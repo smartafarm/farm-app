@@ -1,0 +1,122 @@
+<ng-include src = "'templates/nav.html'"> </ng-include>
+<div class="container" style="padding-top: 80px;">
+
+	<h2>Dashboard</h2><br>
+
+	<div class="row" ng-model="data">
+		<div class="col-md-12" id="device-data" ng-model="data">
+			<div ng-controller="uib-accordion">
+				<div ng-repeat="device in data" id="{{device._id}}">
+					<uib-accordion close-others="oneAtATime">
+						<uib-accordion-group>
+						<!-- Device Panel Header placeholder-->
+						 <uib-accordion-heading>
+        					<span ng-click="testShow1 = !testShow1" test-directive1>{{ device.name }}</span>
+							
+        					<div class="pull-right"  no-click>
+								
+	    						<span style="cursor: default; font-size: 75%; margin-top:-14px;" >   <i>Serial No:{{ device._id }} </i></span>
+	    						
+								
+        							<span
+	        							class="fa fa-pencil-square-o "
+	        							 tooltip-trigger="mouseenter"
+	        							  tooltip-placement="left"
+	        							  uib-tooltip ="Edit Device Name"
+	        							  tooltip-popup-delay='400' id="{{device._id}}"
+	        							  style="margin-left:10px ;margin right:10px"
+	        							  friendly-name >
+        							</span>
+        							<span device-switch
+        							ng-class="device.Status==1 ? 'fa fa-toggle-on fa-lg' : 'fa fa-toggle-off fa-lg'"
+        							style="margin-top:-6px ;margin-left:10px ;color:{{device.Status==1 ? 'green' : 'red'}}"
+        							ng-click="statusToggle()"
+        							tooltip-trigger="mouseenter"
+	    							tooltip-placement="right"
+	    							uib-tooltip ="{{device.Status==1 ? 'Active' : 'Inactive'}}"
+	    							tooltip-popup-delay='400'
+        							 >
+        							</span>
+    							
+        					</div>
+    					 </uib-accordion-heading>
+    					  <!-- EOF Panel Header placeholder-->
+
+    					 <!-- Button placeholder-->
+	    					 <div class="row">
+	    					 	<button
+	    					 		class="pull-right"
+	    							log-btn
+	    							ng-click="dread = !dread"
+	    							tooltip-trigger="mouseenter"
+	    							tooltip-placement="left"
+	    							uib-tooltip ="{{dread==true ? 'View Log' : 'View Graph'}}"
+	    							tooltip-popup-delay='400'>
+	    							<i ng-class="dread==true ? 'fa fa-line-chart' : 'fa fa-file-text-o'" ></i>
+    							</button>
+							<!-- Log Filter Button  placeholder-->
+    							<p class="input-group">
+						            <button
+										uib-datepicker-popup="dd-MM-yyyy"
+										ng-model="cdate"
+										is-open="picker.open"
+										ng-click = "picker.open = true"
+										max-date="maxDate"
+										datepicker-options="dateOptions"
+										ng-required="true"
+										close-text="Close"
+										class="input-md"
+										tooltip-trigger="mouseenter"
+										tooltip-placement="left"
+										uib-tooltip ="Filter"
+										tooltip-popup-delay='400'
+										ng-show="!cdate && dread">
+		    							<i class="fa fa-calendar-check-o"></i>
+		    						</button>
+							       	<button
+							       		ng-click ="cdate=undefined"
+								        tooltip-trigger="mouseenter"
+		    							tooltip-placement="right"
+		    							uib-tooltip ="Clear Filter"
+		    							tooltip-popup-delay='400'
+		    							ng-show = "cdate && dread">
+		    							<i class="fa fa-times"></i>
+	    							</button>
+					            </p>
+				            <!--EOF Log Filter Button  placeholder-->
+
+	    					 </div>
+
+						<!-- EOF Button placeholder-->
+
+
+			           <!-- Graph and log placeholder -->
+						 <div ng-show="dread">
+						 	  <div class="row">
+						        <div class="col-md-3">
+
+						        </div>
+				        	</div>
+						 	<div ng-repeat= "reading in device.readings |filter : {dt : getdate(cdate)} " >
+                                    <devicedata reading = "reading" ></devicedata>
+                            </div>
+					   	</div>
+
+					   	<div ng-show="!dread" >
+					   				   		
+							<test-directive></test-directive>						 	
+							<!-- 				 	<test-directive ng-if="testShow1"></test-directive>		 -->				 	
+					   	</div>
+					<!-- EOF Graph and log placeholder-->
+
+					</uib-accordion>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+<!--
+	-->

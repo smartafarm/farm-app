@@ -1,0 +1,38 @@
+{
+  "name": "smartafarm",
+  "description": "smartarm application",
+  "main": "src/index.html",
+  "authors": [
+    "Vandish Gandhi"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "\u001e"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "homepage": "src/index.html",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-animate": "~1.4.7",
+    "angular-base64": "git://github.com/ninjatronic/angular-base64.git",
+    "angular-bootstrap": "~0.14.3",
+    "angular-chart.js": "~0.8.5",
+    "angular-nvd3": "~1.0.2",
+    "angular-route": "git://github.com/angular/bower-angular-route.git",
+    "angular-ui-grid": "~3.0.7",
+    "angular-ui-router": "~0.2.15",
+    "bootstrap": "~3.3.5",
+    "gulp": "~3.9.0",
+    "oclazyload": "~1.0.8",
+    "raphael": "git://github.com/DmitryBaranovskiy/raphael.git#2.1.0"
+  }
+}
