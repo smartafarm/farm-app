@@ -3,12 +3,17 @@
 	'$scope',
 	'$uibModalInstance',	
 	'$interval',
-function ($scope,$uibModalInstance,$interval) {  
+	'adminService',
+function ($scope,$uibModalInstance,$interval,adminService) {  
 	
 	$scope.user ={};
 
   	$scope.ok = function() {    
-  		console.log($scope.user);
+  		adminService.submit('admin/createUser',$scope.user).then(function(response){
+  			console.log(response);
+  		},function(response){				
+				console.log(response);
+		});
   		//$uibModalInstance.dismiss('cancel');
 	};
 
