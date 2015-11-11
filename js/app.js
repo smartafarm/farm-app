@@ -7,7 +7,9 @@ var sfarm = angular
 'chart.js',
 'nvd3',
 'oc.lazyLoad',
-'ui.grid'
+'ui.grid',
+'ui.grid.selection',
+'ui-notification',
 
 
 ])

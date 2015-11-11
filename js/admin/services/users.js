@@ -1,0 +1,16 @@
+.factory('userFactory', ['$http','$q', function($http,$q){
+	return {
+		receive : function(api){
+			var deferred = $q.defer();			
+			$http({
+				url:'http://localhost/smartfarm/'+api,
+				method:'GET'				
+			}).then(function(response){
+				deferred.resolve(response.data);
+			},function(response){				
+				deferred.reject("Failed");
+			});
+		 	return deferred.promise;
+			}
+		}
+}])

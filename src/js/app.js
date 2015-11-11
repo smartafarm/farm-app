@@ -7,7 +7,9 @@ var sfarm = angular
 'chart.js',
 'nvd3',
 'oc.lazyLoad',
-'ui.grid'
+'ui.grid',
+'ui.grid.selection',
+'ui-notification',
 
 
 ])
@@ -103,6 +105,7 @@ sfarm
            .state('admin' ,{
             url: '/admin',
             templateUrl: 'admin/test.html',
+            controller:'adminCtrl',
             resolve: { 
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('admin/js/app.js');

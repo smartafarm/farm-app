@@ -35,6 +35,7 @@ sfarm
            .state('admin' ,{
             url: '/admin',
             templateUrl: 'admin/test.html',
+            controller:'adminCtrl',
             resolve: { 
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('admin/js/app.js');

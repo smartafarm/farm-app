@@ -16,6 +16,7 @@ gulp.task('depsjs', function(){
 		'bower_components/angular-animate/angular-animate.min.js',
 		'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
 		'bower_components/angular-base64/angular-base64.min.js',
+		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.js',		
 		'bower_components/oclazyload/dist/ocLazyLoad.min.js',
 		'bower_components/angular-ui-grid/ui-grid.min.js',		
 		'bower_components/chart.js/chart.min.js',
@@ -23,9 +24,8 @@ gulp.task('depsjs', function(){
 		'bower_components/d3/d3.js'	,
 		'bower_components/nvd3/build/nv.d3.js',
 		'bower_components/angular-nvd3/dist/angular-nvd3.js',
-		'js/deps/angular-notify.js'	,
+		'js/deps/angular-notify.js'	
 		
-
 		])// eof gul src
 	.pipe(concat('devdeps.js'))
 	.pipe(gulp.dest('src/js'))
@@ -54,7 +54,8 @@ gulp.task('css', function(){
 		'bower_components/bootstrap/dist/css/bootstrap.min.css',
 		'css/angular-notify.css',
 		'bower_components/angular-chart.js/dist/angular-chart.css',
-		'bower_components/angular-ui-grid/ui-grid.min.css'
+		'bower_components/angular-ui-grid/ui-grid.min.css',
+		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.css'
 		
 		])// eof gul src
 	.pipe(concat('smartafarm.css'))
