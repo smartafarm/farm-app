@@ -1,16 +1,12 @@
 <div ng-controller ="userCtrl">
 	<div class="row">
-		<button class="btn btn-primary" style="margin-left: 20px;margin-top: 20px;" add-user> 
+		<h3>Users</h3>
+		<button class="btn btn-primary" style="margin-top: 10px;" add-user> 
 		<i class="fa fa-plus"> </i> Add User
 		</button>
-		<button class="btn btn-primary" style="margin-left: 20px;margin-top: 20px;" edit-device> 
+		<button class="btn btn-primary" style="margin-left: 10px;margin-top: 10px;" edit-device> 
 		<i class="fa fa-plus"> </i> Edit Device
 		</button>
-	</div>
-
-	<div class="row">
-		<div  ui-grid="gridOptions" ui-grid-selection class="myGrid"></div>
-	</div>
-
- 
+		<div  ui-grid="gridOptions" ui-grid-selection class="myGrid" style="margin-top: 20px;"></div>
+	</div> 
 </div>

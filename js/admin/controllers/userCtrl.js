@@ -11,13 +11,14 @@
   					{
   						"First Name" : value.details.fname,
   						"Last Name" : value.details.lname,
-  						"User Name" : value.uname,
+  						"uname" : value.uname,
   						"Email" : value.details.email,
   						"Organisation" :value.details.bname,
   						"Phone No" :value.details.pno  	,					 
   						"devices": value.devices
 
   					})
+          
   			})
   		},function(response){				
 				console.log(response);
@@ -32,7 +33,7 @@
 	      columnDefs:[
   			 { field: 'First Name' }	,
           	 { field: 'Last Name' }	,
-          	 { field: 'User Name' }	,
+          	 { field: 'uname',displayName:'User Name' }	,
           	 { field: 'Email' }	,
           	 { field: 'Organisation' }	,
           	 { field: 'Phone No' }	      

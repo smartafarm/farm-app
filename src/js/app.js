@@ -10,7 +10,7 @@ var sfarm = angular
 'ui.grid',
 'ui.grid.selection',
 'ui-notification',
-
+'checklist-model'
 
 ])
 .constant('USER_ROLES', {

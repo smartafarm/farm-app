@@ -8,7 +8,13 @@
 			$uibModal.open({
 		      animation: true,
 		      templateUrl: 'admin/templates/addUserModal.html',
-		      controller: 'addUserCtrl',		    
+		      controller: 'addUserCtrl',
+		      resolve:{
+		      				myData : function(){	
+		      						
+						      		return scope.myData;
+		      				}	
+	      				} 			    
 	        });
 			})
 		}

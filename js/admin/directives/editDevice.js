@@ -5,7 +5,7 @@
 			
 			ele.bind("click",function(){
 				if(scope.gridApi.selection.getSelectedRows().length == 0){
-					Notification.error({message: 'Please Select a Device', delay: 1000});
+					Notification.error({message: 'Please Select a User to edit Device Settings', delay: 3000});
 				}else{
 					$uibModal.open({
 				      animation: true,
@@ -13,8 +13,8 @@
 				      controller: 'editDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
-		      						var data = scope.gridApi.selection.getSelectedRows()
-						      		return data[0];
+		      						
+						      		return scope.gridApi.selection.getSelectedRows(0);
 		      				}	
 	      				}    
 			        });

@@ -4,6 +4,35 @@
       <h4>Device Settings</h4>      
   </div>
   <div class="modal-body">
+  <input ng-model="query" type="text"
+        placeholder="Search Device" autofocus style="margin-bottom: 10px;">
+  <h4>All Devices</h4>
+  <div ng-repeat="device in data | filter: query" id="{{device._id}}" >  
+   <span class="col-sm-2 col-md-1"><input type="checkbox" data-checklist-model="selectedDevices[$index]" ng-model="enabled" data-checklist-value="{'._id' : device._id}"  ng-change = "!parentBox" style="margin-top: 10px;"></span>
+     <uib-accordion class="col-sm-10 col-md-11" close-others="oneAtATime">
+            <uib-accordion-group is-disabled ="!selectedDevices[$index]._id || selectedDevices[$index]._id.length == 0" >
+            
+             <uib-accordion-heading >
+                  <span disabled-panel>{{ device._id }}</span>
+                 
+                  <div class="pull-right" no-click>
+                  
+                  <span style="cursor: default; font-size: 75%; margin-top:-14px;" >    <i>Name :{{ device.name }} </i></span>
+                 <!--  <span 
+                     ng-class="device.Status==1 ? 'fa fa-toggle-on fa-lg' : 'fa fa-toggle-off fa-lg'"
+                     style="margin-top:-6px ;margin-left:10px ;color:{{device.Status==1 ? 'green' : 'red'}}"
+                     tooltip-trigger="mouseenter"
+                     tooltip-placement="right"
+                     uib-tooltip ="{{device.Status==1 ? 'Active' : 'Inactive'}}"
+                     tooltip-popup-delay='400'
+                  ></span> -->
+                  </div>
+               </uib-accordion-heading>
+              <div ng-repeat ="f in dfunc">
+                <input type="checkbox" checklist-model="selectedDevices[$parent.$index].func" checklist-value="f._id" /> {{f.desc}}            
+              </div>
+          </uib-accordion>
+   </div> 
 
 </ul>
   
