@@ -72,23 +72,31 @@ angular.module("sfarm")
 	'$interval',
 	'adminService',
 	'myData',
-function ($scope,$uibModalInstance,$interval,adminService,myData) {  
+  'Notification',
+function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {  
 	
 	$scope.user ={};
 
   	$scope.ok = function() {    
   		adminService.submit('admin/createUser',$scope.user).then(function(response){
-  				myData.push(
-  					{
-  						"First Name" : $scope.user.details.fname,
-  						"Last Name" : $scope.user.details.lname,
-  						"User Name" : $scope.user.uname,
-  						"Email" : $scope.user.details.email,
-  						"Organisation" :$scope.user.details.bname,
-  						"Phone No" :$scope.user.details.pno  	,					 
-  						"devices": []
+        if(response.status == 202){
+            Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
+          }else
+          {       
+            myData.push(
+            {
+              "First Name" : $scope.user.details.fname,
+              "Last Name" : $scope.user.details.lname,
+              "User Name" : $scope.user.uname,
+              "Email" : $scope.user.details.email,
+              "Organisation" :$scope.user.details.bname,
+              "Phone No" :$scope.user.details.pno   ,          
+              "devices": []
 
-  					})
+            })
+            Notification.success({message : 'User Added' ,delay : 3000})
+          }
+  				
   		},function(response){				
 				console.log(response);
 		});
@@ -102,11 +110,12 @@ function ($scope,$uibModalInstance,$interval,adminService,myData) {
 
 }])
 
-.controller('adminCtrl', ['$rootScope','$interval' ,function($rootScope,$interval) {
+.controller('adminCtrl', ['$rootScope','$interval','$state' ,function($rootScope,$interval,$state) {
  var cancelEvents =function(){
  	 $interval.cancel($rootScope.timer);
  }
  cancelEvents();
+ $state.go('admin.users');  
 }])
 .controller('editDeviceCtrl',[
 	'$scope',
@@ -140,18 +149,20 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 	
 	
   	$scope.ok = function() {  
-  		devices[0].devices = $scope.selectedDevices;
-  		var data = {};
-  		data.uname = devices[0].uname;
-  		data.dAccess = $scope.selectedDevices; 
-  		console.log(data);
-  			userFactory.submit('admin/setDeviceAccess',data).then(function(response){  				
-  				//$uibModalInstance.dismiss('cancel');
-  				Notification.success({message : 'Device Settings Updated' ,delay : 3000})	
-  			},function(response){				
-				console.log(response);
-			});
   		
+  		var data = {};
+  		data.uname = devices[0].uname;  		
+  		data.dAccess = $scope.selectedDevices;   		  		
+  			userFactory.submit('admin/setDeviceAccess',data).then(function(response){  	
+  				if(response.status == 202){
+  					Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
+  				}else
+  				{				
+					devices[0].devices = $scope.selectedDevices;
+					$uibModalInstance.dismiss('cancel');
+					Notification.success({message : 'Device Settings Updated' ,delay : 3000})	
+				}
+  			});  		
 	};
 
 	$scope.cancel = function() {
@@ -165,10 +176,10 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 		console.log(row);
 	}
 	userFactory.receive('admin/getUsers').then(function(response){
-  			var data = response;
-        
+  			var data = response;        
   			$scope.myData = [];
-  			data.users.forEach(function(value,key){  				
+  			data.users.forEach(function(value,key){  		
+
   				$scope.myData.push(
   					{
   						"First Name" : value.details.fname,
@@ -177,7 +188,7 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
   						"Email" : value.details.email,
   						"Organisation" :value.details.bname,
   						"Phone No" :value.details.pno  	,					 
-  						"devices": value.devices
+  						"devices": value.device
 
   					})
           
@@ -191,12 +202,15 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 	        enableRowSelection: true,		    
 	    	selectionRowHeaderWidth: 35,
 		    rowHeight: 35,
-		    
+        rowWidth : 20,
+		    enableColumnResizing : true,
+        paginationPageSizes: [10, 20, 30],
+        paginationPageSize: 10,
 	      columnDefs:[
   			 { field: 'First Name' }	,
           	 { field: 'Last Name' }	,
           	 { field: 'uname',displayName:'User Name' }	,
-          	 { field: 'Email' }	,
+          	 { field: 'Email' ,width: 200}	,
           	 { field: 'Organisation' }	,
           	 { field: 'Phone No' }	      
 	      ] 
@@ -256,7 +270,7 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 				method:'POST',
 				data: {serverData}
 			}).then(function(response){
-				deferred.resolve(response.data);
+				deferred.resolve(response);
 			},function(response){				
 				deferred.reject("Failed");
 			});

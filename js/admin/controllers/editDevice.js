@@ -30,18 +30,20 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 	
 	
   	$scope.ok = function() {  
-  		devices[0].devices = $scope.selectedDevices;
-  		var data = {};
-  		data.uname = devices[0].uname;
-  		data.dAccess = $scope.selectedDevices; 
-  		console.log(data);
-  			userFactory.submit('admin/setDeviceAccess',data).then(function(response){  				
-  				//$uibModalInstance.dismiss('cancel');
-  				Notification.success({message : 'Device Settings Updated' ,delay : 3000})	
-  			},function(response){				
-				console.log(response);
-			});
   		
+  		var data = {};
+  		data.uname = devices[0].uname;  		
+  		data.dAccess = $scope.selectedDevices;   		  		
+  			userFactory.submit('admin/setDeviceAccess',data).then(function(response){  	
+  				if(response.status == 202){
+  					Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
+  				}else
+  				{				
+					devices[0].devices = $scope.selectedDevices;
+					$uibModalInstance.dismiss('cancel');
+					Notification.success({message : 'Device Settings Updated' ,delay : 3000})	
+				}
+  			});  		
 	};
 
 	$scope.cancel = function() {

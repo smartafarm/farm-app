@@ -1,7 +1,7 @@
 .controller('uib-accordion',
 	['$scope',
 	'device',
-	'notify',
+	'Notification',
 	'Poller',
 	'$rootScope',
 	'$timeout',
@@ -9,15 +9,15 @@
 	'$interval',
 	'$filter',
 	'mygraphFactory',
-	function($scope,device,notify,Poller,$rootScope,$timeout,$state,$interval,$filter,mygraphFactory){
+	'$sce',
+	function($scope,device,Notification,Poller,$rootScope,$timeout,$state,$interval,$filter,mygraphFactory,$sce){
 	$scope.flag = true;
 	$scope.newdata = null;
 	$scope.graph = [];
+
 	$scope.data = device.all().then
 		(function(data){
-			$scope.data=data;
-			// setting angular js data angular js graph
-			//-----------------------------------------------------------------------//
+			$scope.data=data;			
 			mygraphFactory.setGraph($scope,$filter);
 			return
 		});
@@ -29,16 +29,14 @@
 	 		$scope.data.forEach(function(entry) {
 	 		data.readings.forEach(function(reading){
 	 			if(reading.did == entry._id){
-	 				$scope.data[index].readings.push(reading);
-	 				console.log(reading);
+	 				
+	 				$scope.data[index].readings.push(reading);	 				
+	 				// setting last read	 				
+					$scope.data[index].lread =new Date(reading.dt);
 	 				// refreshing angular js graph
-	 				mygraphFactory.setGraph($scope,$filter);
-	 			//-----------------------------------------------------------------------//
-	 				/*$scope.graph[index][0].x.push($filter('date')(reading.dt, 'HH:mm'));
-	 				$scope.graph[index][0].y[0].push(reading.T01);
-	 				$scope.graph[index][0].z[0].push(reading.L01);
-	 				console.log($scope.graph);*/
-	 				$interval( notify({ message:'New Reading Received From Device ' + $scope.data[index].name , duration:'10000',position:'right' } ), 1000);
+	 				mygraphFactory.setValue($scope,$filter,index);	 
+
+	 				Notification.info({ message:'New Reading Received From Device ' + $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})
 	 		index = index+1;

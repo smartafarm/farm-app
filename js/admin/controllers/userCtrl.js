@@ -3,10 +3,10 @@
 		console.log(row);
 	}
 	userFactory.receive('admin/getUsers').then(function(response){
-  			var data = response;
-        
+  			var data = response;        
   			$scope.myData = [];
-  			data.users.forEach(function(value,key){  				
+  			data.users.forEach(function(value,key){  		
+
   				$scope.myData.push(
   					{
   						"First Name" : value.details.fname,
@@ -15,7 +15,7 @@
   						"Email" : value.details.email,
   						"Organisation" :value.details.bname,
   						"Phone No" :value.details.pno  	,					 
-  						"devices": value.devices
+  						"devices": value.device
 
   					})
           
@@ -29,12 +29,15 @@
 	        enableRowSelection: true,		    
 	    	selectionRowHeaderWidth: 35,
 		    rowHeight: 35,
-		    
+        rowWidth : 20,
+		    enableColumnResizing : true,
+        paginationPageSizes: [10, 20, 30],
+        paginationPageSize: 10,
 	      columnDefs:[
   			 { field: 'First Name' }	,
           	 { field: 'Last Name' }	,
           	 { field: 'uname',displayName:'User Name' }	,
-          	 { field: 'Email' }	,
+          	 { field: 'Email' ,width: 200}	,
           	 { field: 'Organisation' }	,
           	 { field: 'Phone No' }	      
 	      ] 

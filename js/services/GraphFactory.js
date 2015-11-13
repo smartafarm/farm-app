@@ -4,7 +4,7 @@
  return{
     setGraph:function($scope,$filter){
             // creating graph value array
-         /*    $scope.labels =[];
+             $scope.labels =[];
               $scope.series = [['Temprature'],['Level']];  
               var myIndex = -1;
               angular.forEach($scope.data, function(deviceReadings, key){      
@@ -49,7 +49,7 @@
                 $scope.graph[myIndex]['level'].push(value);     
                });     
               });
-*/
+
 
               // chart options temprature
               $scope.chart_options_temp = {

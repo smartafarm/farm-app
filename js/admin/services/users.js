@@ -19,7 +19,7 @@
 				method:'POST',
 				data: {serverData}
 			}).then(function(response){
-				deferred.resolve(response.data);
+				deferred.resolve(response);
 			},function(response){				
 				deferred.reject("Failed");
 			});

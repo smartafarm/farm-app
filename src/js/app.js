@@ -10,7 +10,9 @@ var sfarm = angular
 'ui.grid',
 'ui.grid.selection',
 'ui-notification',
-'checklist-model'
+'checklist-model',
+'ui.grid.resizeColumns',
+'ui.grid.pagination'
 
 ])
 .constant('USER_ROLES', {
@@ -256,6 +258,23 @@ sfarm
 
 }) //eof devicedata
 
+.directive('lastReading',function(){
+	return{
+		restrict:'A',	
+		link : function(scope,ele,attr){	
+			var dates=[];
+			var readings = scope.data[scope.$index].readings;
+			readings.forEach(function(value,key){
+				//console.log(value);
+				dates.push(new Date(value.dt));
+			})
+			var maxDate=new Date(Math.max.apply(null,dates));
+			scope.data[scope.$index].lread =maxDate;
+		}
+	}
+
+}) //eof devicedata
+	
 .directive('logBtn',function(){
 	return{
 		restrict:'A',		
@@ -333,17 +352,10 @@ sfarm
 .controller('testCtrl',  function ($scope,mygraphFactory,$filter,$rootScope) {
 	this.callGraph = function(){
 		
-		if(!$scope.graph[$scope.$index]){
-				console.log($scope);
-			mygraphFactory.setValue($scope,$filter,$scope.$index);
+		if(!$scope.graph[$scope.$index]){				
+			//mygraphFactory.setValue($scope,$filter,$scope.$index);
 			}
-			else{
-					console.log('here');
-					
-					 $scope.graph.splice($scope.$index, 1);
-					
-					console.log($scope);
-				}
+			
 	}
 })
 .directive('uibTooltip', function(){
@@ -357,7 +369,7 @@ sfarm
 .controller('uib-accordion',
 	['$scope',
 	'device',
-	'notify',
+	'Notification',
 	'Poller',
 	'$rootScope',
 	'$timeout',
@@ -365,15 +377,15 @@ sfarm
 	'$interval',
 	'$filter',
 	'mygraphFactory',
-	function($scope,device,notify,Poller,$rootScope,$timeout,$state,$interval,$filter,mygraphFactory){
+	'$sce',
+	function($scope,device,Notification,Poller,$rootScope,$timeout,$state,$interval,$filter,mygraphFactory,$sce){
 	$scope.flag = true;
 	$scope.newdata = null;
 	$scope.graph = [];
+
 	$scope.data = device.all().then
 		(function(data){
-			$scope.data=data;
-			// setting angular js data angular js graph
-			//-----------------------------------------------------------------------//
+			$scope.data=data;			
 			mygraphFactory.setGraph($scope,$filter);
 			return
 		});
@@ -385,16 +397,14 @@ sfarm
 	 		$scope.data.forEach(function(entry) {
 	 		data.readings.forEach(function(reading){
 	 			if(reading.did == entry._id){
-	 				$scope.data[index].readings.push(reading);
-	 				console.log(reading);
+	 				
+	 				$scope.data[index].readings.push(reading);	 				
+	 				// setting last read	 				
+					$scope.data[index].lread =new Date(reading.dt);
 	 				// refreshing angular js graph
-	 				mygraphFactory.setGraph($scope,$filter);
-	 			//-----------------------------------------------------------------------//
-	 				/*$scope.graph[index][0].x.push($filter('date')(reading.dt, 'HH:mm'));
-	 				$scope.graph[index][0].y[0].push(reading.T01);
-	 				$scope.graph[index][0].z[0].push(reading.L01);
-	 				console.log($scope.graph);*/
-	 				$interval( notify({ message:'New Reading Received From Device ' + $scope.data[index].name , duration:'10000',position:'right' } ), 1000);
+	 				mygraphFactory.setValue($scope,$filter,index);	 
+
+	 				Notification.info({ message:'New Reading Received From Device ' + $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})
 	 		index = index+1;
@@ -615,7 +625,7 @@ return{
  return{
     setGraph:function($scope,$filter){
             // creating graph value array
-         /*    $scope.labels =[];
+             $scope.labels =[];
               $scope.series = [['Temprature'],['Level']];  
               var myIndex = -1;
               angular.forEach($scope.data, function(deviceReadings, key){      
@@ -660,7 +670,7 @@ return{
                 $scope.graph[myIndex]['level'].push(value);     
                });     
               });
-*/
+
 
               // chart options temprature
               $scope.chart_options_temp = {

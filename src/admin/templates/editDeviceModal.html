@@ -7,8 +7,9 @@
   <input ng-model="query" type="text"
         placeholder="Search Device" autofocus style="margin-bottom: 10px;">
   <h4>All Devices</h4>
+  <form name="editDevice">
   <div ng-repeat="device in data | filter: query" id="{{device._id}}" >  
-   <span class="col-sm-2 col-md-1"><input type="checkbox" data-checklist-model="selectedDevices[$index]" ng-model="enabled" data-checklist-value="{'._id' : device._id}"  ng-change = "!parentBox" style="margin-top: 10px;"></span>
+   <span class="col-sm-2 col-md-1"><input type="checkbox" data-checklist-model="selectedDevices[$index]._id" ng-model="enabled" data-checklist-value="device._id"  ng-change = "!parentBox" style="margin-top: 10px;"></span>
      <uib-accordion class="col-sm-10 col-md-11" close-others="oneAtATime">
             <uib-accordion-group is-disabled ="!selectedDevices[$index]._id || selectedDevices[$index]._id.length == 0" >
             
@@ -37,10 +38,10 @@
 </ul>
   
   <div class="modal-footer">
-    <button class="btn btn-success" ng-click="ok()"> Save</button>
+    <button class="btn btn-success" ng-disabled = "editDevice.$pristine" ng-click="ok()"> Save</button>
     <button class="btn" ng-click="cancel()">Cancel</button>
   </div>
-  </form>
+</form>
 </div>
 <!-- <div ng-repeat="device in data" id="{{device._id}}">
      <uib-accordion close-others="oneAtATime">

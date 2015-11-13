@@ -14,29 +14,35 @@
         					<span ng-click="testShow1 = !testShow1" test-directive1>{{ device.name }}</span>
 							
         					<div class="pull-right"  no-click>
+
+								<span last-reading style="cursor: default; font-size: 75%; margin-top:-14px;margin-right: 15px;" >   
+								<i>Last Reading <span ng-class="{'fa fa-spinner fa-spin': data[$index].lread === undefined}">{{ data[$index].lread | date:'dd-MM-yyyy h:mm a' }}</span> </i>
+								</span>
+
+	    						<span style="cursor: default; font-size: 75%; margin-top:-14px;" >  
+	    						<i>Serial No:{{ device._id }} </i>
+	    						</span>	    						
 								
-	    						<span style="cursor: default; font-size: 75%; margin-top:-14px;" >   <i>Serial No:{{ device._id }} </i></span>
-	    						
-								
-        							<span
-	        							class="fa fa-pencil-square-o "
-	        							 tooltip-trigger="mouseenter"
-	        							  tooltip-placement="left"
-	        							  uib-tooltip ="Edit Device Name"
-	        							  tooltip-popup-delay='400' id="{{device._id}}"
-	        							  style="margin-left:10px ;margin right:10px"
-	        							  friendly-name >
-        							</span>
-        							<span device-switch
-        							ng-class="device.Status==1 ? 'fa fa-toggle-on fa-lg' : 'fa fa-toggle-off fa-lg'"
-        							style="margin-top:-6px ;margin-left:10px ;color:{{device.Status==1 ? 'green' : 'red'}}"
-        							ng-click="statusToggle()"
-        							tooltip-trigger="mouseenter"
+    							<span
+									class="fa fa-pencil-square-o "
+									tooltip-trigger="mouseenter"
+									tooltip-placement="left"
+									uib-tooltip ="Edit Device Name"
+									tooltip-popup-delay='400' id="{{device._id}}"
+									style="margin-left:10px ;margin right:10px"
+									friendly-name >
+    							</span>
+
+    							<span device-switch
+	    							ng-class="device.Status==1 ? 'fa fa-toggle-on fa-lg' : 'fa fa-toggle-off fa-lg'"
+	    							style="margin-top:-6px ;margin-left:10px ;color:{{device.Status==1 ? 'green' : 'red'}}"
+	    							ng-click="statusToggle()"
+	    							tooltip-trigger="mouseenter"
 	    							tooltip-placement="right"
 	    							uib-tooltip ="{{device.Status==1 ? 'Active' : 'Inactive'}}"
 	    							tooltip-popup-delay='400'
-        							 >
-        							</span>
+    							 >
+    							</span>
     							
         					</div>
     					 </uib-accordion-heading>
