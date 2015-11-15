@@ -3,7 +3,7 @@
 		login : function(credentials){
 			var deferred = $q.defer();
 			$http({
-				url:'http://localhost/smartfarm/login/authenticate',
+				url:'api/login/authenticate',
 				method:'POST',
 				data: {credentials}
 			}).then(function(response){

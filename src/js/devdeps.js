@@ -566,7 +566,7 @@ angular.module('checklist-model', [])
 //# sourceMappingURL=angular-chart.min.js.map
 !function() {
   var d3 = {
-    version: "3.5.8"
+    version: "3.5.6"
   };
   var d3_arraySlice = [].slice, d3_array = function(list) {
     return d3_arraySlice.call(list);
@@ -1197,7 +1197,10 @@ angular.module('checklist-model', [])
     prefix: d3_nsPrefix,
     qualify: function(name) {
       var i = name.indexOf(":"), prefix = name;
-      if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
+      if (i >= 0) {
+        prefix = name.slice(0, i);
+        name = name.slice(i + 1);
+      }
       return d3_nsPrefix.hasOwnProperty(prefix) ? {
         space: d3_nsPrefix[prefix],
         local: name
@@ -1408,14 +1411,12 @@ angular.module('checklist-model', [])
       if (key) {
         var nodeByKeyValue = new d3_Map(), keyValues = new Array(n), keyValue;
         for (i = -1; ++i < n; ) {
-          if (node = group[i]) {
-            if (nodeByKeyValue.has(keyValue = key.call(node, node.__data__, i))) {
-              exitNodes[i] = node;
-            } else {
-              nodeByKeyValue.set(keyValue, node);
-            }
-            keyValues[i] = keyValue;
+          if (nodeByKeyValue.has(keyValue = key.call(node = group[i], node.__data__, i))) {
+            exitNodes[i] = node;
+          } else {
+            nodeByKeyValue.set(keyValue, node);
           }
+          keyValues[i] = keyValue;
         }
         for (i = -1; ++i < m; ) {
           if (!(node = nodeByKeyValue.get(keyValue = key.call(groupData, nodeData = groupData[i], i)))) {
@@ -1427,7 +1428,7 @@ angular.module('checklist-model', [])
           nodeByKeyValue.set(keyValue, true);
         }
         for (i = -1; ++i < n; ) {
-          if (i in keyValues && nodeByKeyValue.get(keyValues[i]) !== true) {
+          if (nodeByKeyValue.get(keyValues[i]) !== true) {
             exitNodes[i] = group[i];
           }
         }
@@ -1619,7 +1620,7 @@ angular.module('checklist-model', [])
       group = d3_array(d3_selectAll(nodes, d3_document));
       group.parentNode = d3_document.documentElement;
     } else {
-      group = d3_array(nodes);
+      group = nodes;
       group.parentNode = null;
     }
     return d3_selection([ group ]);
@@ -1850,22 +1851,18 @@ angular.module('checklist-model', [])
   }
   var ρ = Math.SQRT2, ρ2 = 2, ρ4 = 4;
   d3.interpolateZoom = function(p0, p1) {
-    var ux0 = p0[0], uy0 = p0[1], w0 = p0[2], ux1 = p1[0], uy1 = p1[1], w1 = p1[2], dx = ux1 - ux0, dy = uy1 - uy0, d2 = dx * dx + dy * dy, i, S;
-    if (d2 < ε2) {
-      S = Math.log(w1 / w0) / ρ;
-      i = function(t) {
-        return [ ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(ρ * t * S) ];
-      };
-    } else {
-      var d1 = Math.sqrt(d2), b0 = (w1 * w1 - w0 * w0 + ρ4 * d2) / (2 * w0 * ρ2 * d1), b1 = (w1 * w1 - w0 * w0 - ρ4 * d2) / (2 * w1 * ρ2 * d1), r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0), r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / ρ;
-      i = function(t) {
-        var s = t * S, coshr0 = d3_cosh(r0), u = w0 / (ρ2 * d1) * (coshr0 * d3_tanh(ρ * s + r0) - d3_sinh(r0));
+    var ux0 = p0[0], uy0 = p0[1], w0 = p0[2], ux1 = p1[0], uy1 = p1[1], w1 = p1[2];
+    var dx = ux1 - ux0, dy = uy1 - uy0, d2 = dx * dx + dy * dy, d1 = Math.sqrt(d2), b0 = (w1 * w1 - w0 * w0 + ρ4 * d2) / (2 * w0 * ρ2 * d1), b1 = (w1 * w1 - w0 * w0 - ρ4 * d2) / (2 * w1 * ρ2 * d1), r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0), r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1), dr = r1 - r0, S = (dr || Math.log(w1 / w0)) / ρ;
+    function interpolate(t) {
+      var s = t * S;
+      if (dr) {
+        var coshr0 = d3_cosh(r0), u = w0 / (ρ2 * d1) * (coshr0 * d3_tanh(ρ * s + r0) - d3_sinh(r0));
         return [ ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / d3_cosh(ρ * s + r0) ];
-      };
+      }
+      return [ ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(ρ * s) ];
     }
-    i.duration = S * 1e3;
-    return i;
+    interpolate.duration = S * 1e3;
+    return interpolate;
   };
   d3.behavior.zoom = function() {
     var view = {
@@ -1935,9 +1932,8 @@ angular.module('checklist-model', [])
       view = {
         x: view.x,
         y: view.y,
-        k: null
+        k: +_
       };
-      scaleTo(+_);
       rescale();
       return zoom;
     };
@@ -2268,8 +2264,9 @@ angular.module('checklist-model', [])
     return v < 16 ? "0" + Math.max(0, v).toString(16) : Math.min(255, v).toString(16);
   }
   function d3_rgb_parse(format, rgb, hsl) {
+    format = format.toLowerCase();
     var r = 0, g = 0, b = 0, m1, m2, color;
-    m1 = /([a-z]+)\((.*)\)/.exec(format = format.toLowerCase());
+    m1 = /([a-z]+)\((.*)\)/.exec(format);
     if (m1) {
       m2 = m1[2].split(",");
       switch (m1[1]) {
@@ -2684,19 +2681,17 @@ angular.module('checklist-model', [])
   };
   d3.csv = d3.dsv(",", "text/csv");
   d3.tsv = d3.dsv("	", "text/tab-separated-values");
-  var d3_timer_queueHead, d3_timer_queueTail, d3_timer_interval, d3_timer_timeout, d3_timer_frame = this[d3_vendorSymbol(this, "requestAnimationFrame")] || function(callback) {
+  var d3_timer_queueHead, d3_timer_queueTail, d3_timer_interval, d3_timer_timeout, d3_timer_active, d3_timer_frame = this[d3_vendorSymbol(this, "requestAnimationFrame")] || function(callback) {
     setTimeout(callback, 17);
   };
-  d3.timer = function() {
-    d3_timer.apply(this, arguments);
-  };
-  function d3_timer(callback, delay, then) {
+  d3.timer = function(callback, delay, then) {
     var n = arguments.length;
     if (n < 2) delay = 0;
     if (n < 3) then = Date.now();
     var time = then + delay, timer = {
       c: callback,
       t: time,
+      f: false,
       n: null
     };
     if (d3_timer_queueTail) d3_timer_queueTail.n = timer; else d3_timer_queueHead = timer;
@@ -2706,8 +2701,7 @@ angular.module('checklist-model', [])
       d3_timer_interval = 1;
       d3_timer_frame(d3_timer_step);
     }
-    return timer;
-  }
+  };
   function d3_timer_step() {
     var now = d3_timer_mark(), delay = d3_timer_sweep() - now;
     if (delay > 24) {
@@ -2726,21 +2720,22 @@ angular.module('checklist-model', [])
     d3_timer_sweep();
   };
   function d3_timer_mark() {
-    var now = Date.now(), timer = d3_timer_queueHead;
-    while (timer) {
-      if (now >= timer.t && timer.c(now - timer.t)) timer.c = null;
-      timer = timer.n;
+    var now = Date.now();
+    d3_timer_active = d3_timer_queueHead;
+    while (d3_timer_active) {
+      if (now >= d3_timer_active.t) d3_timer_active.f = d3_timer_active.c(now - d3_timer_active.t);
+      d3_timer_active = d3_timer_active.n;
     }
     return now;
   }
   function d3_timer_sweep() {
     var t0, t1 = d3_timer_queueHead, time = Infinity;
     while (t1) {
-      if (t1.c) {
+      if (t1.f) {
+        t1 = t0 ? t0.n = t1.n : d3_timer_queueHead = t1.n;
+      } else {
         if (t1.t < time) time = t1.t;
         t1 = (t0 = t1).n;
-      } else {
-        t1 = t0 ? t0.n = t1.n : d3_timer_queueHead = t1.n;
       }
     }
     d3_timer_queueTail = t0;
@@ -2755,7 +2750,7 @@ angular.module('checklist-model', [])
   var d3_formatPrefixes = [ "y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y" ].map(d3_formatPrefix);
   d3.formatPrefix = function(value, precision) {
     var i = 0;
-    if (value = +value) {
+    if (value) {
       if (value < 0) value *= -1;
       if (precision) value = d3.round(value, d3_format_precision(value, precision));
       i = 1 + Math.floor(1e-12 + Math.log(value) / Math.LN10);
@@ -3105,8 +3100,7 @@ angular.module('checklist-model', [])
         if (i != string.length) return null;
         if ("p" in d) d.H = d.H % 12 + d.p * 12;
         var localZ = d.Z != null && d3_date !== d3_date_utc, date = new (localZ ? d3_date_utc : d3_date)();
-        if ("j" in d) date.setFullYear(d.y, 0, d.j); else if ("W" in d || "U" in d) {
-          if (!("w" in d)) d.w = "W" in d ? 1 : 0;
+        if ("j" in d) date.setFullYear(d.y, 0, d.j); else if ("w" in d && ("W" in d || "U" in d)) {
           date.setFullYear(d.y, 0, 1);
           date.setFullYear(d.y, 0, "W" in d ? (d.w + 6) % 7 + d.W * 7 - (date.getDay() + 5) % 7 : d.w + d.U * 7 - (date.getDay() + 6) % 7);
         } else date.setFullYear(d.y, d.m, d.d);
@@ -6558,68 +6552,54 @@ angular.module('checklist-model', [])
     f: 0
   };
   d3.interpolateTransform = d3_interpolateTransform;
-  function d3_interpolateTransformPop(s) {
-    return s.length ? s.pop() + "," : "";
-  }
-  function d3_interpolateTranslate(ta, tb, s, q) {
-    if (ta[0] !== tb[0] || ta[1] !== tb[1]) {
-      var i = s.push("translate(", null, ",", null, ")");
+  function d3_interpolateTransform(a, b) {
+    var s = [], q = [], n, A = d3.transform(a), B = d3.transform(b), ta = A.translate, tb = B.translate, ra = A.rotate, rb = B.rotate, wa = A.skew, wb = B.skew, ka = A.scale, kb = B.scale;
+    if (ta[0] != tb[0] || ta[1] != tb[1]) {
+      s.push("translate(", null, ",", null, ")");
       q.push({
-        i: i - 4,
+        i: 1,
         x: d3_interpolateNumber(ta[0], tb[0])
       }, {
-        i: i - 2,
+        i: 3,
         x: d3_interpolateNumber(ta[1], tb[1])
       });
     } else if (tb[0] || tb[1]) {
       s.push("translate(" + tb + ")");
+    } else {
+      s.push("");
     }
-  }
-  function d3_interpolateRotate(ra, rb, s, q) {
-    if (ra !== rb) {
+    if (ra != rb) {
       if (ra - rb > 180) rb += 360; else if (rb - ra > 180) ra += 360;
       q.push({
-        i: s.push(d3_interpolateTransformPop(s) + "rotate(", null, ")") - 2,
+        i: s.push(s.pop() + "rotate(", null, ")") - 2,
         x: d3_interpolateNumber(ra, rb)
       });
     } else if (rb) {
-      s.push(d3_interpolateTransformPop(s) + "rotate(" + rb + ")");
+      s.push(s.pop() + "rotate(" + rb + ")");
     }
-  }
-  function d3_interpolateSkew(wa, wb, s, q) {
-    if (wa !== wb) {
+    if (wa != wb) {
       q.push({
-        i: s.push(d3_interpolateTransformPop(s) + "skewX(", null, ")") - 2,
+        i: s.push(s.pop() + "skewX(", null, ")") - 2,
         x: d3_interpolateNumber(wa, wb)
       });
     } else if (wb) {
-      s.push(d3_interpolateTransformPop(s) + "skewX(" + wb + ")");
+      s.push(s.pop() + "skewX(" + wb + ")");
     }
-  }
-  function d3_interpolateScale(ka, kb, s, q) {
-    if (ka[0] !== kb[0] || ka[1] !== kb[1]) {
-      var i = s.push(d3_interpolateTransformPop(s) + "scale(", null, ",", null, ")");
+    if (ka[0] != kb[0] || ka[1] != kb[1]) {
+      n = s.push(s.pop() + "scale(", null, ",", null, ")");
       q.push({
-        i: i - 4,
+        i: n - 4,
         x: d3_interpolateNumber(ka[0], kb[0])
       }, {
-        i: i - 2,
+        i: n - 2,
         x: d3_interpolateNumber(ka[1], kb[1])
       });
-    } else if (kb[0] !== 1 || kb[1] !== 1) {
-      s.push(d3_interpolateTransformPop(s) + "scale(" + kb + ")");
+    } else if (kb[0] != 1 || kb[1] != 1) {
+      s.push(s.pop() + "scale(" + kb + ")");
     }
-  }
-  function d3_interpolateTransform(a, b) {
-    var s = [], q = [];
-    a = d3.transform(a), b = d3.transform(b);
-    d3_interpolateTranslate(a.translate, b.translate, s, q);
-    d3_interpolateRotate(a.rotate, b.rotate, s, q);
-    d3_interpolateSkew(a.skew, b.skew, s, q);
-    d3_interpolateScale(a.scale, b.scale, s, q);
-    a = b = null;
+    n = q.length;
     return function(t) {
-      var i = -1, n = q.length, o;
+      var i = -1, o;
       while (++i < n) s[(o = q[i]).i] = o.x(t);
       return s.join("");
     };
@@ -6791,7 +6771,7 @@ angular.module('checklist-model', [])
     return chord;
   };
   d3.layout.force = function() {
-    var force = {}, event = d3.dispatch("start", "tick", "end"), timer, size = [ 1, 1 ], drag, alpha, friction = .9, linkDistance = d3_layout_forceLinkDistance, linkStrength = d3_layout_forceLinkStrength, charge = -30, chargeDistance2 = d3_layout_forceChargeDistance2, gravity = .1, theta2 = .64, nodes = [], links = [], distances, strengths, charges;
+    var force = {}, event = d3.dispatch("start", "tick", "end"), size = [ 1, 1 ], drag, alpha, friction = .9, linkDistance = d3_layout_forceLinkDistance, linkStrength = d3_layout_forceLinkStrength, charge = -30, chargeDistance2 = d3_layout_forceChargeDistance2, gravity = .1, theta2 = .64, nodes = [], links = [], distances, strengths, charges;
     function repulse(node) {
       return function(quad, x1, _, x2) {
         if (quad.point !== node) {
@@ -6815,7 +6795,6 @@ angular.module('checklist-model', [])
     }
     force.tick = function() {
       if ((alpha *= .99) < .005) {
-        timer = null;
         event.end({
           type: "end",
           alpha: alpha = 0
@@ -6833,7 +6812,7 @@ angular.module('checklist-model', [])
           l = alpha * strengths[i] * ((l = Math.sqrt(l)) - distances[i]) / l;
           x *= l;
           y *= l;
-          t.x -= x * (k = s.weight + t.weight ? s.weight / (s.weight + t.weight) : .5);
+          t.x -= x * (k = s.weight / (t.weight + s.weight));
           t.y -= y * k;
           s.x += x * (k = 1 - k);
           s.y += y * k;
@@ -6929,21 +6908,13 @@ angular.module('checklist-model', [])
       if (!arguments.length) return alpha;
       x = +x;
       if (alpha) {
-        if (x > 0) {
-          alpha = x;
-        } else {
-          timer.c = null, timer.t = NaN, timer = null;
-          event.start({
-            type: "end",
-            alpha: alpha = 0
-          });
-        }
+        if (x > 0) alpha = x; else alpha = 0;
       } else if (x > 0) {
         event.start({
           type: "start",
           alpha: alpha = x
         });
-        timer = d3_timer(force.tick);
+        d3.timer(force.tick);
       }
       return force;
     };
@@ -7197,7 +7168,7 @@ angular.module('checklist-model', [])
     function pie(data) {
       var n = data.length, values = data.map(function(d, i) {
         return +value.call(pie, d, i);
-      }), a = +(typeof startAngle === "function" ? startAngle.apply(this, arguments) : startAngle), da = (typeof endAngle === "function" ? endAngle.apply(this, arguments) : endAngle) - a, p = Math.min(Math.abs(da) / n, +(typeof padAngle === "function" ? padAngle.apply(this, arguments) : padAngle)), pa = p * (da < 0 ? -1 : 1), sum = d3.sum(values), k = sum ? (da - n * pa) / sum : 0, index = d3.range(n), arcs = [], v;
+      }), a = +(typeof startAngle === "function" ? startAngle.apply(this, arguments) : startAngle), da = (typeof endAngle === "function" ? endAngle.apply(this, arguments) : endAngle) - a, p = Math.min(Math.abs(da) / n, +(typeof padAngle === "function" ? padAngle.apply(this, arguments) : padAngle)), pa = p * (da < 0 ? -1 : 1), k = (da - n * pa) / d3.sum(values), index = d3.range(n), arcs = [], v;
       if (sort != null) index.sort(sort === d3_layout_pieSortByValue ? function(i, j) {
         return values[j] - values[i];
       } : function(i, j) {
@@ -7910,8 +7881,10 @@ angular.module('checklist-model', [])
     }
     function treemap(d) {
       var nodes = stickies || hierarchy(d), root = nodes[0];
-      root.x = root.y = 0;
-      if (root.value) root.dx = size[0], root.dy = size[1]; else root.dx = root.dy = 0;
+      root.x = 0;
+      root.y = 0;
+      root.dx = size[0];
+      root.dy = size[1];
       if (stickies) hierarchy.revalue(root);
       scale([ root ], root.dx * root.dy / root.value);
       (stickies ? stickify : squarify)(root);
@@ -8575,16 +8548,11 @@ angular.module('checklist-model', [])
       } else {
         x2 = y2 = 0;
       }
-      if (da > ε && (rc = Math.min(Math.abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments))) > .001) {
+      if ((rc = Math.min(Math.abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments))) > .001) {
         cr = r0 < r1 ^ cw ? 0 : 1;
-        var rc1 = rc, rc0 = rc;
-        if (da < π) {
-          var oc = x3 == null ? [ x2, y2 ] : x1 == null ? [ x0, y0 ] : d3_geom_polygonIntersect([ x0, y0 ], [ x3, y3 ], [ x1, y1 ], [ x2, y2 ]), ax = x0 - oc[0], ay = y0 - oc[1], bx = x1 - oc[0], by = y1 - oc[1], kc = 1 / Math.sin(Math.acos((ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by))) / 2), lc = Math.sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-          rc0 = Math.min(rc, (r0 - lc) / (kc - 1));
-          rc1 = Math.min(rc, (r1 - lc) / (kc + 1));
-        }
+        var oc = x3 == null ? [ x2, y2 ] : x1 == null ? [ x0, y0 ] : d3_geom_polygonIntersect([ x0, y0 ], [ x3, y3 ], [ x1, y1 ], [ x2, y2 ]), ax = x0 - oc[0], ay = y0 - oc[1], bx = x1 - oc[0], by = y1 - oc[1], kc = 1 / Math.sin(Math.acos((ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by))) / 2), lc = Math.sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
         if (x1 != null) {
-          var t30 = d3_svg_arcCornerTangents(x3 == null ? [ x2, y2 ] : [ x3, y3 ], [ x0, y0 ], r1, rc1, cw), t12 = d3_svg_arcCornerTangents([ x1, y1 ], [ x2, y2 ], r1, rc1, cw);
+          var rc1 = Math.min(rc, (r1 - lc) / (kc + 1)), t30 = d3_svg_arcCornerTangents(x3 == null ? [ x2, y2 ] : [ x3, y3 ], [ x0, y0 ], r1, rc1, cw), t12 = d3_svg_arcCornerTangents([ x1, y1 ], [ x2, y2 ], r1, rc1, cw);
           if (rc === rc1) {
             path.push("M", t30[0], "A", rc1, ",", rc1, " 0 0,", cr, " ", t30[1], "A", r1, ",", r1, " 0 ", 1 - cw ^ d3_svg_arcSweep(t30[1][0], t30[1][1], t12[1][0], t12[1][1]), ",", cw, " ", t12[1], "A", rc1, ",", rc1, " 0 0,", cr, " ", t12[0]);
           } else {
@@ -8594,7 +8562,7 @@ angular.module('checklist-model', [])
           path.push("M", x0, ",", y0);
         }
         if (x3 != null) {
-          var t03 = d3_svg_arcCornerTangents([ x0, y0 ], [ x3, y3 ], r0, -rc0, cw), t21 = d3_svg_arcCornerTangents([ x2, y2 ], x1 == null ? [ x0, y0 ] : [ x1, y1 ], r0, -rc0, cw);
+          var rc0 = Math.min(rc, (r0 - lc) / (kc - 1)), t03 = d3_svg_arcCornerTangents([ x0, y0 ], [ x3, y3 ], r0, -rc0, cw), t21 = d3_svg_arcCornerTangents([ x2, y2 ], x1 == null ? [ x0, y0 ] : [ x1, y1 ], r0, -rc0, cw);
           if (rc === rc0) {
             path.push("L", t21[0], "A", rc0, ",", rc0, " 0 0,", cr, " ", t21[1], "A", r0, ",", r0, " 0 ", cw ^ d3_svg_arcSweep(t21[1][0], t21[1][1], t03[1][0], t03[1][1]), ",", 1 - cw, " ", t03[1], "A", rc0, ",", rc0, " 0 0,", cr, " ", t03[0]);
           } else {
@@ -8676,7 +8644,7 @@ angular.module('checklist-model', [])
     return (x0 - x1) * y0 - (y0 - y1) * x0 > 0 ? 0 : 1;
   }
   function d3_svg_arcCornerTangents(p0, p1, r1, rc, cw) {
-    var x01 = p0[0] - p1[0], y01 = p0[1] - p1[1], lo = (cw ? rc : -rc) / Math.sqrt(x01 * x01 + y01 * y01), ox = lo * y01, oy = -lo * x01, x1 = p0[0] + ox, y1 = p0[1] + oy, x2 = p1[0] + ox, y2 = p1[1] + oy, x3 = (x1 + x2) / 2, y3 = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, d2 = dx * dx + dy * dy, r = r1 - rc, D = x1 * y2 - x2 * y1, d = (dy < 0 ? -1 : 1) * Math.sqrt(Math.max(0, r * r * d2 - D * D)), cx0 = (D * dy - dx * d) / d2, cy0 = (-D * dx - dy * d) / d2, cx1 = (D * dy + dx * d) / d2, cy1 = (-D * dx + dy * d) / d2, dx0 = cx0 - x3, dy0 = cy0 - y3, dx1 = cx1 - x3, dy1 = cy1 - y3;
+    var x01 = p0[0] - p1[0], y01 = p0[1] - p1[1], lo = (cw ? rc : -rc) / Math.sqrt(x01 * x01 + y01 * y01), ox = lo * y01, oy = -lo * x01, x1 = p0[0] + ox, y1 = p0[1] + oy, x2 = p1[0] + ox, y2 = p1[1] + oy, x3 = (x1 + x2) / 2, y3 = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1, d2 = dx * dx + dy * dy, r = r1 - rc, D = x1 * y2 - x2 * y1, d = (dy < 0 ? -1 : 1) * Math.sqrt(r * r * d2 - D * D), cx0 = (D * dy - dx * d) / d2, cy0 = (-D * dx - dy * d) / d2, cx1 = (D * dy + dx * d) / d2, cy1 = (-D * dx + dy * d) / d2, dx0 = cx0 - x3, dy0 = cy0 - y3, dx1 = cx1 - x3, dy1 = cy1 - y3;
     if (dx0 * dx0 + dy0 * dy0 > dx1 * dx1 + dy1 * dy1) cx0 = cx1, cy0 = cy1;
     return [ [ cx0 - ox, cy0 - oy ], [ cx0 * r1 / r, cy0 * r1 / r ] ];
   }
@@ -8748,10 +8716,10 @@ angular.module('checklist-model', [])
     value.closed = /-closed$/.test(key);
   });
   function d3_svg_lineLinear(points) {
-    return points.length > 1 ? points.join("L") : points + "Z";
+    return points.join("L");
   }
   function d3_svg_lineLinearClosed(points) {
-    return points.join("L") + "Z";
+    return d3_svg_lineLinear(points) + "Z";
   }
   function d3_svg_lineStep(points) {
     var i = 0, n = points.length, p = points[0], path = [ p[0], ",", p[1] ];
@@ -8773,7 +8741,7 @@ angular.module('checklist-model', [])
     return points.length < 4 ? d3_svg_lineLinear(points) : points[1] + d3_svg_lineHermite(points.slice(1, -1), d3_svg_lineCardinalTangents(points, tension));
   }
   function d3_svg_lineCardinalClosed(points, tension) {
-    return points.length < 3 ? d3_svg_lineLinearClosed(points) : points[0] + d3_svg_lineHermite((points.push(points[0]), 
+    return points.length < 3 ? d3_svg_lineLinear(points) : points[0] + d3_svg_lineHermite((points.push(points[0]), 
     points), d3_svg_lineCardinalTangents([ points[points.length - 2] ].concat(points, [ points[1] ]), tension));
   }
   function d3_svg_lineCardinal(points, tension) {
@@ -9209,11 +9177,9 @@ angular.module('checklist-model', [])
   var d3_selection_interrupt = d3_selection_interruptNS(d3_transitionNamespace());
   function d3_selection_interruptNS(ns) {
     return function() {
-      var lock, activeId, active;
-      if ((lock = this[ns]) && (active = lock[activeId = lock.active])) {
-        active.timer.c = null;
-        active.timer.t = NaN;
-        if (--lock.count) delete lock[activeId]; else delete this[ns];
+      var lock, active;
+      if ((lock = this[ns]) && (active = lock[lock.active])) {
+        if (--lock.count) delete lock[lock.active]; else delete this[ns];
         lock.active += .5;
         active.event && active.event.interrupt.call(this, this.__data__, active.index);
       }
@@ -9468,68 +9434,12 @@ angular.module('checklist-model', [])
     var lock = node[ns] || (node[ns] = {
       active: 0,
       count: 0
-    }), transition = lock[id], time, timer, duration, ease, tweens;
-    function schedule(elapsed) {
-      var delay = transition.delay;
-      timer.t = delay + time;
-      if (delay <= elapsed) return start(elapsed - delay);
-      timer.c = start;
-    }
-    function start(elapsed) {
-      var activeId = lock.active, active = lock[activeId];
-      if (active) {
-        active.timer.c = null;
-        active.timer.t = NaN;
-        --lock.count;
-        delete lock[activeId];
-        active.event && active.event.interrupt.call(node, node.__data__, active.index);
-      }
-      for (var cancelId in lock) {
-        if (+cancelId < id) {
-          var cancel = lock[cancelId];
-          cancel.timer.c = null;
-          cancel.timer.t = NaN;
-          --lock.count;
-          delete lock[cancelId];
-        }
-      }
-      lock.active = id;
-      transition.event && transition.event.start.call(node, node.__data__, i);
-      tweens = [];
-      transition.tween.forEach(function(key, value) {
-        if (value = value.call(node, node.__data__, i)) {
-          tweens.push(value);
-        }
-      });
-      ease = transition.ease;
-      duration = transition.duration;
-      timer.c = tick;
-      d3_timer(function() {
-        if (timer.c && tick(elapsed || 1)) {
-          timer.c = null;
-          timer.t = NaN;
-        }
-        return 1;
-      }, 0, time);
-    }
-    function tick(elapsed) {
-      var t = elapsed / duration, e = ease(t), n = tweens.length;
-      while (n > 0) {
-        tweens[--n].call(node, e);
-      }
-      if (t >= 1) {
-        transition.event && transition.event.end.call(node, node.__data__, i);
-        if (--lock.count) delete lock[id]; else delete node[ns];
-        return 1;
-      }
-    }
+    }), transition = lock[id];
     if (!transition) {
-      time = inherit.time;
-      timer = d3_timer(schedule, 0, time);
+      var time = inherit.time;
       transition = lock[id] = {
         tween: new d3_Map(),
         time: time,
-        timer: timer,
         delay: inherit.delay,
         duration: inherit.duration,
         ease: inherit.ease,
@@ -9537,6 +9447,49 @@ angular.module('checklist-model', [])
       };
       inherit = null;
       ++lock.count;
+      d3.timer(function(elapsed) {
+        var delay = transition.delay, duration, ease, timer = d3_timer_active, tweened = [];
+        timer.t = delay + time;
+        if (delay <= elapsed) return start(elapsed - delay);
+        timer.c = start;
+        function start(elapsed) {
+          if (lock.active > id) return stop();
+          var active = lock[lock.active];
+          if (active) {
+            --lock.count;
+            delete lock[lock.active];
+            active.event && active.event.interrupt.call(node, node.__data__, active.index);
+          }
+          lock.active = id;
+          transition.event && transition.event.start.call(node, node.__data__, i);
+          transition.tween.forEach(function(key, value) {
+            if (value = value.call(node, node.__data__, i)) {
+              tweened.push(value);
+            }
+          });
+          ease = transition.ease;
+          duration = transition.duration;
+          d3.timer(function() {
+            timer.c = tick(elapsed || 1) ? d3_true : tick;
+            return 1;
+          }, 0, time);
+        }
+        function tick(elapsed) {
+          if (lock.active !== id) return 1;
+          var t = elapsed / duration, e = ease(t), n = tweened.length;
+          while (n > 0) {
+            tweened[--n].call(node, e);
+          }
+          if (t >= 1) {
+            transition.event && transition.event.end.call(node, node.__data__, i);
+            return stop();
+          }
+        }
+        function stop() {
+          if (--lock.count) delete lock[id]; else delete node[ns];
+          return 1;
+        }
+      }, 0, time);
     }
   }
   d3.svg.axis = function() {
@@ -9590,7 +9543,7 @@ angular.module('checklist-model', [])
     };
     axis.ticks = function() {
       if (!arguments.length) return tickArguments_;
-      tickArguments_ = d3_array(arguments);
+      tickArguments_ = arguments;
       return axis;
     };
     axis.tickValues = function(x) {
@@ -10112,7 +10065,8 @@ angular.module('checklist-model', [])
   d3.xml = d3_xhrType(function(request) {
     return request.responseXML;
   });
-  if (typeof define === "function" && define.amd) define(this.d3 = d3); else if (typeof module === "object" && module.exports) module.exports = d3; else this.d3 = d3;
+  if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
+  this.d3 = d3;
 }();
 /* nvd3 version 1.8.1 (https://github.com/novus/nvd3) 2015-06-15 */
 (function(){
@@ -10744,7 +10698,8 @@ nv.nearestValueIndex = function (values, searchVal, threshold) {
                     width = parseInt(tooltipElem.offsetWidth, 10),
                     windowWidth = nv.utils.windowSize().width,
                     windowHeight = nv.utils.windowSize().height,
-                    scrollTop = window.pageYOffset,
+                    //scrollTop = window.pageYOffset,
+                    scrollTop = document.getElementById("main-content-container").scrollTop
                     scrollLeft = window.pageXOffset,
                     left, top;
 
@@ -23413,7 +23368,7 @@ nv.models.sunburstChart = function() {
 nv.version = "1.8.1";
 })();
 /**************************************************************************
-* AngularJS-nvD3, v1.0.3; MIT License; 06/11/2015 13:30
+* AngularJS-nvD3, v1.0.2; MIT License; 16/09/2015 21:33
 * http://krispo.github.io/angular-nvd3
 **************************************************************************/
 (function(){
@@ -23438,7 +23393,7 @@ nv.version = "1.8.1";
                         visible: true,
                         disabled: false,
                         autorefresh: true,
-                        refreshDataOnly: true,
+                        refreshDataOnly: false,
                         deepWatchOptions: true,
                         deepWatchData: false, // to increase performance by default
                         deepWatchConfig: true,
@@ -23457,7 +23412,7 @@ nv.version = "1.8.1";
 
                         // Update chart layout (for example if container is resized)
                         update: function() {
-                            if (scope.chart) scope.chart.update();
+                            scope.chart.update();
                         },
 
                         // Update chart with new options
@@ -23480,16 +23435,15 @@ nv.version = "1.8.1";
                             angular.forEach(scope.chart, function(value, key){
                                 if (key[0] === '_');
                                 else if ([
-                                        'clearHighlights',
-                                        'highlightPoint',
-                                        'id',
-                                        'options',
-                                        'resizeHandler',
-                                        'state',
-                                        'open',
-                                        'close',
-                                        'tooltipContent'
-                                    ].indexOf(key) >= 0);
+                                    'clearHighlights',
+                                    'highlightPoint',
+                                    'id',
+                                    'options',
+                                    'resizeHandler',
+                                    'state',
+                                    'open',
+                                    'close'
+                                ].indexOf(key) >= 0);
 
                                 else if (key === 'dispatch') {
                                     if (options.chart[key] === undefined || options.chart[key] === null) {
@@ -23499,40 +23453,40 @@ nv.version = "1.8.1";
                                 }
 
                                 else if ([
-                                        'bars',
-                                        'bars1',
-                                        'bars2',
-                                        'boxplot',
-                                        'bullet',
-                                        'controls',
-                                        'discretebar',
-                                        'distX',
-                                        'distY',
-                                        'interactiveLayer',
-                                        'legend',
-                                        'lines',
-                                        'lines1',
-                                        'lines2',
-                                        'multibar',
-                                        'pie',
-                                        'scatter',
-                                        'sparkline',
-                                        'stack1',
-                                        'stack2',
-                                        'sunburst',
-                                        'tooltip',
-                                        'x2Axis',
-                                        'xAxis',
-                                        'y1Axis',
-                                        'y2Axis',
-                                        'y3Axis',
-                                        'y4Axis',
-                                        'yAxis',
-                                        'yAxis1',
-                                        'yAxis2'
-                                    ].indexOf(key) >= 0 ||
+                                    'bars',
+                                    'bars1',
+                                    'bars2',
+                                    'boxplot',
+                                    'bullet',
+                                    'controls',
+                                    'discretebar',
+                                    'distX',
+                                    'distY',
+                                    'interactiveLayer',
+                                    'legend',
+                                    'lines',
+                                    'lines1',
+                                    'lines2',
+                                    'multibar',
+                                    'pie',
+                                    'scatter',
+                                    'sparkline',
+                                    'stack1',
+                                    'stack2',
+                                    'sunburst',
+                                    'tooltip',
+                                    'x2Axis',
+                                    'xAxis',
+                                    'y1Axis',
+                                    'y2Axis',
+                                    'y3Axis',
+                                    'y4Axis',
+                                    'yAxis',
+                                    'yAxis1',
+                                    'yAxis2'
+                                ].indexOf(key) >= 0 ||
                                         // stacked is a component for stackedAreaChart, but a boolean for multiBarChart and multiBarHorizontalChart
-                                    (key === 'stacked' && options.chart.type === 'stackedAreaChart')) {
+                                        (key === 'stacked' && options.chart.type === 'stackedAreaChart')) {
                                     if (options.chart[key] === undefined || options.chart[key] === null) {
                                         if (scope._config.extended) options.chart[key] = {};
                                     }
@@ -23542,7 +23496,6 @@ nv.version = "1.8.1";
                                 //TODO: need to fix bug in nvd3
                                 else if ((key === 'xTickFormat' || key === 'yTickFormat') && options.chart.type === 'lineWithFocusChart');
                                 else if ((key === 'tooltips') && options.chart.type === 'boxPlotChart');
-                                else if ((key === 'tooltipXContent' || key === 'tooltipYContent') && options.chart.type === 'scatterChart');
 
                                 else if (options.chart[key] === undefined || options.chart[key] === null){
                                     if (scope._config.extended) options.chart[key] = value();
@@ -23568,29 +23521,12 @@ nv.version = "1.8.1";
                             if (options['styles'] || scope._config.extended) configureStyles();
 
                             nv.addGraph(function() {
-                                if (!scope.chart) return;
-
                                 // Remove resize handler. Due to async execution should be placed here, not in the clearElement
-                                if (scope.chart.resizeHandler) scope.chart.resizeHandler.clear();
-
+                                if (scope.chart && scope.chart.resizeHandler) scope.chart.resizeHandler.clear();
                                 // Update the chart when window resizes
                                 scope.chart.resizeHandler = nv.utils.windowResize(function() {
                                     scope.chart && scope.chart.update && scope.chart.update();
                                 });
-
-                                /// Zoom feature
-                                if (options.chart.zoom !== undefined && [
-                                        'scatterChart',
-                                        'lineChart',
-                                        'candlestickBarChart',
-                                        'cumulativeLineChart',
-                                        'historicalBarChart',
-                                        'ohlcBarChart',
-                                        'stackedAreaChart'
-                                    ].indexOf(options.chart.type) > -1) {
-                                    nvd3Utils.zoom(scope, options);
-                                }
-
                                 return scope.chart;
                             }, options.chart['callback']);
                         },
@@ -23598,25 +23534,18 @@ nv.version = "1.8.1";
                         // Update chart with new data
                         updateWithData: function (data){
                             if (data) {
+                                // TODO this triggers one more refresh. Refactor it!
+                                scope.options.chart.transitionDuration = +scope.options.chart.transitionDuration || 250;
                                 // remove whole svg element with old data
                                 d3.select(element[0]).select('svg').remove();
 
-                                var h, w;
-
                                 // Select the current element to add <svg> element and to render the chart in
-                                scope.svg = d3.select(element[0]).append('svg');
-                                if (h = scope.options.chart.height) {
-                                    if (!isNaN(+h)) h += 'px'; //check if height is number
-                                    scope.svg.attr('height', h).style({height: h});
-                                }
-                                if (w = scope.options.chart.width) {
-                                    if (!isNaN(+w)) w += 'px'; //check if width is number
-                                    scope.svg.attr('width', w).style({width: w});
-                                } else {
-                                    scope.svg.attr('width', '100%').style({width: '100%'});
-                                }
-
-                                scope.svg.datum(data).call(scope.chart);
+                                d3.select(element[0]).append('svg')
+                                    .attr('height', scope.options.chart.height)
+                                    .attr('width', scope.options.chart.width  || '100%')
+                                    .datum(data)
+                                    .transition().duration(scope.options.chart.transitionDuration)
+                                    .call(scope.chart);
                             }
                         },
 
@@ -23627,15 +23556,10 @@ nv.version = "1.8.1";
                             element.find('.caption').remove();
                             element.empty();
 
-                            // remove tooltip if exists
-                            if (scope.chart && scope.chart.tooltip && scope.chart.tooltip.id) {
-                                d3.select('#' + scope.chart.tooltip.id()).remove();
-                            }
-
                             // To be compatible with old nvd3 (v1.7.1)
                             if (nv.graphs && scope.chart) {
-                                for (var i = nv.graphs.length - 1; i >= 0; i--) {
-                                    if (nv.graphs[i] && (nv.graphs[i].id === scope.chart.id)) {
+                                for(var i = nv.graphs.length - 1; i >= 0; i--) {
+                                    if(nv.graphs[i].id === scope.chart.id) {
                                         nv.graphs.splice(i, 1);
                                     }
                                 }
@@ -23668,22 +23592,19 @@ nv.version = "1.8.1";
                                     }
                                     configure(chart[key], options[key], chartType);
                                 }
-                                else if (key === 'contentGenerator') {
-                                    if (options[key]) chart[key](options[key]);
-                                }
                                 else if ([
-                                        'axis',
-                                        'clearHighlights',
-                                        'defined',
-                                        'highlightPoint',
-                                        'nvPointerEventsClass',
-                                        'options',
-                                        'rangeBand',
-                                        'rangeBands',
-                                        'scatter',
-                                        'open',
-                                        'close'
-                                    ].indexOf(key) === -1) {
+                                    'axis',
+                                    'clearHighlights',
+                                    'defined',
+                                    'highlightPoint',
+                                    'nvPointerEventsClass',
+                                    'options',
+                                    'rangeBand',
+                                    'rangeBands',
+                                    'scatter',
+                                    'open',
+                                    'close'
+                                ].indexOf(key) === -1) {
                                     if (options[key] === undefined || options[key] === null){
                                         if (scope._config.extended) options[key] = value();
                                     }
@@ -23722,7 +23643,7 @@ nv.version = "1.8.1";
 
                         if (_.enable) {
                             if (name === 'title') element.prepend(wrapElement);
-                            else if (name === 'subtitle') angular.element(element[0].querySelector('.title')).after(wrapElement);
+                            else if (name === 'subtitle') element.find('.title').after(wrapElement);
                             else if (name === 'caption') element.append(wrapElement);
                         }
                     }
@@ -23851,94 +23772,11 @@ nv.version = "1.8.1";
                         }
                     });
                     return dst;
-                },
-                zoom: function(scope, options) {
-                    var zoom = options.chart.zoom;
-
-                    // check if zoom enabled
-                    var enabled = (typeof zoom.enabled === 'undefined' || zoom.enabled === null) ? true : zoom.enabled;
-                    if (!enabled) return;
-
-                    var xScale = scope.chart.xAxis.scale()
-                        , yScale = scope.chart.yAxis.scale()
-                        , xDomain = scope.chart.xDomain || xScale.domain
-                        , yDomain = scope.chart.yDomain || yScale.domain
-                        , x_boundary = xScale.domain().slice()
-                        , y_boundary = yScale.domain().slice()
-
-                    // initialize zoom options
-                        , scale = zoom.scale || 1
-                        , translate = zoom.translate || [0, 0]
-                        , scaleExtent = zoom.scaleExtent || [1, 10]
-                        , useFixedDomain = zoom.useFixedDomain || false
-                        , useNiceScale = zoom.useNiceScale || false
-                        , horizontalOff = zoom.horizontalOff || false
-                        , verticalOff = zoom.verticalOff || false
-                        , unzoomEventType = zoom.unzoomEventType || 'dblclick.zoom'
-
-                    // auxiliary functions
-                        , fixDomain
-                        , d3zoom
-                        , zoomed
-                        , unzoomed
-                        ;
-
-                    // ensure nice axis
-                    if (useNiceScale) {
-                        xScale.nice();
-                        yScale.nice();
-                    }
-
-                    // fix domain
-                    fixDomain = function (domain, boundary) {
-                        domain[0] = Math.min(Math.max(domain[0], boundary[0]), boundary[1] - boundary[1] / scaleExtent[1]);
-                        domain[1] = Math.max(boundary[0] + boundary[1] / scaleExtent[1], Math.min(domain[1], boundary[1]));
-                        return domain;
-                    };
-
-                    // zoom event handler
-                    zoomed = function () {
-                        if (zoom.zoomed !== undefined) {
-                            var domains = zoom.zoomed(xScale.domain(), yScale.domain());
-                            if (!horizontalOff) xDomain([domains.x1, domains.x2]);
-                            if (!verticalOff) yDomain([domains.y1, domains.y2]);
-                        } else {
-                            if (!horizontalOff) xDomain(useFixedDomain ? fixDomain(xScale.domain(), x_boundary) : xScale.domain());
-                            if (!verticalOff) yDomain(useFixedDomain ? fixDomain(yScale.domain(), y_boundary) : yScale.domain());
-                        }
-                        scope.chart.update();
-                    };
-
-                    // unzoomed event handler
-                    unzoomed = function () {
-                        if (zoom.unzoomed !== undefined) {
-                            var domains = zoom.unzoomed(xScale.domain(), yScale.domain());
-                            if (!horizontalOff) xDomain([domains.x1, domains.x2]);
-                            if (!verticalOff) yDomain([domains.y1, domains.y2]);
-                        } else {
-                            if (!horizontalOff) xDomain(x_boundary);
-                            if (!verticalOff) yDomain(y_boundary);
-                        }
-                        d3zoom.scale(scale).translate(translate);
-                        scope.chart.update();
-                    };
-
-                    // create d3 zoom handler
-                    d3zoom = d3.behavior.zoom()
-                        .x(xScale)
-                        .y(yScale)
-                        .scaleExtent(scaleExtent)
-                        .on('zoom', zoomed);
-
-                    scope.svg.call(d3zoom);
-
-                    d3zoom.scale(scale).translate(translate).event(scope.svg);
-
-                    if (unzoomEventType !== 'none') scope.svg.on(unzoomEventType, unzoomed);
                 }
             };
         });
 })();
+
 angular.module('cgNotify', []).factory('notify',['$timeout','$http','$compile','$templateCache','$rootScope',
     function($timeout,$http,$compile,$templateCache,$rootScope){
 

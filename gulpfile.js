@@ -20,7 +20,7 @@ gulp.task('depsjs', function(){
 		'bower_components/oclazyload/dist/ocLazyLoad.min.js',
 		'bower_components/angular-ui-grid/ui-grid.min.js',	
 		'bower_components/checklist-model/checklist-model.js'	,
-		'bower_components/chart.js/chart.min.js',
+		'bower_components/Chart.js/Chart.min.js',
 		'bower_components/angular-chart.js/dist/angular-chart.min.js',
 		'bower_components/d3/d3.js'	,
 		'bower_components/nvd3/build/nv.d3.js',
