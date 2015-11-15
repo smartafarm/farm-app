@@ -159,43 +159,6 @@ sfarm
             
     }
 ]);
-Chart.types.Line.extend({
-    name: "LineAlt",
-    initialize: function (data) {
-        if (this.options.yAxisLabel) this.options.scaleLabel = '         ' + this.options.scaleLabel;
-
-        Chart.types.Line.prototype.initialize.apply(this, arguments);
-
-        if (this.options.yAxisLabel) this.scale.yAxisLabel = this.options.yAxisLabel;
-    },
-    draw: function () {
-        Chart.types.Line.prototype.draw.apply(this, arguments);
-
-        if (this.scale.yAxisLabel) {
-            var ctx = this.chart.ctx;
-            ctx.save();
-            // text alignment and color
-            ctx.textAlign = "center";
-            ctx.textBaseline = "bottom";
-            ctx.fillStyle = this.options.scaleFontColor;
-            // position
-            var x = this.scale.xScalePaddingLeft * 0.3;
-            var y = this.chart.height / 2;
-            // change origin
-            ctx.translate(x, y)
-            // rotate text
-            ctx.rotate(-90 * Math.PI / 180);
-            ctx.fillText(this.scale.yAxisLabel, 0, 0);
-            ctx.restore();
-        }
-    }
-});
-
-angular.module('chart.js')
-    .directive('chartLineAlt', ['ChartJsFactory', function (ChartJsFactory) {
-        return new ChartJsFactory('LineAlt');
-    }]);
-
 
 var sfarm =angular.module('sfarm');
 sfarm
@@ -258,23 +221,6 @@ sfarm
 
 }) //eof devicedata
 
-.directive('lastReading',function(){
-	return{
-		restrict:'A',	
-		link : function(scope,ele,attr){	
-			var dates=[];
-			var readings = scope.data[scope.$index].readings;
-			readings.forEach(function(value,key){
-				//console.log(value);
-				dates.push(new Date(value.dt));
-			})
-			var maxDate=new Date(Math.max.apply(null,dates));
-			scope.data[scope.$index].lread =maxDate;
-		}
-	}
-
-}) //eof devicedata
-	
 .directive('logBtn',function(){
 	return{
 		restrict:'A',		
@@ -303,33 +249,6 @@ sfarm
 
 }) //eof devicedata
 
-.directive('flexibleDiv', function () {
-        return {
-            scope: {
-                opts: '=' 
-            },
-            link: function (scope, element, attr) {
-
-                // Watching height of parent div
-                scope.$watch(function () {
-                    return element.parent(0).height();
-                }, updateHeight);
-
-                // Watching width of parent div
-                scope.$watch(function () {
-                    return element.parent(0).width();
-                }, updateWidth);
-
-                function updateHeight() {
-                    scope.opts.chart.height = element.parent(0).height()-150; //150 custom padding
-                }
-
-                function updateWidth() {
-                    scope.opts.chart.width = element.parent(0).width()-50; //50 custom padding
-                }
-            }
-        }
-    })
 .directive('testDirective', [function ($scope) {
 	return {
 		restrict: 'EA',		
@@ -366,6 +285,113 @@ sfarm
         }
     }
 })
+Chart.types.Line.extend({
+    name: "LineAlt",
+    initialize: function (data) {
+        if (this.options.yAxisLabel) this.options.scaleLabel = '         ' + this.options.scaleLabel;
+
+        Chart.types.Line.prototype.initialize.apply(this, arguments);
+
+        if (this.options.yAxisLabel) this.scale.yAxisLabel = this.options.yAxisLabel;
+    },
+    draw: function () {
+        Chart.types.Line.prototype.draw.apply(this, arguments);
+
+        if (this.scale.yAxisLabel) {
+            var ctx = this.chart.ctx;
+            ctx.save();
+            // text alignment and color
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            ctx.fillStyle = this.options.scaleFontColor;
+            // position
+            var x = this.scale.xScalePaddingLeft * 0.3;
+            var y = this.chart.height / 2;
+            // change origin
+            ctx.translate(x, y)
+            // rotate text
+            ctx.rotate(-90 * Math.PI / 180);
+            ctx.fillText(this.scale.yAxisLabel, 0, 0);
+            ctx.restore();
+        }
+    }
+})
+
+angular.module('chart.js')
+    .directive('chartLineAlt', ['ChartJsFactory', function (ChartJsFactory) {
+        return new ChartJsFactory('LineAlt');
+    }])
+
+.directive('lastReading',function(){
+	return{
+		restrict:'A',	
+		link : function(scope,ele,attr){	
+			var dates=[];
+			var readings = scope.data[scope.$index].readings;
+			readings.forEach(function(value,key){
+				//console.log(value);
+				dates.push(new Date(value.dt));
+			})
+			var maxDate=new Date(Math.max.apply(null,dates));
+			scope.data[scope.$index].lread =maxDate;
+		}
+	}
+
+}) //eof devicedata
+	
+.directive('flexibleDiv', function () {
+        return {
+            scope: {
+                opts: '=' 
+            },
+            link: function (scope, element, attr) {
+
+                // Watching height of parent div
+                scope.$watch(function () {
+                    return element.parent(0).height();
+                }, updateHeight);
+
+                // Watching width of parent div
+                scope.$watch(function () {
+                    return element.parent(0).width();
+                }, updateWidth);
+
+                function updateHeight() {
+                    scope.opts.chart.height = element.parent(0).height()-150; //150 custom padding
+                }
+
+                function updateWidth() {
+                    scope.opts.chart.width = element.parent(0).width()-50; //50 custom padding
+                }
+            }
+        }
+    })
+.directive('resize', function ($window) {
+    return function (scope, elm, attr) {
+
+        var w = angular.element($window);
+           if($window.innerWidth < attr.hvalue ){
+                
+                    elm.addClass('collapse')
+                }else
+                {
+                    elm.removeClass('collapse')
+                }
+
+        w.bind('resize', function () {
+            
+          if($window.innerWidth < attr.hvalue ){
+                
+                    elm.addClass('collapse')
+
+                }else
+                {
+                    elm.removeClass('collapse')
+                }
+            //scope.$apply();
+        });
+    }
+})
 .controller('uib-accordion',
 	['$scope',
 	'device',
@@ -385,7 +411,7 @@ sfarm
 
 	$scope.data = device.all().then
 		(function(data){
-			$scope.data=data;			
+			$scope.data=data;		
 			mygraphFactory.setGraph($scope,$filter);
 			return
 		});
@@ -403,7 +429,6 @@ sfarm
 					$scope.data[index].lread =new Date(reading.dt);
 	 				// refreshing angular js graph
 	 				mygraphFactory.setValue($scope,$filter,index);	 
-
 	 				Notification.info({ message:'New Reading Received From Device ' + $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})
@@ -487,12 +512,12 @@ $scope.statusToggle = function(){
 
 .controller('FriendlyNameEditorCtrl',[
 	'$scope',
-	'$modalInstance',
+	'$uibModalInstance',
 	'selectedDevice',
 	'UpdateService',
 	'notify',
 	'$interval',
-function ($scope,$modalInstance,selectedDevice,UpdateService,notify,$interval) {  
+function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval) {  
 	
 	$scope.selectedDevice = selectedDevice;
 
@@ -501,7 +526,7 @@ function ($scope,$modalInstance,selectedDevice,UpdateService,notify,$interval) {
   	  
   	  UpdateService.deviceStatus('update/fname',data).then(function(response){
   	  		$scope.selectedDevice.name = $scope.editFname.fname.$modelValue;
-			$modalInstance.close();
+			$uibModalInstance.close();
 			$interval( notify({ message:'Device Name updated for #' + $scope.selectedDevice._id , duration:'10000',position:'right' } ), 1000); 
 		},function(response){
 			alert('Update failed');
@@ -510,7 +535,7 @@ function ($scope,$modalInstance,selectedDevice,UpdateService,notify,$interval) {
 	};
 
 	$scope.cancel = function() {
-	  $modalInstance.dismiss('cancel');
+	  $uibModalInstance.dismiss('cancel');
 	};	
   
 
@@ -519,20 +544,26 @@ function ($scope,$modalInstance,selectedDevice,UpdateService,notify,$interval) {
 .controller('LoginCtrl',[
   '$scope', 
   '$rootScope', 
-  'notify',
+  'Notification',
   '$state',
   'LoginService',
   'sessionService',
- function ($scope, $rootScope,notify,$state,LoginService,sessionService) {
+ function ($scope, $rootScope,Notification,$state,LoginService,sessionService) {
   $scope.credentials = {
     username: '',
     password: ''
   };
   $scope.login = function(credentials){
-  	LoginService.login(credentials).then(function(data){  	
-      $state.go('app');
-  	},function(data){
-  		notify({ message:'Login Failed. Please try again' ,duration:'10000',position:'center' } )
+  	LoginService.login(credentials).then(function(response){
+    if(!response){
+    Notification.error({ title:'Login Failed',message:'Incorrect Credentials' ,delay : 4000 } );
+
+    }
+  
+    $state.go('app');
+  	},function(response){
+      console.log(response)   ;
+  		
   	});
   	
   }
@@ -588,36 +619,6 @@ function($rootScope,$state,LoginService,sessionService,$http){
 
 
 }])
-
-.factory('device',['$http','reqInspect',function($http,reqInspect){
-return{
-		all:function(){
-				   return $http.get('http://localhost/smartfarm/fetch/getdevices').then(function(response)
-					{
-                        //reqInspect.submitResposne(response.status);
-						return response.data;
-					})
-				}
-   }	
-}])// eof getdevices
-.factory('Poller', function($http,$q,reqInspect){
-               return {
-                    poll : function(api){
-                        var deferred = $q.defer();
-                        $http.get(api).then(function (response) {                            
-                            deferred.resolve(response.data);
-                        },function(response){
-                           return deferred.reject() ;//reqInspect.submitResposne(response.status) ;                           
-                        });
-                        return deferred.promise;
-                       
-                    }
-
-                }
-            })
-
-
-
 
 .factory('mygraphFactory', function()
 {
@@ -792,15 +793,19 @@ return{
 				method:'POST',
 				data: {credentials}
 			}).then(function(response){
-				sessionStorage.setItem('user',response.data.id) ;
-				sessionStorage.setItem('reqTok',response.data.token) ;
-							
-				deferred.resolve(response.data);
-			},function(response){
-				console.log(response.status);
-				 deferred.reject("Failed");
+				
+				if(response){
+								sessionStorage.setItem('user',response.data.id) ;
+								sessionStorage.setItem('reqTok',response.data.token) ;
+
+							}
+			
+				deferred.resolve(response)
+			},function(reject){
+				
+				deferred.reject(reject);
 			});
-		 	return deferred.promise;
+		 	return deferred.promise
 		},
 		isAuth : function(token,id){
 			var deferred = $q.defer();
@@ -830,27 +835,6 @@ return{
 			}					
 		}
 }])
-.factory('reqInspect',['$injector',
-	function($injector){
-	return{	
-
-	 responseError: function(rejection) {
-        if (rejection.status === 401) {
-          // Return a new promise
-         var sessionService = $injector.get('sessionService');
-         var $http = $injector.get('$http');
-         var $state = $injector.get('$state');
-				sessionService.destroy('user');
-	    		$http.defaults.headers.common['X-Auth-Token'] = undefined;
-	    		$http.defaults.headers.common['Bearer'] = undefined;   			    			    
-	    		$state.go('login')    ;    	
-          };
-        }
-    }
-	
-
-}])
-
 .factory('sessionService', ['LoginService','$interval','$rootScope', function(LoginService,$interval,$rootScope){
 	return {
 			set:function(key,value){
@@ -887,4 +871,54 @@ return{
 		 	return deferred.promise;
 			}
 		}
+}])
+.factory('device',['$http','reqInspect',function($http,reqInspect){
+return{
+		all:function(){
+				   return $http.get('http://localhost/smartfarm/fetch/getdevices').then(function(response)
+					{
+                        //reqInspect.submitResposne(response.status);
+						return response.data;
+					})
+				}
+   }	
+}])// eof getdevices
+.factory('Poller', function($http,$q,reqInspect){
+               return {
+                    poll : function(api){
+                        var deferred = $q.defer();
+                        $http.get(api).then(function (response) {                            
+                            deferred.resolve(response.data);
+                        },function(response){
+                           return deferred.reject() ;//reqInspect.submitResposne(response.status) ;                           
+                        });
+                        return deferred.promise;
+                       
+                    }
+
+                }
+            })
+
+
+
+
+.factory('reqInspect',['$injector',
+	function($injector){
+	return{	
+
+	 responseError: function(rejection) {
+        if (rejection.status === 401) {
+          // Return a new promise
+         var sessionService = $injector.get('sessionService');
+         var $http = $injector.get('$http');
+         var $state = $injector.get('$state');
+				sessionService.destroy('user');
+	    		$http.defaults.headers.common['X-Auth-Token'] = undefined;
+	    		$http.defaults.headers.common['Bearer'] = undefined;   			    			    
+	    		$state.go('login')    ;    	
+          };
+        }
+    }
+	
+
 }])

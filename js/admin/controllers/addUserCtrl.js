@@ -20,7 +20,7 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
             {
               "First Name" : $scope.user.details.fname,
               "Last Name" : $scope.user.details.lname,
-              "User Name" : $scope.user.uname,
+              "uname" : $scope.user.uname,
               "Email" : $scope.user.details.email,
               "Organisation" :$scope.user.details.bname,
               "Phone No" :$scope.user.details.pno   ,          

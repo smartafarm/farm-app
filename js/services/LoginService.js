@@ -7,15 +7,19 @@
 				method:'POST',
 				data: {credentials}
 			}).then(function(response){
-				sessionStorage.setItem('user',response.data.id) ;
-				sessionStorage.setItem('reqTok',response.data.token) ;
-							
-				deferred.resolve(response.data);
-			},function(response){
-				console.log(response.status);
-				 deferred.reject("Failed");
+				
+				if(response){
+								sessionStorage.setItem('user',response.data.id) ;
+								sessionStorage.setItem('reqTok',response.data.token) ;
+
+							}
+			
+				deferred.resolve(response)
+			},function(reject){
+				
+				deferred.reject(reject);
 			});
-		 	return deferred.promise;
+		 	return deferred.promise
 		},
 		isAuth : function(token,id){
 			var deferred = $q.defer();

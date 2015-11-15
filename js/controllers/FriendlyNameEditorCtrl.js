@@ -1,12 +1,12 @@
 
 .controller('FriendlyNameEditorCtrl',[
 	'$scope',
-	'$modalInstance',
+	'$uibModalInstance',
 	'selectedDevice',
 	'UpdateService',
 	'notify',
 	'$interval',
-function ($scope,$modalInstance,selectedDevice,UpdateService,notify,$interval) {  
+function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval) {  
 	
 	$scope.selectedDevice = selectedDevice;
 
@@ -15,7 +15,7 @@ function ($scope,$modalInstance,selectedDevice,UpdateService,notify,$interval) {
   	  
   	  UpdateService.deviceStatus('update/fname',data).then(function(response){
   	  		$scope.selectedDevice.name = $scope.editFname.fname.$modelValue;
-			$modalInstance.close();
+			$uibModalInstance.close();
 			$interval( notify({ message:'Device Name updated for #' + $scope.selectedDevice._id , duration:'10000',position:'right' } ), 1000); 
 		},function(response){
 			alert('Update failed');
@@ -24,7 +24,7 @@ function ($scope,$modalInstance,selectedDevice,UpdateService,notify,$interval) {
 	};
 
 	$scope.cancel = function() {
-	  $modalInstance.dismiss('cancel');
+	  $uibModalInstance.dismiss('cancel');
 	};	
   
 

@@ -17,7 +17,7 @@
 
 	$scope.data = device.all().then
 		(function(data){
-			$scope.data=data;			
+			$scope.data=data;		
 			mygraphFactory.setGraph($scope,$filter);
 			return
 		});
@@ -35,7 +35,6 @@
 					$scope.data[index].lread =new Date(reading.dt);
 	 				// refreshing angular js graph
 	 				mygraphFactory.setValue($scope,$filter,index);	 
-
 	 				Notification.info({ message:'New Reading Received From Device ' + $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})

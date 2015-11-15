@@ -28,9 +28,9 @@ Chart.types.Line.extend({
             ctx.restore();
         }
     }
-});
+})
 
 angular.module('chart.js')
     .directive('chartLineAlt', ['ChartJsFactory', function (ChartJsFactory) {
         return new ChartJsFactory('LineAlt');
-    }]);
+    }])

@@ -15,7 +15,7 @@
 				<li><a ui-sref="app.dashboard">Dashboard </a></li>				
 				<li><a href="http://localhost/feeder" target="_blank">Feeder </a></li>				
         <!-- <li><a href="admin/dashboard/rdash-angular/dist/index.html" >Admin</a></li>    -->     
-        <li><a ui-sref="admin" >Admin</a></li>     
+        <li ng-if="userName === 'admin'"><a ui-sref="admin" >Change Priviledges</a></li>     
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li uib-dropdown>
