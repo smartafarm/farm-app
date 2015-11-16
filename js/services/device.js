@@ -1,16 +1,21 @@
-.factory('device',['$http','reqInspect',function($http,reqInspect){
+.factory('device',['$http','$q','reqInspect',function($http,$q,reqInspect){
 return{
-		all:function(){
-				   return $http({
-            headers: { 'Content-Type': 'application/json' },
-            url:'http://www.smartafarm.com.au/api/fetch/getdevices',
-            method :'GET'
-            }).then(function(response)
-					{
-                        //reqInspect.submitResposne(response.status);
-						return response.data;
-					})
-				}
+		all:function(credentials){
+            var deferred = $q.defer();
+            $http({
+                url:'http://www.smartafarm.com.au/api/fetch/getdevices',
+                method:'GET',
+                headers:{'Content-type' : 'application/json'}
+                
+                
+            }).then(function(response){
+                deferred.resolve(response.data)
+            },function(reject){
+                deferred.reject(reject);
+            });
+            return deferred.promise
+        }
+		      
    }	
 }])// eof getdevices
 .factory('Poller', function($http,$q,reqInspect){
