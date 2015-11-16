@@ -23,7 +23,7 @@
 		});
 	function Repeater ()  {
 		//Polling for new data
-		 Poller.poll('http://localhost/smartfarm/fetch/getupdate?t='+ new Date().toISOString())
+		 Poller.poll('http://www.smartafarm.com.au/api/fetch/getupdate?t='+ new Date().toISOString())
 		 .then(function(data){
 		 	var index = 0;
 	 		$scope.data.forEach(function(entry) {
@@ -35,7 +35,7 @@
 					$scope.data[index].lread =new Date(reading.dt);
 	 				// refreshing angular js graph
 	 				mygraphFactory.setValue($scope,$filter,index);	 
-	 				Notification.info({ message:'New Reading Received From Device ' + $scope.data[index].name , delay:4000 }) ;
+	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})
 	 		index = index+1;

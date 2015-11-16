@@ -3,7 +3,7 @@
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/smartfarm/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);
@@ -15,7 +15,7 @@
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/smartfarm/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData}
 			}).then(function(response){

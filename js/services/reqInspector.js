@@ -1,7 +1,7 @@
 .factory('reqInspect',['$injector',
 	function($injector){
 	return{	
-
+	
 	 responseError: function(rejection) {
         if (rejection.status === 401) {
           // Return a new promise

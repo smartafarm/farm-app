@@ -15,7 +15,9 @@ function($rootScope,$state,LoginService,sessionService,$http){
 	    if(toState.name !== 'login'){	    
 	    	var token = sessionStorage.getItem('reqTok');		    	
 	    	var bearer = sessionStorage.getItem('user');		    	
-	    	if (token && bearer){	   	  
+	    	if (token && bearer){
+	    		$http.defaults.headers.post = { 'Content-Type': 'application/x-www-form-urlencoded' }
+	    		$http.defaults.headers.get = { 'Content-Type': 'application/json' }
 	    		$http.defaults.headers.common['X-Auth-Token'] = token   ;
 	    		$http.defaults.headers.common['Bearer'] = bearer			    			    ;
 	    	}

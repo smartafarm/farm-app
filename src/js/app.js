@@ -417,7 +417,7 @@ sfarm
 		});
 	function Repeater ()  {
 		//Polling for new data
-		 Poller.poll('http://localhost/smartfarm/fetch/getupdate?t='+ new Date().toISOString())
+		 Poller.poll('http://www.smartafarm.com.au/api/fetch/getupdate?t='+ new Date().toISOString())
 		 .then(function(data){
 		 	var index = 0;
 	 		$scope.data.forEach(function(entry) {
@@ -429,7 +429,7 @@ sfarm
 					$scope.data[index].lread =new Date(reading.dt);
 	 				// refreshing angular js graph
 	 				mygraphFactory.setValue($scope,$filter,index);	 
-	 				Notification.info({ message:'New Reading Received From Device ' + $scope.data[index].name , delay:4000 }) ;
+	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})
 	 		index = index+1;
@@ -602,7 +602,9 @@ function($rootScope,$state,LoginService,sessionService,$http){
 	    if(toState.name !== 'login'){	    
 	    	var token = sessionStorage.getItem('reqTok');		    	
 	    	var bearer = sessionStorage.getItem('user');		    	
-	    	if (token && bearer){	   	  
+	    	if (token && bearer){
+	    		$http.defaults.headers.post = { 'Content-Type': 'application/x-www-form-urlencoded' }
+	    		$http.defaults.headers.get = { 'Content-Type': 'application/json' }
 	    		$http.defaults.headers.common['X-Auth-Token'] = token   ;
 	    		$http.defaults.headers.common['Bearer'] = bearer			    			    ;
 	    	}
@@ -623,7 +625,11 @@ function($rootScope,$state,LoginService,sessionService,$http){
 .factory('device',['$http','reqInspect',function($http,reqInspect){
 return{
 		all:function(){
-				   return $http.get('http://localhost/smartfarm/fetch/getdevices').then(function(response)
+				   return $http({
+            headers: { 'Content-Type': 'application/json' },
+            url:'http://www.smartafarm.com.au/api/fetch/getdevices',
+            method :'GET'
+            }).then(function(response)
 					{
                         //reqInspect.submitResposne(response.status);
 						return response.data;
@@ -819,7 +825,9 @@ return{
 		login : function(credentials){
 			var deferred = $q.defer();
 			$http({
-				url:'api/login/authenticate',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				//url:'http://www.smartafarm.com.au/api/login/authenticate',
+				url:'http://www.smartafarm.com.au/api/login/authenticate',
 				method:'POST',
 				data: {credentials}
 			}).then(function(response){
@@ -868,7 +876,7 @@ return{
 .factory('reqInspect',['$injector',
 	function($injector){
 	return{	
-
+	
 	 responseError: function(rejection) {
         if (rejection.status === 401) {
           // Return a new promise
@@ -911,7 +919,7 @@ return{
 		deviceStatus : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/smartfarm/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData}
 			}).then(function(response){

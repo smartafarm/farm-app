@@ -1,7 +1,11 @@
 .factory('device',['$http','reqInspect',function($http,reqInspect){
 return{
 		all:function(){
-				   return $http.get('http://localhost/smartfarm/fetch/getdevices').then(function(response)
+				   return $http({
+            headers: { 'Content-Type': 'application/json' },
+            url:'http://www.smartafarm.com.au/api/fetch/getdevices',
+            method :'GET'
+            }).then(function(response)
 					{
                         //reqInspect.submitResposne(response.status);
 						return response.data;

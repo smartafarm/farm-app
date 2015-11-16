@@ -3,7 +3,9 @@
 		login : function(credentials){
 			var deferred = $q.defer();
 			$http({
-				url:'api/login/authenticate',
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				//url:'http://www.smartafarm.com.au/api/login/authenticate',
+				url:'http://www.smartafarm.com.au/api/login/authenticate',
 				method:'POST',
 				data: {credentials}
 			}).then(function(response){
