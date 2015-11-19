@@ -1,7 +1,5 @@
 .controller('userCtrl', ['$scope','userFactory', function ($scope,userFactory) {
-	$scope.editDevice = function(row){
-		console.log(row);
-	}
+  
 	userFactory.receive('admin/getUsers').then(function(response){
   			var data = response;        
   			$scope.myData = [];
@@ -47,15 +45,5 @@
       $scope.gridApi = gridApi;
       gridApi.selection.setMultiSelect(false);
       }
-    
-//testing
-
-
-	/*$scope.myData = [
-        {
-            "firstName": "Cox",
-            "lastName": "Carney"
-        }
-        ]
-        console.log($scope.myData);*/
+ 
 }])

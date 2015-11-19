@@ -110,12 +110,13 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
 
 }])
 
-.controller('adminCtrl', ['$rootScope','$interval','$state' ,function($rootScope,$interval,$state) {
+.controller('adminCtrl', ['$scope','$rootScope','$interval','$state' ,function($scope,$rootScope,$interval,$state) {
  var cancelEvents =function(){
  	 $interval.cancel($rootScope.timer);
  }
  cancelEvents();
  $state.go('admin.users');  
+
 }])
 .controller('editDeviceCtrl',[
 	'$scope',
@@ -172,9 +173,7 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 
 }])
 .controller('userCtrl', ['$scope','userFactory', function ($scope,userFactory) {
-	$scope.editDevice = function(row){
-		console.log(row);
-	}
+  
 	userFactory.receive('admin/getUsers').then(function(response){
   			var data = response;        
   			$scope.myData = [];
@@ -220,26 +219,17 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
       $scope.gridApi = gridApi;
       gridApi.selection.setMultiSelect(false);
       }
-    
-//testing
-
-
-	/*$scope.myData = [
-        {
-            "firstName": "Cox",
-            "lastName": "Carney"
-        }
-        ]
-        console.log($scope.myData);*/
+ 
 }])
 .factory('adminService', ['$http','$q', function($http,$q){
 	return {
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
-				data: {serverData}
+				data: {serverData:serverData}
 			}).then(function(response){
 				deferred.resolve(response.data);
 			},function(response){				
@@ -254,6 +244,7 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
@@ -266,9 +257,10 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
-				data: {serverData}
+				data: {serverData:serverData}
 			}).then(function(response){
 				deferred.resolve(response);
 			},function(response){				

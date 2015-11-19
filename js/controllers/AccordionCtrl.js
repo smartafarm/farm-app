@@ -14,15 +14,17 @@
 	$scope.flag = true;
 	$scope.newdata = null;
 	$scope.graph = [];
-
+	$scope.isLoading =true;
 	$scope.data = device.all().then
 		(function(data){
 			$scope.data=data;		
 			mygraphFactory.setGraph($scope,$filter);
+			$scope.isLoading =false;
 			return
 		});
 	function Repeater ()  {
 		//Polling for new data
+		 //Poller.poll('http://www.smartafarm.com.au/api/fetch/getupdate?t='+ new Date().toISOString())
 		 Poller.poll('http://www.smartafarm.com.au/api/fetch/getupdate?t='+ new Date().toISOString())
 		 .then(function(data){
 		 	var index = 0;

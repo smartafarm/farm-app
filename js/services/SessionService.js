@@ -6,10 +6,11 @@
 			get:function(key){
 				return sessionStorage.getItem(key);
 			},
-			destroy:function(key){
+			destroy:function(){
 				//cancelling the update timer
 				$rootScope.$broadcast('timerEvent:stopped');
 			//	$interval.cancel($scope.timer);
+				var key = sessionStorage.getItem('user');
 				LoginService.destroy(key);
 				sessionStorage.removeItem('user');		
 				sessionStorage.removeItem('reqTok');

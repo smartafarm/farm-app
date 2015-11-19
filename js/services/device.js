@@ -4,10 +4,8 @@ return{
             var deferred = $q.defer();
             $http({
                 url:'http://www.smartafarm.com.au/api/fetch/getdevices',
-                method:'GET',
-                headers:{'Content-type' : 'application/json'}
-                
-                
+               // url:'http://www.smartafarm.com.au/api/fetch/getdevices',
+                method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
             },function(reject){

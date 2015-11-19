@@ -2,10 +2,11 @@
 <div class="container" style="padding-top: 80px;">
 
 	<h2>Dashboard</h2><br>
-
+	
 	<div class="row" ng-model="data">
 		<div class="col-md-12" id="device-data" ng-model="data">
 			<div ng-controller="uib-accordion">
+			<div ng-if="isLoading"><i class="fa fa-refresh fa-spin fa-5x"></i></div>
 				<div ng-repeat="device in data" id="{{device._id}}">
 					<uib-accordion close-others="oneAtATime">
 						<uib-accordion-group>
@@ -30,7 +31,7 @@
 									uib-tooltip ="Edit Device Name"
 									tooltip-popup-delay='400' id="{{device._id}}"
 									style="margin-left:10px ;margin right:10px"
-									ng-if="device.func.indexOf('D01') != -1"
+									ng-if="device.func  && device.func.indexOf('D01') != -1 "
 									friendly-name >
     							</span>
 
@@ -40,7 +41,7 @@
 	    							ng-click="statusToggle()"
 	    							tooltip-trigger="mouseenter"
 	    							tooltip-placement="right"
-	    							ng-if="device.func.indexOf('D02') != -1"
+	    							ng-if="device.func  && device.func.indexOf('D02') != -1  "
 	    							uib-tooltip ="{{device.Status==1 ? 'Active' : 'Inactive'}}"
 	    							tooltip-popup-delay='400'
     							 >

@@ -159,6 +159,43 @@ sfarm
             
     }
 ]);
+Chart.types.Line.extend({
+    name: "LineAlt",
+    initialize: function (data) {
+        if (this.options.yAxisLabel) this.options.scaleLabel = '         ' + this.options.scaleLabel;
+
+        Chart.types.Line.prototype.initialize.apply(this, arguments);
+
+        if (this.options.yAxisLabel) this.scale.yAxisLabel = this.options.yAxisLabel;
+    },
+    draw: function () {
+        Chart.types.Line.prototype.draw.apply(this, arguments);
+
+        if (this.scale.yAxisLabel) {
+            var ctx = this.chart.ctx;
+            ctx.save();
+            // text alignment and color
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            ctx.fillStyle = this.options.scaleFontColor;
+            // position
+            var x = this.scale.xScalePaddingLeft * 0.3;
+            var y = this.chart.height / 2;
+            // change origin
+            ctx.translate(x, y)
+            // rotate text
+            ctx.rotate(-90 * Math.PI / 180);
+            ctx.fillText(this.scale.yAxisLabel, 0, 0);
+            ctx.restore();
+        }
+    }
+})
+
+angular.module('chart.js')
+    .directive('chartLineAlt', ['ChartJsFactory', function (ChartJsFactory) {
+        return new ChartJsFactory('LineAlt');
+    }])
+
 
 var sfarm =angular.module('sfarm');
 sfarm
@@ -221,6 +258,23 @@ sfarm
 
 }) //eof devicedata
 
+.directive('lastReading',function(){
+	return{
+		restrict:'A',	
+		link : function(scope,ele,attr){	
+			var dates=[];
+			var readings = scope.data[scope.$index].readings;
+			readings.forEach(function(value,key){
+				//console.log(value);
+				dates.push(new Date(value.dt));
+			})
+			var maxDate=new Date(Math.max.apply(null,dates));
+			scope.data[scope.$index].lread =maxDate;
+		}
+	}
+
+}) //eof devicedata
+	
 .directive('logBtn',function(){
 	return{
 		restrict:'A',		
@@ -249,6 +303,33 @@ sfarm
 
 }) //eof devicedata
 
+.directive('flexibleDiv', function () {
+        return {
+            scope: {
+                opts: '=' 
+            },
+            link: function (scope, element, attr) {
+
+                // Watching height of parent div
+                scope.$watch(function () {
+                    return element.parent(0).height();
+                }, updateHeight);
+
+                // Watching width of parent div
+                scope.$watch(function () {
+                    return element.parent(0).width();
+                }, updateWidth);
+
+                function updateHeight() {
+                    scope.opts.chart.height = element.parent(0).height()-150; //150 custom padding
+                }
+
+                function updateWidth() {
+                    scope.opts.chart.width = element.parent(0).width()-50; //50 custom padding
+                }
+            }
+        }
+    })
 .directive('testDirective', [function ($scope) {
 	return {
 		restrict: 'EA',		
@@ -285,87 +366,6 @@ sfarm
         }
     }
 })
-Chart.types.Line.extend({
-    name: "LineAlt",
-    initialize: function (data) {
-        if (this.options.yAxisLabel) this.options.scaleLabel = '         ' + this.options.scaleLabel;
-
-        Chart.types.Line.prototype.initialize.apply(this, arguments);
-
-        if (this.options.yAxisLabel) this.scale.yAxisLabel = this.options.yAxisLabel;
-    },
-    draw: function () {
-        Chart.types.Line.prototype.draw.apply(this, arguments);
-
-        if (this.scale.yAxisLabel) {
-            var ctx = this.chart.ctx;
-            ctx.save();
-            // text alignment and color
-            ctx.textAlign = "center";
-            ctx.textBaseline = "bottom";
-            ctx.fillStyle = this.options.scaleFontColor;
-            // position
-            var x = this.scale.xScalePaddingLeft * 0.3;
-            var y = this.chart.height / 2;
-            // change origin
-            ctx.translate(x, y)
-            // rotate text
-            ctx.rotate(-90 * Math.PI / 180);
-            ctx.fillText(this.scale.yAxisLabel, 0, 0);
-            ctx.restore();
-        }
-    }
-})
-
-angular.module('chart.js')
-    .directive('chartLineAlt', ['ChartJsFactory', function (ChartJsFactory) {
-        return new ChartJsFactory('LineAlt');
-    }])
-
-.directive('lastReading',function(){
-	return{
-		restrict:'A',	
-		link : function(scope,ele,attr){	
-			var dates=[];
-			var readings = scope.data[scope.$index].readings;
-			readings.forEach(function(value,key){
-				//console.log(value);
-				dates.push(new Date(value.dt));
-			})
-			var maxDate=new Date(Math.max.apply(null,dates));
-			scope.data[scope.$index].lread =maxDate;
-		}
-	}
-
-}) //eof devicedata
-	
-.directive('flexibleDiv', function () {
-        return {
-            scope: {
-                opts: '=' 
-            },
-            link: function (scope, element, attr) {
-
-                // Watching height of parent div
-                scope.$watch(function () {
-                    return element.parent(0).height();
-                }, updateHeight);
-
-                // Watching width of parent div
-                scope.$watch(function () {
-                    return element.parent(0).width();
-                }, updateWidth);
-
-                function updateHeight() {
-                    scope.opts.chart.height = element.parent(0).height()-150; //150 custom padding
-                }
-
-                function updateWidth() {
-                    scope.opts.chart.width = element.parent(0).width()-50; //50 custom padding
-                }
-            }
-        }
-    })
 .directive('resize', function ($window) {
     return function (scope, elm, attr) {
 
@@ -408,15 +408,17 @@ angular.module('chart.js')
 	$scope.flag = true;
 	$scope.newdata = null;
 	$scope.graph = [];
-
+	$scope.isLoading =true;
 	$scope.data = device.all().then
 		(function(data){
 			$scope.data=data;		
 			mygraphFactory.setGraph($scope,$filter);
+			$scope.isLoading =false;
 			return
 		});
 	function Repeater ()  {
 		//Polling for new data
+		 //Poller.poll('http://www.smartafarm.com.au/api/fetch/getupdate?t='+ new Date().toISOString())
 		 Poller.poll('http://www.smartafarm.com.au/api/fetch/getupdate?t='+ new Date().toISOString())
 		 .then(function(data){
 		 	var index = 0;
@@ -472,14 +474,6 @@ angular.module('chart.js')
 	'$http',
 	function($rootScope,$scope,$state,$interval,sessionService,$http){
 
-	$scope.logout = function(){		
-		var key =sessionStorage.getItem('user') 
-		sessionService.destroy(key)
-		$http.defaults.headers.common['X-Auth-Token'] = undefined;
-		$http.defaults.headers.common['Bearer'] = undefined;
-		$state.go('login',{}, {reload:true});
-	}
-	
 }])
 .controller('deviceStatusCtrl',[
 	'$scope',
@@ -569,9 +563,25 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
   }
 }])
 
-.controller('NavCtrl', ['$scope', function($scope){
+.controller('NavCtrl', ['$rootScope',
+	'$scope',
+	'$state',
+	'$interval',
+	'sessionService',
+	'$http',
+	function($rootScope,$scope,$state,$interval,sessionService,$http){
+
+	$scope.logout = function(){		
+		var key =sessionStorage.getItem('user') 
+		sessionService.destroy(key)
+		$http.defaults.headers.common['X-Auth-Token'] = undefined;
+		$http.defaults.headers.common['Bearer'] = undefined;
+		$state.go('login',{}, {reload:true});
+	}
 	var username = sessionStorage.getItem('user');
 	if (username) $scope.userName = username
+	
+	
 }])
 .controller('TimeCtrl', ['$scope','$timeout', function ($scope,$timeout) {
  	$scope.clock = "loading clock..."; // initialise the time variable
@@ -621,6 +631,43 @@ function($rootScope,$state,LoginService,sessionService,$http){
 
 
 }])
+
+.factory('device',['$http','$q','reqInspect',function($http,$q,reqInspect){
+return{
+		all:function(credentials){
+            var deferred = $q.defer();
+            $http({
+                url:'http://www.smartafarm.com.au/api/fetch/getdevices',
+               // url:'http://www.smartafarm.com.au/api/fetch/getdevices',
+                method:'GET'
+            }).then(function(response){
+                deferred.resolve(response.data)
+            },function(reject){
+                deferred.reject(reject);
+            });
+            return deferred.promise
+        }
+		      
+   }	
+}])// eof getdevices
+.factory('Poller', function($http,$q,reqInspect){
+               return {
+                    poll : function(api){
+                        var deferred = $q.defer();
+                        $http.get(api).then(function (response) {                            
+                            deferred.resolve(response.data);
+                        },function(response){
+                           return deferred.reject() ;//reqInspect.submitResposne(response.status) ;                           
+                        });
+                        return deferred.promise;
+                       
+                    }
+
+                }
+            })
+
+
+
 
 .factory('mygraphFactory', function()
 {
@@ -792,10 +839,10 @@ function($rootScope,$state,LoginService,sessionService,$http){
 			var deferred = $q.defer();
 			$http({
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				//url:'http://www.smartafarm.com.au/api/login/authenticate',
 				url:'http://www.smartafarm.com.au/api/login/authenticate',
+				//url:'http://www.smartafarm.com.au/api/login/authenticate',
 				method:'POST',
-				data: {credentials}
+				data: {credentials:credentials}
 			}).then(function(response){
 				
 				if(response){
@@ -814,7 +861,7 @@ function($rootScope,$state,LoginService,sessionService,$http){
 		isAuth : function(token,id){
 			var deferred = $q.defer();
 			$http({
-				url:'http://localhost/smartfarm/login/validate',
+				url:'http://www.smartafarm.com.au/api/login/validate',
 				method:'POST',
 				data: {data:{'user' : id , 'token' : token}}
 			}).then(function(response){
@@ -824,12 +871,12 @@ function($rootScope,$state,LoginService,sessionService,$http){
 			});
 		 	return deferred.promise;
 			},
-		destroy : function(id){
+		destroy : function(key){
 			var deferred = $q.defer();
 			$http({
-				url:'http://localhost/smartfarm/login/destroy',
+				url:'http://www.smartafarm.com.au/api/login/destroy',
 				method:'POST',
-				data: {'user' : id }
+				data: {'user' : key }
 			}).then(function(response){
 				deferred.resolve(response.data);
 			},function(response){
@@ -839,6 +886,26 @@ function($rootScope,$state,LoginService,sessionService,$http){
 			}					
 		}
 }])
+.factory('reqInspect',['$injector',
+	function($injector){
+	return{	
+	
+	 responseError: function(rejection) {
+        if (rejection.status === 401) {         
+         var sessionService = $injector.get('sessionService');
+         var $http = $injector.get('$http');
+         var $state = $injector.get('$state');
+				sessionService.destroy();
+	    		$http.defaults.headers.common['X-Auth-Token'] = undefined;
+	    		$http.defaults.headers.common['Bearer'] = undefined;   			    			    
+	    		$state.go('login')    ;    	
+          };
+        }
+    }
+	
+
+}])
+
 .factory('sessionService', ['LoginService','$interval','$rootScope', function(LoginService,$interval,$rootScope){
 	return {
 			set:function(key,value){
@@ -847,10 +914,11 @@ function($rootScope,$state,LoginService,sessionService,$http){
 			get:function(key){
 				return sessionStorage.getItem(key);
 			},
-			destroy:function(key){
+			destroy:function(){
 				//cancelling the update timer
 				$rootScope.$broadcast('timerEvent:stopped');
 			//	$interval.cancel($scope.timer);
+				var key = sessionStorage.getItem('user');
 				LoginService.destroy(key);
 				sessionStorage.removeItem('user');		
 				sessionStorage.removeItem('reqTok');
@@ -864,9 +932,10 @@ function($rootScope,$state,LoginService,sessionService,$http){
 		deviceStatus : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
-				data: {serverData}
+				data: {serverData:serverData}
 			}).then(function(response){
 				deferred.resolve(response.data);
 			},function(response){				
@@ -875,63 +944,4 @@ function($rootScope,$state,LoginService,sessionService,$http){
 		 	return deferred.promise;
 			}
 		}
-}])
-.factory('device',['$http','$q','reqInspect',function($http,$q,reqInspect){
-return{
-		all:function(credentials){
-            var deferred = $q.defer();
-            $http({
-                url:'http://www.smartafarm.com.au/api/fetch/getdevices',
-                method:'GET',
-                headers:{'Content-type' : 'application/json'}
-                
-                
-            }).then(function(response){
-                deferred.resolve(response.data)
-            },function(reject){
-                deferred.reject(reject);
-            });
-            return deferred.promise
-        }
-		      
-   }	
-}])// eof getdevices
-.factory('Poller', function($http,$q,reqInspect){
-               return {
-                    poll : function(api){
-                        var deferred = $q.defer();
-                        $http.get(api).then(function (response) {                            
-                            deferred.resolve(response.data);
-                        },function(response){
-                           return deferred.reject() ;//reqInspect.submitResposne(response.status) ;                           
-                        });
-                        return deferred.promise;
-                       
-                    }
-
-                }
-            })
-
-
-
-
-.factory('reqInspect',['$injector',
-	function($injector){
-	return{	
-	
-	 responseError: function(rejection) {
-        if (rejection.status === 401) {
-          // Return a new promise
-         var sessionService = $injector.get('sessionService');
-         var $http = $injector.get('$http');
-         var $state = $injector.get('$state');
-				sessionService.destroy('user');
-	    		$http.defaults.headers.common['X-Auth-Token'] = undefined;
-	    		$http.defaults.headers.common['Bearer'] = undefined;   			    			    
-	    		$state.go('login')    ;    	
-          };
-        }
-    }
-	
-
 }])
