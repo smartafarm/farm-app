@@ -34,6 +34,7 @@
     "gulp": "~3.9.0",
     "oclazyload": "~1.0.8",
     "raphael": "git://github.com/DmitryBaranovskiy/raphael.git#2.1.0",
-    "angular-ui-notification": "~0.0.14"
+    "angular-ui-notification": "~0.0.14",
+    "checklist-model": "~0.6.0"
   }
 }
