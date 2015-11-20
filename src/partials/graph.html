@@ -5,9 +5,11 @@
     margin-top: 10px;
     margin-bottom: 10px;
 ">Temprature</h3>
-		<canvas id="line" style="height: 100%;width:100%"class="chart chart-line" chart-data="graph[$index].temp"
+		<!-- <canvas id="line" style="height: 100%;width:100%" class="chart chart-line" chart-data="graph[$index].temp"
 		chart-labels="graph[$index].labels" chart-legend="true" chart-series="graph[$index].series[0]"
 		chart-click="onClick" chart-options="chart_options_temp">
+		</canvas> -->
+		<canvas tc-chartjs-line chart-options="Testoptions" chart-data="Testdata" auto-legend>
 		</canvas>
 	</div>
 	
@@ -17,10 +19,10 @@
     margin-bottom: 0px;
     padding-bottom: 0px;
 ">Level</h3>
-		<canvas id="line" class="chart chart-line" chart-data="graph[$index].level"
+		<!-- <canvas id="line" class="chart chart-line" chart-data="graph[$index].level"
 		chart-labels="graph[$index].labels" chart-legend="true" chart-series="graph[$index].series[1]"
 		chart-click="onClick" chart-colours="colours" chart-options="chart_options_level">
 		</canvas>
-	
+			 -->
 	</div> 
 </div>

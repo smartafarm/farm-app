@@ -22,9 +22,7 @@ gulp.task('depsjs', function(){
 		'bower_components/checklist-model/checklist-model.js'	,
 		'bower_components/Chart.js/Chart.min.js',
 		'bower_components/angular-chart.js/dist/angular-chart.min.js',
-		'bower_components/d3/d3.js'	,
-		'bower_components/nvd3/build/nv.d3.js',
-		'bower_components/angular-nvd3/dist/angular-nvd3.js',
+		'bower_components/tc-angular-chartjs/dist/tc-angular-chartjs.min.js',
 		'js/deps/angular-notify.js'	
 		
 		])// eof gul src

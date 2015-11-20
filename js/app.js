@@ -5,14 +5,14 @@ var sfarm = angular
 'cgNotify',
 'ngAnimate',
 'chart.js',
-'nvd3',
 'oc.lazyLoad',
 'ui.grid',
 'ui.grid.selection',
 'ui-notification',
 'checklist-model',
 'ui.grid.resizeColumns',
-'ui.grid.pagination'
+'ui.grid.pagination',
+'tc.chartjs'
 
 ])
 .constant('USER_ROLES', {

@@ -19,6 +19,7 @@
 		(function(data){
 			$scope.data=data;		
 			mygraphFactory.setGraph($scope,$filter);
+			//mygraphFactory.testGraph($scope,$filter);
 			$scope.isLoading =false;
 			return
 		});

@@ -35,6 +35,7 @@
     "oclazyload": "~1.0.8",
     "raphael": "git://github.com/DmitryBaranovskiy/raphael.git#2.1.0",
     "angular-ui-notification": "~0.0.14",
-    "checklist-model": "~0.6.0"
+    "checklist-model": "~0.6.0",
+    "tc-angular-chartjs": "~1.0.12"
   }
 }
