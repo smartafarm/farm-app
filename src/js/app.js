@@ -89,20 +89,20 @@ sfarm
             .state('app', {
                 url: '/',   
                 templateUrl: "index.html",
-                controller: "AppCtrl",
-                data: {
-                          authorizedRoles: [USER_ROLES.admin, USER_ROLES.editor]
-                        }  
+                controller: "AppCtrl"
+              
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
                 templateUrl: 'templates/dashboard.html' ,
                 controller :'DashboardCtrl',
-                parent:'app',                                         
-                data: {
-                          authorizedRoles: [USER_ROLES.admin, USER_ROLES.editor]
-                    }  	
-                
+                parent:'app'
+            })
+              .state('app.rawdata' ,{
+                url: 'app/rawdata',
+                templateUrl: 'templates/rawdata.html' ,
+                controller :'rawDataCtrl',
+                parent:'app'
             })
            .state('admin' ,{
             url: '/admin',
@@ -265,11 +265,18 @@ sfarm
 			var dates=[];
 			var readings = scope.data[scope.$index].readings;
 			readings.forEach(function(value,key){
-				//console.log(value);
 				dates.push(new Date(value.dt));
 			})
-			var maxDate=new Date(Math.max.apply(null,dates));
-			scope.data[scope.$index].lread =maxDate;
+			var maxDate=Math.max.apply(null,dates);
+			scope.data[scope.$index].lread =new Date(maxDate);			
+
+			readings.forEach(function(value,key){	
+
+				if(new Date (value.dt).getTime() === new Date(maxDate).getTime() ){					
+					scope.data[scope.$index].lread = value ;			
+				}
+				
+			})
 		}
 	}
 
@@ -428,7 +435,7 @@ sfarm
 	 				
 	 				$scope.data[index].readings.push(reading);	 				
 	 				// setting last read	 				
-					$scope.data[index].lread =new Date(reading.dt);
+					$scope.data[index].lread =reading;
 	 				// refreshing angular js graph
 	 				mygraphFactory.setValue($scope,$filter,index);	 
 	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
@@ -456,7 +463,9 @@ sfarm
 .controller('AppCtrl',['$scope',
 	'$state',
 	'USER_ROLES',
-  function ($scope,$state,USER_ROLES) {  
+	'$rootScope',
+  function ($scope,$state,USER_ROLES,$rootScope) {  
+
   $scope.userRoles = USER_ROLES;
   $state.go('app.dashboard');  
   $scope.showModal = false;
@@ -547,6 +556,8 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
     username: '',
     password: ''
   };
+  
+  
   $scope.login = function(credentials){
   	LoginService.login(credentials).then(function(response){
     if(!response){
@@ -583,6 +594,19 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
 	
 	
 }])
+.controller('rawDataCtrl' ,['$scope','userFactory','$state','$rootScope',function ($scope,userFactory,$state,$rootScope) {
+	
+
+$scope.refresh= function(){	
+	userFactory.receive('fetch/getrawdata').then(function(response){
+  			var data = response;        
+  			$scope.rawdata = data;  		
+  		},function(response){				
+				console.log(response);
+		});
+}
+$scope.refresh();
+}])
 .controller('TimeCtrl', ['$scope','$timeout', function ($scope,$timeout) {
  	$scope.clock = "loading clock..."; // initialise the time variable
     $scope.tickInterval = 1000 //ms
@@ -600,12 +624,18 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
 	'LoginService',
 	'sessionService',
 	'$http',
+	'$interval',
+function($rootScope,$state,LoginService,sessionService,$http,$interval){	
 	
-function($rootScope,$state,LoginService,sessionService,$http){	
-	
+	 
+
 	$rootScope.$on('$stateChangeStart', 
 		function(event, toState, toParams, fromState, fromParams) {
-
+			
+			var cancelEvents =function(){
+		 	 $interval.cancel($rootScope.timer);
+		 }
+		 cancelEvents();
 	    /*	    
 		Validation
 		*/
@@ -938,6 +968,37 @@ return{
 				data: {serverData:serverData}
 			}).then(function(response){
 				deferred.resolve(response.data);
+			},function(response){				
+				deferred.reject("Failed");
+			});
+		 	return deferred.promise;
+			}
+		}
+}])
+.factory('userFactory', ['$http','$q', function($http,$q){
+	return {
+		receive : function(api){
+			var deferred = $q.defer();			
+			$http({
+				//url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
+				method:'GET'				
+			}).then(function(response){
+				deferred.resolve(response.data);
+			},function(response){				
+				deferred.reject("Failed");
+			});
+		 	return deferred.promise;
+			},
+		submit : function(api,serverData){
+			var deferred = $q.defer();			
+			$http({
+				//url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
+				method:'POST',
+				data: {serverData:serverData}
+			}).then(function(response){
+				deferred.resolve(response);
 			},function(response){				
 				deferred.reject("Failed");
 			});

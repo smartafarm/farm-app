@@ -10,6 +10,8 @@
     username: '',
     password: ''
   };
+  
+  
   $scope.login = function(credentials){
   	LoginService.login(credentials).then(function(response){
     if(!response){

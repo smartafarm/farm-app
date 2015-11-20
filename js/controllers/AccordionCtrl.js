@@ -34,7 +34,7 @@
 	 				
 	 				$scope.data[index].readings.push(reading);	 				
 	 				// setting last read	 				
-					$scope.data[index].lread =new Date(reading.dt);
+					$scope.data[index].lread =reading;
 	 				// refreshing angular js graph
 	 				mygraphFactory.setValue($scope,$filter,index);	 
 	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;

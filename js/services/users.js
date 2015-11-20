@@ -4,7 +4,7 @@
 			var deferred = $q.defer();			
 			$http({
 				//url:'http://www.smartafarm.com.au/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);

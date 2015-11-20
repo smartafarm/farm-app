@@ -1,12 +1,22 @@
 <div class ="row" >
-
+	
 	<div class = "col-xs-12 col-sm-6 col-lg-6" >
+	<h3 style="
+    margin-top: 10px;
+    margin-bottom: 10px;
+">Temprature</h3>
 		<canvas id="line" style="height: 100%;width:100%"class="chart chart-line" chart-data="graph[$index].temp"
 		chart-labels="graph[$index].labels" chart-legend="true" chart-series="graph[$index].series[0]"
 		chart-click="onClick" chart-options="chart_options_temp">
 		</canvas>
 	</div>
+	
 	<div class = "col-xs-12 col-sm-6 col-lg-6" >	
+	<h3 style="
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+">Level</h3>
 		<canvas id="line" class="chart chart-line" chart-data="graph[$index].level"
 		chart-labels="graph[$index].labels" chart-legend="true" chart-series="graph[$index].series[1]"
 		chart-click="onClick" chart-colours="colours" chart-options="chart_options_level">

@@ -3,12 +3,18 @@
 	'LoginService',
 	'sessionService',
 	'$http',
+	'$interval',
+function($rootScope,$state,LoginService,sessionService,$http,$interval){	
 	
-function($rootScope,$state,LoginService,sessionService,$http){	
-	
+	 
+
 	$rootScope.$on('$stateChangeStart', 
 		function(event, toState, toParams, fromState, fromParams) {
-
+			
+			var cancelEvents =function(){
+		 	 $interval.cancel($rootScope.timer);
+		 }
+		 cancelEvents();
 	    /*	    
 		Validation
 		*/

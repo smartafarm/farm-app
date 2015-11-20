@@ -5,11 +5,18 @@
 			var dates=[];
 			var readings = scope.data[scope.$index].readings;
 			readings.forEach(function(value,key){
-				//console.log(value);
 				dates.push(new Date(value.dt));
 			})
-			var maxDate=new Date(Math.max.apply(null,dates));
-			scope.data[scope.$index].lread =maxDate;
+			var maxDate=Math.max.apply(null,dates);
+			scope.data[scope.$index].lread =new Date(maxDate);			
+
+			readings.forEach(function(value,key){	
+
+				if(new Date (value.dt).getTime() === new Date(maxDate).getTime() ){					
+					scope.data[scope.$index].lread = value ;			
+				}
+				
+			})
 		}
 	}
 

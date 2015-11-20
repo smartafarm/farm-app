@@ -17,20 +17,20 @@ sfarm
             .state('app', {
                 url: '/',   
                 templateUrl: "index.html",
-                controller: "AppCtrl",
-                data: {
-                          authorizedRoles: [USER_ROLES.admin, USER_ROLES.editor]
-                        }  
+                controller: "AppCtrl"
+              
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
                 templateUrl: 'templates/dashboard.html' ,
                 controller :'DashboardCtrl',
-                parent:'app',                                         
-                data: {
-                          authorizedRoles: [USER_ROLES.admin, USER_ROLES.editor]
-                    }  	
-                
+                parent:'app'
+            })
+              .state('app.rawdata' ,{
+                url: 'app/rawdata',
+                templateUrl: 'templates/rawdata.html' ,
+                controller :'rawDataCtrl',
+                parent:'app'
             })
            .state('admin' ,{
             url: '/admin',

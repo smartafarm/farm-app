@@ -1,5 +1,5 @@
 <ng-include src = "'templates/nav.html'"> </ng-include>
-<div class="container" style="padding-top: 80px;">
+<div class="container" style="padding-top:80px">
 
 	<h2>Dashboard</h2><br>
 	
@@ -17,7 +17,13 @@
         					<div class="pull-right"  no-click>
 
 								<span resize hvalue ="576" last-reading style="cursor: default; font-size: 75%; margin-top:-14px;margin-right: 15px;" >   
-								<i>Last Reading <span ng-class="{'fa fa-spinner fa-spin': data[$index].lread === undefined}">{{ data[$index].lread | date:'dd-MM-yyyy h:mm a' }}</span> </i>
+								<i> <span style="color:MediumBlue">Last Reading</span>
+								<span ng-class="{'fa fa-spinner fa-spin': data[$index].lread.dt === undefined}">{{ data[$index].lread.dt | date:'dd-MM-yyyy h:mm a' }}&nbsp
+								<span ng-repeat= "sensor in data[$index].lread.data"> <i><strong style="color:green">{{sensor.sensorID }}</strong></i> 
+								<span ng-repeat= "sensorData in sensor.sdata"> {{sensorData | valueFilter}}</span>
+								</span>	
+								</span> 
+								</i>
 								</span>
 
 	    						<span  resize hvalue ="406" style="cursor: default; font-size: 75%; margin-top:-14px;" >  
@@ -93,13 +99,7 @@
 	    							</button>
 					            </p>
 				            <!--EOF Log Filter Button  placeholder-->
-
-	    					 </div>
-
-						<!-- EOF Button placeholder-->
-
-
-			           <!-- Graph and log placeholder -->
+  <!-- Graph and log placeholder -->
 						 <div ng-show="dread">
 						 	  <div class="row">
 						        <div class="col-md-3">
@@ -111,13 +111,15 @@
                             </div>
 					   	</div>
 
-					   	<div ng-show="!dread" >
-					   				   		
-							<test-directive></test-directive>						 	
-							<!-- 				 	<test-directive ng-if="testShow1"></test-directive>		 -->				 	
-					   	</div>
-					<!-- EOF Graph and log placeholder-->
+					   	<div ng-show="!dread" >					   				   		
+							<test-directive></test-directive>						 							
+						</div>
+					 </div>
 
+						<!-- EOF Button placeholder-->
+
+
+			         
 					</uib-accordion>
 
 				</div>
@@ -125,7 +127,7 @@
 			</div>
 		</div>
 	</div>
-
 </div>
+
 <!--
 	-->
