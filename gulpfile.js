@@ -22,9 +22,9 @@ gulp.task('depsjs', function(){
 		'bower_components/checklist-model/checklist-model.js'	,
 		'bower_components/Chart.js/Chart.min.js',
 		'bower_components/angular-chart.js/dist/angular-chart.min.js',
-		'bower_components/tc-angular-chartjs/dist/tc-angular-chartjs.min.js',
-		'js/deps/angular-notify.js'	
-		
+		'bower_components/d3/d3.min.js',
+		'node_modules/angular-google-chart/ng-google-chart.js',
+		'js/deps/angular-notify.js'			
 		])// eof gul src
 	.pipe(concat('devdeps.js'))
 	.pipe(gulp.dest('src/js'))

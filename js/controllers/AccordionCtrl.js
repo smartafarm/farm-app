@@ -17,9 +17,10 @@
 	$scope.isLoading =true;
 	$scope.data = device.all().then
 		(function(data){
-			$scope.data=data;		
-			mygraphFactory.setGraph($scope,$filter);
-			//mygraphFactory.testGraph($scope,$filter);
+			$scope.data=data;				  	
+			mygraphFactory.setGraph($scope,$filter)
+			
+
 			$scope.isLoading =false;
 			return
 		});
@@ -45,7 +46,7 @@
 		});
 		 });
 	};
-	$rootScope.timer = $interval(Repeater, 11000);
+	//$rootScope.timer = $interval(Repeater, 11000);
 	$scope.$on('timerEvent:stopped', function() {
 		$interval.cancel($rootScope.timer);
 	});
@@ -57,5 +58,7 @@
    		//console.log(MyDate);
    	    return MyDate;
    	}
+
   };
+
 }])

@@ -12,8 +12,7 @@ var sfarm = angular
 'checklist-model',
 'ui.grid.resizeColumns',
 'ui.grid.pagination',
-'tc.chartjs'
-
+'googlechart'
 ])
 .constant('USER_ROLES', {
   all: '*',
