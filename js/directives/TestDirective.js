@@ -24,8 +24,9 @@
 	 }
 	
 	    $scope.trigger =function(){
-  	 //$window.triggerHandler('resize');
+  	 	//triggering resize fro proper graph display
   			 $rootScope.$emit('resizeMsg');  	 
   }
-    
+    /* Controllers */
+
 })

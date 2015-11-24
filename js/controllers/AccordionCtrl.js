@@ -38,7 +38,7 @@
 	 				// setting last read	 				
 					$scope.data[index].lread =reading;
 	 				// refreshing angular js graph
-	 				mygraphFactory.setValue($scope,$filter,index);	 
+	 				console.log(reading);
 	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})
@@ -46,7 +46,7 @@
 		});
 		 });
 	};
-	//$rootScope.timer = $interval(Repeater, 11000);
+	$rootScope.timer = $interval(Repeater, 11000);
 	$scope.$on('timerEvent:stopped', function() {
 		$interval.cancel($rootScope.timer);
 	});

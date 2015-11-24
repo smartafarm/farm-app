@@ -362,10 +362,11 @@ sfarm
 	 }
 	
 	    $scope.trigger =function(){
-  	 //$window.triggerHandler('resize');
+  	 	//triggering resize fro proper graph display
   			 $rootScope.$emit('resizeMsg');  	 
   }
-    
+    /* Controllers */
+
 })
 .directive('uibTooltip', function(){
     return {
@@ -441,7 +442,7 @@ sfarm
 	 				// setting last read	 				
 					$scope.data[index].lread =reading;
 	 				// refreshing angular js graph
-	 				mygraphFactory.setValue($scope,$filter,index);	 
+	 				console.log(reading);
 	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
 	 			}
 	 		})
@@ -449,7 +450,7 @@ sfarm
 		});
 		 });
 	};
-	//$rootScope.timer = $interval(Repeater, 11000);
+	$rootScope.timer = $interval(Repeater, 11000);
 	$scope.$on('timerEvent:stopped', function() {
 		$interval.cancel($rootScope.timer);
 	});
@@ -732,12 +733,16 @@ return{
                 $scope.graphLevel[myIndex]['data'] = {};
                 //setting coloums
                $scope.graphTemprature[myIndex].data = {"cols": [
-                  {id: "t", label: "Time", type: "string"},    
-                  {id: "t01", label: "Temprature", type: "number"}
+                  {id: "t", label: "Time", type: "date"},    
+                  {id: "t01", label: "T01", type: "number"},
+                  {id: "t01", label: "T02", type: "number"},
+                  
+                  
               ]}
               $scope.graphLevel[myIndex].data = {"cols": [
-                  {id: "t", label: "Time", type: "string"},
-                  {id: "l01", label: "Level", type: "number"}
+                  {id: "t", label: "Time", type: "date"},
+                  {id: "l01", label: "L01", type: "number"},
+                  {id: "l01", label: "L02", type: "number"}
               ]}
 
                 //initializing rows
@@ -751,45 +756,44 @@ return{
                 temp["rows"] = [];
                 temp1  = [];
                 level["rows"] = [];
-                var rowIndex = -1;
+                
                 var index = -1;
                 angular.forEach(deviceReadings.readings, function(readingData, keya){ 
-                  
+                  index =index +1 ; 
+                  var dt =   new Date(readingData.dt); 
+                  //temprature
+                    temp.rows[index]=[];
+                    temp.rows[index]['c'] = []
+                   
+                    temp.rows[index].c.push({'v' : dt }); 
+                    //level
+                    level.rows[index]=[];
+                    level.rows[index]['c'] = []
+                    level.rows[index].c.push({'v' : dt }); 
+
                     angular.forEach(readingData.data, function(data, keyb){
                      
-                      
-                      angular.forEach(data.sdata, function(sdata, keyc){
-                        //pushing date and data
-                      index = index +1 ;
-                      console.log(index );
-                      console.log(sdata);
-                        var dt =   $filter('date')(readingData.dt, 'h:mm a');
-                        if(sdata.type == 'Temp')
-                        {                  
-
-                          
-                          ///  temp.rows[rowIndex].c.push({'v' : sdata.value });                            
-                           if(!temp1[sdata.id]){ temp1[sdata.id] = {'c':[]}}        
-                           
-                          
-                            temp.rows.push({'c' :[{'v' : dt },{'v' : parseFloat(sdata.value) }]});                          
-                          
-                        }
-                        else{
-                         level.rows.push({'c' :[{'v' : dt},{'v' : parseFloat(sdata.value)}]});
-                        }                        
+                     
+                     var sensor= readingData.data.sensorID;                   
+                                      
+                      angular.forEach(data.sdata, function(sdata, keyc){ 
+                      if(sdata.type=='Temp'){
+                         temp.rows[index].c.push({'v' : parseFloat(sdata.value)}); 
+                       }else{
+                        level.rows[index].c.push({'v' : parseInt(sdata.value)}); 
+                       }
+                                   
                       });// eof sdata
+                    
                     });//eof data
                 })//eof reading data;
+
               //push temp array to graph array  
-              console.log(temp1);
               $scope.graphTemprature[myIndex].data['rows'] =temp['rows'];
               $scope.graphLevel[myIndex].data['rows'] =level['rows'];
-
               //defining chart type
-              
               $scope.graphTemprature[myIndex].type = 'AreaChart';
-              $scope.graphLevel[myIndex].type = 'AreaChart';
+              $scope.graphLevel[myIndex].type = 'AnnotationChart';
               
               if(addCol ==true){                        
                 $scope.graphTemprature[myIndex].data.cols.push({id: "t02", label: "Temp 02 ", type: "number"})
@@ -798,7 +802,7 @@ return{
               //setting chart options
               
               $scope.graphTemprature[myIndex].options = {
-                  'title': 'Temprature',
+                  'title' : 'Temprature',
                   'legend': { 'position': 'bottom' },
                    "fill": 20,        
                   "vAxis": { "title": "Degree Celcius(℃)" },
@@ -812,7 +816,28 @@ return{
                     {'stroke': 'green'}
                     
                   },
-                  'colors': ['green']
+                  'colors': ['red','green'],
+                  'pointSize': 10,
+                   explorer: {
+                        axis: 'horizontal',
+                        keepInBounds: true,
+                        maxZoomIn: 0.1,
+                        maxZoomOut: 4
+
+                    },
+                    hAxis : {
+                      format : 'HH:mm'
+                    }
+                  /*'zoomStartTime' : new Date(),                  
+                  'displayAnnotations' : true,
+                  'displayAnnotationsFilter' :true,
+                  'annotationsWidth' : 20,
+                  //'scaleColumns' : [1,2],
+                  'allValuesSuffix' : '  ℃',
+                  'scaleType' : 'allmaximized'*/
+                  
+                          
+                  
               };
               $scope.graphLevel[myIndex].options = {
                 'title': 'Level',
@@ -829,7 +854,16 @@ return{
                     {'stroke': 'blue'}
                     
                   },
-                  'colors': ['blue']
+                  'colors': ['blue'],
+                   'pointSize': 10,
+                  'zoomStartTime' : new Date(),                  
+                  'displayAnnotations' : true,
+                  'displayAnnotationsFilter' :true,
+                  'annotationsWidth' : 20,
+                  //'scaleColumns' : [1,2],
+                  'allValuesSuffix' : '%',
+                  'scaleType' : 'allmaximized'
+
               };
                    console.log($scope.graphTemprature[myIndex]);
           }); 
