@@ -18,7 +18,9 @@
 	$scope.data = device.all().then
 		(function(data){
 			$scope.data=data;				  	
-			mygraphFactory.setGraph($scope,$filter)
+			mygraphFactory.googleGraph($scope,$filter)
+			//mygraphFactory.nvd31graph($scope,$filter);
+			
 			
 
 			$scope.isLoading =false;

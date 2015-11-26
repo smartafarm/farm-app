@@ -1,4 +1,4 @@
-Chart.types.Line.extend({
+/*Chart.types.Line.extend({
     name: "LineAlt",
     initialize: function (data) {
         if (this.options.yAxisLabel) this.options.scaleLabel = '         ' + this.options.scaleLabel;
@@ -34,3 +34,4 @@ angular.module('chart.js')
     .directive('chartLineAlt', ['ChartJsFactory', function (ChartJsFactory) {
         return new ChartJsFactory('LineAlt');
     }])
+*/

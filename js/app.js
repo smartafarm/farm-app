@@ -4,7 +4,7 @@ var sfarm = angular
 'ui.bootstrap',
 'cgNotify',
 'ngAnimate',
-'chart.js',
+'nvd3',
 'oc.lazyLoad',
 'ui.grid',
 'ui.grid.selection',
@@ -12,7 +12,10 @@ var sfarm = angular
 'checklist-model',
 'ui.grid.resizeColumns',
 'ui.grid.pagination',
-'googlechart'
+'googlechart',
+//'chart.js',
+
+
 ])
 .constant('USER_ROLES', {
   all: '*',
@@ -53,7 +56,7 @@ var sfarm = angular
         
     }
 })
-.config(['ChartJsProvider', function (ChartJsProvider) {
+/*.config(['ChartJsProvider', function (ChartJsProvider) {
     // Configure all charts
     
     ChartJsProvider.setOptions({
@@ -63,7 +66,7 @@ var sfarm = angular
 
 
    
-  }])
+  }])*/
   .config(['$animateProvider', function($animateProvider) {
           $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
       }
