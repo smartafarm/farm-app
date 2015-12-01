@@ -11,13 +11,13 @@
     font-size: 12px;
   
 }
-/* #_AnnotationChart_zoomControlContainer_5-days,
+#_AnnotationChart_zoomControlContainer_5-days,
 #_AnnotationChart_zoomControlContainer_1-hour,
 #_AnnotationChart_zoomControlContainer_3-months,
 #_AnnotationChart_zoomControlContainer_max
  {
     display: none;
-} */
+}
 #tempLabel {
   -webkit-transform: rotate(90deg);
     -moz-transform: rotate(90deg);
