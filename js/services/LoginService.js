@@ -4,8 +4,8 @@
 			var deferred = $q.defer();
 			$http({
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				//url:'http://www.smartafarm.com.au/api/login/authenticate',
-				url:'http://localhost/api/login/authenticate',
+				url:'http://www.smartafarm.com.au/api/login/authenticate',
+				//	url:'http://localhost/api/login/authenticate',
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){
