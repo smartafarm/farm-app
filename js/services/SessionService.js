@@ -12,7 +12,7 @@
 			//	$interval.cancel($scope.timer);
 				var key = sessionStorage.getItem('user');
 				LoginService.destroy(key);
-				sessionStorage.removeItem('user');		
+				sessionStorage.removeItem('user');						
 				sessionStorage.removeItem('reqTok');
 				return;
 			}

@@ -18,6 +18,7 @@
     Notification.error({ title:'Login Failed',message:'Incorrect Credentials' ,delay : 4000 } );
 
     }
+    $rootScope.details = response.data.details;
   
     $state.go('app');
   	},function(response){

@@ -43,14 +43,14 @@ var sfarm = angular
         
         var indidcate = word.value.substring(0, 1);
         if (word.type==='Temp'){
-          var wordValue  = parseFloat(word.value) ;
+          var wordValue  = parseFloat(word.value)/10 ;
           return label + ' : '   + wordValue +' ℃ ';//&#8451  °C
         }else if(word.type==='Level')
         {
-          var wordValue  = parseFloat(word.value) 
+          var wordValue  = parseFloat(word.value)/10 ;
           return label + ' : '   + wordValue + ' % '
         }else{
-          var wordValue  = parseFloat(word.value) ;
+          var wordValue  = parseFloat(word.value)/10 ;
           return label + ' : '   + wordValue 
         }
         

@@ -12,7 +12,10 @@
     "gulp-watch": "^4.3.5",
     "run-sequence": "^1.1.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp-ng-annotate": "^1.1.0",
+    "gulp-ngmin": "^0.3.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

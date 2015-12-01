@@ -60,12 +60,13 @@
     					 <!-- Button placeholder-->
 	    					 <div class="row">
 	    					 	<button
+	    					 	
 	    					 		class="pull-right"
 	    							log-btn
 	    							ng-click="dread = !dread"
 	    							tooltip-trigger="mouseenter"
 	    							tooltip-placement="left"
-	    							uib-tooltip ="{{dread==true ? 'View Log' : 'View Graph'}}"
+	    							uib-tooltip ="{{dread==true ? 'View Graph' : 'View Log'}}"
 	    							tooltip-popup-delay='400'>
 	    							<i ng-class="dread==true ? 'fa fa-line-chart' : 'fa fa-file-text-o'" ></i>
     							</button>
@@ -98,25 +99,30 @@
 		    							<i class="fa fa-times"></i>
 	    							</button>
 					            </p>
+					            </div>
 				            <!--EOF Log Filter Button  placeholder-->
   							<!-- Graph and log placeholder -->
-						 <div ng-show="dread">
-						 	  <div class="row">
-						        <div class="col-md-3">
-
-						        </div>
-				        	</div>
-						 	<div ng-repeat= "reading in device.readings |filter : {dt : getdate(cdate)} " >
+						<div class = "row">
+						 <div ng-show="dread" style="margin-left: 40px; margin-right: 30px;">
+						 	  
+						 	<div ng-repeat= "reading in device.readings |filter : {dt : getdate(cdate)} | orderBy:'-dt' | limitTo:20" >
                                     <devicedata reading = "reading" ></devicedata>
                             </div>
 					   	</div>
 
-					   	<div ng-show="!dread" >					   				   		
-							<google-graph></google-graph>
-							 <!-- <my-graph></my-graph> -->
+					   	<div ng-show="!dread" >					 
+					   		<div ng-show="graphLoading" style="width:20%;margin: 0 auto;">Loading..<i class="fa fa-refresh fa-spin fa-3x" ></i></div>  	
+					   		
+			 		  		<span id="levelLabel" style="float:left;display:block; margin-top: 155px; padding-left: 20px;padding-top: 0px;padding-bottom: 35px;"><strong>Level (%)</strong></span>			   		
+
+								<google-graph style="float:center"></google-graph>
+							
+							<span id="tempLabel" style="float: right; border-style: solid; margin-top: -165px; margin-right: 0px;border-left-width: 0px;border-bottom-width: 0px;border-top-width: 0px;border-right-width: 0px;padding-bottom: 55px;">
+							<strong>Temprature (℃)</strong></span>			
 
 						</div>
-					 </div>
+						</div>
+					 
 
 						<!-- EOF Button placeholder-->
 

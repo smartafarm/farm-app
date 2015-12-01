@@ -2,5 +2,5 @@
 <div class="container" style="padding-top:80px">
 	<h1>Raw Data </h1>
 	<div><button ng-click = "refresh()"> Refresh </button></div>
-	{{rawdata}}
+	<p ng-repeat = "line in rawdata track by $index">{{line}}</p>
 </div>

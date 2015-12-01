@@ -6,6 +6,7 @@ var rename			= require('gulp-rename');
 var uglify			= require('gulp-uglify');
 var runSequence		= require('run-sequence');
 var watch			= require('gulp-watch');
+var ngAnnotate 		= require('gulp-ng-annotate');
 
 /* tasks */
 gulp.task('depsjs', function(){
@@ -30,8 +31,9 @@ gulp.task('depsjs', function(){
 		])// eof gul src
 	.pipe(concat('devdeps.js'))
 	.pipe(gulp.dest('src/js'))
-//	.pipe(uglify())
-//	.pipe(gulp.dest('src/js'))
+	
+	//.pipe(uglify())
+	//.pipe(gulp.dest('src/js'))
 
 })// eof depsjs
 gulp.task('appjs', function(){
@@ -43,9 +45,10 @@ gulp.task('appjs', function(){
 		'js/routes.js'
 		])// eof gul src
 	.pipe(concat('app.js'))
-	.pipe(gulp.dest('src/js'))
-	//.pipe(uglify())
 	//.pipe(gulp.dest('src/js'))
+	.pipe(ngAnnotate())
+	.pipe(uglify())
+	.pipe(gulp.dest('src/js'))
 
 })// eof appjs
 

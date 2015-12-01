@@ -20,7 +20,7 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li uib-dropdown>
-					<a href="#"  uib-dropdown-toggle>{{ userName | ucf }}  <span class="caret"></span></a>
+					<a href="#"  uib-dropdown-toggle>{{ details.fname | ucf }} {{ details.lname | ucf }}<span class="caret"></span></a>
 					<ul class="dropdown-menu" uib-dropdown-menu>
 						<li><a ng-click="logout()" >Logout</a></li>
 					</ul>
