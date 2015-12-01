@@ -46,8 +46,8 @@ gulp.task('appjs', function(){
 		])// eof gul src
 	.pipe(concat('app.js'))
 	//.pipe(gulp.dest('src/js'))
-	.pipe(ngAnnotate())
-	.pipe(uglify())
+	//.pipe(ngAnnotate())
+	//.pipe(uglify())
 	.pipe(gulp.dest('src/js'))
 
 })// eof appjs
@@ -59,8 +59,7 @@ gulp.task('css', function(){
 		'css/angular-notify.css',
 		'bower_components/angular-chart.js/dist/angular-chart.css',
 		'bower_components/angular-ui-grid/ui-grid.min.css',
-		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.css'
-		
+		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.css'		
 		])// eof gul src
 	.pipe(concat('smartafarm.css'))
 	.pipe(gulp.dest('src/css'))

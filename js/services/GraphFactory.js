@@ -7,51 +7,31 @@
   
             
             // Creating Graph Data container
-          
-             $scope.graphTemprature = {};
              $scope.graphLevel = {};
-           
                var myIndex = -1;
-               var temp = {};
                var level = {};
               angular.forEach($scope.data, function(deviceReadings, key){
-              
                 myIndex = myIndex + 1;
-                var addCol =false;
                 // initializing data
-                
-                $scope.graphTemprature[myIndex] = {};
-                $scope.graphTemprature[myIndex]['data'] = {};
                 $scope.graphLevel[myIndex] = {};
                 $scope.graphLevel[myIndex]['data'] = {};
                 //setting coloums
-               $scope.graphTemprature[myIndex].data = {"cols": [
-                  {id: "t", label: "Time", type: "datetime"},    
-                  {id: "t01", label: "T01", type: "number"},                  
-                  {id: "t01", label: "T02", type: "number"}
-                                 
-                  
-              ]}
+              
               $scope.graphLevel[myIndex].data = {"cols": [
                   {id: "t", label: "Time", type: "date"},
                   {id: "t01", label: "T01", type: "number"},
                   {id: "l01", label: "L01", type: "number"},
                   
-                 // {type: 'string', role: 'annotation'},
-                 // {type: 'string', role: 'tooltip'} ,
-                  //{id: "l01", label: "L02", type: "number"}
               ]}
 
                 //initializing rows
                 
-                $scope.graphTemprature[myIndex].data['rows'] = {};
+
                 $scope.graphLevel[myIndex].data['rows'] = {};
 
                 //temp rows for creating data array for graph
                 
-                var c = [];
-                temp["rows"] = [];
-                temp1  = [];
+                var c = [];                
                 level["rows"] = [];
                 
                 var index = -1;
@@ -60,13 +40,7 @@
                   var dt =   new Date(readingData.dt); 
                  
                   dt1 = dt.getDate()  + "/" + dt.getMonth()  + "/" + dt.getFullYear()  + dt.getHours() + ':' +dt.getMinutes();
-                  //console.log(readingData.dt);
                   
-                  //temprature
-                    temp.rows[index]=[];
-                    temp.rows[index]['c'] = []
-                   
-                    temp.rows[index].c.push({'v' : dt }); 
                     //level
                     level.rows[index]=[];
                     level.rows[index]['c'] = []
@@ -82,31 +56,19 @@
 
                 })//eof reading data;
 
-              //push temp array to graph array  
-              $scope.graphTemprature[myIndex].data['rows'] =temp['rows'];
+              //push temp array to graph array                
               $scope.graphLevel[myIndex].data['rows'] =level['rows'];
-              //defining chart type
-              $scope.graphTemprature[myIndex].type = 'AreaChart';
-              $scope.graphLevel[myIndex].type = 'AnnotationChart';
+              //defining chart type              
+              $scope.graphLevel[myIndex].type = 'AnnotationChart';              
               
-              if(addCol ==true){                        
-                $scope.graphTemprature[myIndex].data.cols.push({id: "t02", label: "Temp 02 ", type: "number"})
-                $scope.graphLevel[myIndex].data.cols.push({id: "l02", label: "Level 02 ", type: "number"})              
-              }
               //setting chart options
               var dt = new Date();
              // console.log(dt);
               var dt1 = new Date(dt.getFullYear()  ,dt.getMonth() ,dt.getDate() )
-              
-              
-
-              
               //console.log(dt1);
               $scope.graphLevel[myIndex].options = {
-                'title': 'Level',
-                'crosshair': { 'trigger': 'both' },
-                 "fill": 20,        
-                  
+                'title': 'Level',                
+                 "fill": 20,       
                 "animation" : {
                         'startup' : true,
                         'duration': 400,
@@ -122,32 +84,21 @@
                   'zoomStartTime' : dt1,     
                   'zoomEndTime' : dt  ,           
                   'displayAnnotations' : false,
-                  'displayAnnotationsFilter' :false,
-                  
+                  'displayAnnotationsFilter' :false,                  
                   'displayLegendDots' :false,
                   'scaleColumns' : [1,2],
                   //'allValuesSuffix' : '%',
                   'scaleType' : 'allmaximized',
                   'table':{
                     'sortAscending' :false
-                  },
-                  vAxis:{
-                    'title' :'time'
-                  },
-                  min : 0,
-                 // max : 100,
+                  },                  
+                  min : 0,                 
                   displayLegends :false,
                   legendPosition:'newRow',
                   //scaleFormat : '#\'%\'',
-                  dateFormat:'hh:mm a dd-MM-yy',
-                  select : function(){
-                    console.log('hello');
-                  }
-
-                  
-
+                  dateFormat:'hh:mm a dd-MM-yy'                  
               };
-              
+              console.log($scope.graphLevel[myIndex]);
                
           })}}})  
 
