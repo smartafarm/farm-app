@@ -1,4 +1,5 @@
 .factory('userFactory', ['$http','$q', function($http,$q){
+	//factory to sending and receiving information
 	return {
 		receive : function(api){
 			var deferred = $q.defer();			

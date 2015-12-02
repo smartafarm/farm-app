@@ -1,4 +1,5 @@
 .directive('noClick',function(){
+	//directive to prevent default click to open panel header
 	return{
 		restrict:'A',		
 		

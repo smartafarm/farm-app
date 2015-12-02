@@ -1,4 +1,5 @@
 .factory('UpdateService', ['$http','$q', function($http,$q){
+	//factory to update device status
 	return {
 		deviceStatus : function(api,serverData){
 			var deferred = $q.defer();			

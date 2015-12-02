@@ -1,16 +1,19 @@
 .factory('LoginService', ['$http','$q', function($http,$q){
+	//Factory for user login
 	return {
 		login : function(credentials){
+		//main login function to set user credentials
 			var deferred = $q.defer();
 			$http({
+				//setting headers
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				url:'http://www.smartafarm.com.au/api/login/authenticate',
-				//	url:'http://localhost/api/login/authenticate',
+				url:'http://www.smartafarm.com.au/api/login/authenticate',				
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){
 				
 				if(response){
+								//setting sessions in browser
 								sessionStorage.setItem('user',response.data.id) ;
 								sessionStorage.setItem('reqTok',response.data.token) ;
 
@@ -23,7 +26,9 @@
 			});
 		 	return deferred.promise
 		},
+
 		isAuth : function(token,id){
+		//authorize token on each request			
 			var deferred = $q.defer();
 			$http({
 				url:'http://www.smartafarm.com.au/api/login/validate',
@@ -36,7 +41,9 @@
 			});
 		 	return deferred.promise;
 			},
+
 		destroy : function(key){
+		//destroy token and user credentials
 			var deferred = $q.defer();
 			$http({
 				url:'http://www.smartafarm.com.au/api/login/destroy',

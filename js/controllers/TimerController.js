@@ -1,7 +1,9 @@
 .controller('TimeCtrl', ['$scope','$timeout', function ($scope,$timeout) {
+
+	//Login page timer controller
  	$scope.clock = "loading clock..."; // initialise the time variable
     $scope.tickInterval = 1000 //ms
-
+    //Clocl settings
     var tick = function() {
         $scope.clock = Date.now() // get the current time
         $timeout(tick, $scope.tickInterval); // reset the timer

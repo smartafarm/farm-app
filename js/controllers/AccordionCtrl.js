@@ -13,9 +13,7 @@
 	function($scope,device,Notification,Poller,$rootScope,$timeout,$state,$interval,$filter,mygraphFactory,$sce){
 
 
-	//$scope.flag = true;
-	//$scope.newdata = null;
-	//$scope.graph = [];
+	
 	$scope.isLoading =true;
 	$scope.graphLoading = true;
 	// pulling data from server for devices

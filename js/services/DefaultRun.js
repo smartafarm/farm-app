@@ -6,17 +6,17 @@
 	'$interval',
 function($rootScope,$state,LoginService,sessionService,$http,$interval){	
 	
-	 
+	 // Default run of application
 
 	$rootScope.$on('$stateChangeStart', 
-		function(event, toState, toParams, fromState, fromParams) {
-			
+		//cancel the timer pulling information from server when page is routed from dashboard
+		function(event, toState, toParams, fromState, fromParams) {			
 			var cancelEvents =function(){
 		 	 $interval.cancel($rootScope.timer);
 		 }
 		 cancelEvents();
 	    /*	    
-		Validation
+		Add Authorization token on each request
 		*/
 	    if(toState.name !== 'login'){	    
 	    	var token = sessionStorage.getItem('reqTok');		    	
@@ -29,6 +29,7 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 	    	}
 	    	else 
 	    	{	
+	    		//if no token or bearer found
 	    		event.preventDefault();
 	    		sessionService.destroy('user');
 	    		$http.defaults.headers.common['X-Auth-Token'] = undefined

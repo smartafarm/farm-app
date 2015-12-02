@@ -1,5 +1,7 @@
+//Main application Javascript
 var sfarm = angular
 .module('sfarm', [
+  //dependencies
 'ui.router',
 'ui.bootstrap',
 'cgNotify',
@@ -24,11 +26,12 @@ var sfarm = angular
 })
 
 .config(function($httpProvider) {
-
+  //pushing request interceptor for server
   $httpProvider.interceptors.push('reqInspect');
 })
 .filter('ucf', function()
 {
+    //filter to convert text into sentence case
     return function(word)
     {
         return word.substring(0,1).toUpperCase() + word.slice(1);
@@ -36,6 +39,7 @@ var sfarm = angular
 })
 .filter('valueFilter', function()
 {
+  //filter to display values of readings
     return function(word)
     {
         //console.log(word);
@@ -56,18 +60,8 @@ var sfarm = angular
         
     }
 })
-/*.config(['ChartJsProvider', function (ChartJsProvider) {
-    // Configure all charts
-    
-    ChartJsProvider.setOptions({
-   		scaleBeginAtZero: true
-     
-    });
-
-
-   
-  }])*/
-  .config(['$animateProvider', function($animateProvider) {
-          $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
-      }
-  ]);
+.config(['$animateProvider', function($animateProvider) {
+      //configuartion to animate accordion for UIB ANGULAR BOOTSTRAP
+      $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
+  }
+]);

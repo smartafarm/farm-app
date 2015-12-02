@@ -1,3 +1,5 @@
+//APPLICATION ROUTING SCRIPT
+
 var sfarm =angular.module('sfarm');
 sfarm
 .config(['$stateProvider', '$urlRouterProvider','USER_ROLES',
@@ -22,8 +24,7 @@ sfarm
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
-                templateUrl: 'templates/dashboard.html' ,
-                controller :'DashboardCtrl',
+                templateUrl: 'templates/dashboard.html' ,                
                 parent:'app'
             })
               .state('app.rawdata' ,{
@@ -37,6 +38,7 @@ sfarm
             templateUrl: 'admin/test.html',
             controller:'adminCtrl',
             resolve: { 
+                        //LAZY loading admin scripts 
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('admin/js/app.js');
                         }]
@@ -64,26 +66,5 @@ sfarm
             
               
             })
-            /*.state('app.dashboard.dReadings' ,{
-                url: '/readings',
-                views :{
-                    "display":{
-                        template:'<div ng-repeat= "reading in device.readings"><devicedata reading = "reading" ></devicedata></div>'
-                    }
-                }
-                
-            })
-            .state('app.dashboard.dGraph' ,{
-                url: '/graph',                
-                views:{
-                    "display" :{
-                        template :'this is graph view'
-                    }
-                }
-                
-                           
-                
-            })*/
-            
     }
 ]);

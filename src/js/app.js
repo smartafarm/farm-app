@@ -1,5 +1,7 @@
+//Main application Javascript
 var sfarm = angular
 .module('sfarm', [
+  //dependencies
 'ui.router',
 'ui.bootstrap',
 'cgNotify',
@@ -24,11 +26,12 @@ var sfarm = angular
 })
 
 .config(function($httpProvider) {
-
+  //pushing request interceptor for server
   $httpProvider.interceptors.push('reqInspect');
 })
 .filter('ucf', function()
 {
+    //filter to convert text into sentence case
     return function(word)
     {
         return word.substring(0,1).toUpperCase() + word.slice(1);
@@ -36,6 +39,7 @@ var sfarm = angular
 })
 .filter('valueFilter', function()
 {
+  //filter to display values of readings
     return function(word)
     {
         //console.log(word);
@@ -56,21 +60,13 @@ var sfarm = angular
         
     }
 })
-/*.config(['ChartJsProvider', function (ChartJsProvider) {
-    // Configure all charts
-    
-    ChartJsProvider.setOptions({
-   		scaleBeginAtZero: true
-     
-    });
+.config(['$animateProvider', function($animateProvider) {
+      //configuartion to animate accordion for UIB ANGULAR BOOTSTRAP
+      $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
+  }
+]);
 
-
-   
-  }])*/
-  .config(['$animateProvider', function($animateProvider) {
-          $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
-      }
-  ]);
+//APPLICATION ROUTING SCRIPT
 
 var sfarm =angular.module('sfarm');
 sfarm
@@ -96,8 +92,7 @@ sfarm
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
-                templateUrl: 'templates/dashboard.html' ,
-                controller :'DashboardCtrl',
+                templateUrl: 'templates/dashboard.html' ,                
                 parent:'app'
             })
               .state('app.rawdata' ,{
@@ -111,6 +106,7 @@ sfarm
             templateUrl: 'admin/test.html',
             controller:'adminCtrl',
             resolve: { 
+                        //LAZY loading admin scripts 
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('admin/js/app.js');
                         }]
@@ -138,70 +134,13 @@ sfarm
             
               
             })
-            /*.state('app.dashboard.dReadings' ,{
-                url: '/readings',
-                views :{
-                    "display":{
-                        template:'<div ng-repeat= "reading in device.readings"><devicedata reading = "reading" ></devicedata></div>'
-                    }
-                }
-                
-            })
-            .state('app.dashboard.dGraph' ,{
-                url: '/graph',                
-                views:{
-                    "display" :{
-                        template :'this is graph view'
-                    }
-                }
-                
-                           
-                
-            })*/
-            
     }
 ]);
-/*Chart.types.Line.extend({
-    name: "LineAlt",
-    initialize: function (data) {
-        if (this.options.yAxisLabel) this.options.scaleLabel = '         ' + this.options.scaleLabel;
-
-        Chart.types.Line.prototype.initialize.apply(this, arguments);
-
-        if (this.options.yAxisLabel) this.scale.yAxisLabel = this.options.yAxisLabel;
-    },
-    draw: function () {
-        Chart.types.Line.prototype.draw.apply(this, arguments);
-
-        if (this.scale.yAxisLabel) {
-            var ctx = this.chart.ctx;
-            ctx.save();
-            // text alignment and color
-            ctx.textAlign = "center";
-            ctx.textBaseline = "bottom";
-            ctx.fillStyle = this.options.scaleFontColor;
-            // position
-            var x = this.scale.xScalePaddingLeft * 0.3;
-            var y = this.chart.height / 2;
-            // change origin
-            ctx.translate(x, y)
-            // rotate text
-            ctx.rotate(-90 * Math.PI / 180);
-            ctx.fillText(this.scale.yAxisLabel, 0, 0);
-            ctx.restore();
-        }
-    }
-})
-
-angular.module('chart.js')
-    .directive('chartLineAlt', ['ChartJsFactory', function (ChartJsFactory) {
-        return new ChartJsFactory('LineAlt');
-    }])
-*/
 
 var sfarm =angular.module('sfarm');
 sfarm
 .directive('devicedata',function(){
+	//directive to print data from devices into accordion
 	return{
 		restrict:'E',
     
@@ -216,6 +155,7 @@ sfarm
 
 
 .directive('deviceSwitch',function(){
+	// directive to enable/disable device status
 	return{
 		restrict:'A',	
 		controller:'deviceStatusCtrl',		
@@ -223,6 +163,7 @@ sfarm
 		link : function(scope,ele,attr){
 			
 			ele.bind("click",function(event){	
+			//preventing the derfault click event				
 			 event.preventDefault();
 			 event.stopPropagation();      			
 			})
@@ -233,18 +174,21 @@ sfarm
 			
 
 .directive('friendlyName',function($uibModal){
+	//directive to edit friendly name of the device
+	//triggers a modal
 	return{
 		restrict:'A',		
 		scope:{device : '='}	,		
 		link : function(scope,ele,attr){
 			
 			ele.bind("click",function(event){
-		
+			//open modal
 			$uibModal.open({
 		      animation: true,
 		      templateUrl: 'partials/EditFriendlyModal.php',
 		      controller: 'FriendlyNameEditorCtrl',
 		      resolve:{
+		      	//send data of selected device to controller
 		      	selectedDevice : function(){
 		      		
 		      		var data =scope.$parent.device;
@@ -252,6 +196,7 @@ sfarm
 		      	}
 		      }
 	        });
+	        //prevent default click event
 			 event.preventDefault();
 			 event.stopPropagation();      			
 			})
@@ -261,7 +206,7 @@ sfarm
 }) //eof devicedata
 
 .directive('googleGraph', [function ($scope,$window,$timeout) {
-
+//directive to print google annotation graph
 	return {
 		restrict: 'EA',		
 		templateUrl:'partials/googlegraph.html',
@@ -270,21 +215,25 @@ sfarm
 		
  		
 }])
-
+/*
+* Controller in directive currently for testing
+ */
 
 .controller('testCtrl',  function ($scope,mygraphFactory,$filter,$rootScope,$rootScope) {	
 	
 	    $scope.trigger =function(){
-  	 	//triggering resize fro proper graph display
+  	 	//triggering resize for proper graph display when accordion header is clicked
   			 $rootScope.$emit('resizeMsg');  	 
   }})
 
 
 
 .directive('lastReading',function(){
+	//directive to print last reading on accordion panel header
 	return{
 		restrict:'A',	
 		link : function(scope,ele,attr){	
+			//date comparision for currently available data
 			var dates=[];
 			var readings = scope.data[scope.$index].readings;
 			readings.forEach(function(value,key){
@@ -295,7 +244,8 @@ sfarm
 
 			readings.forEach(function(value,key){	
 
-				if(new Date (value.dt).getTime() === new Date(maxDate).getTime() ){					
+				if(new Date (value.dt).getTime() === new Date(maxDate).getTime() ){		
+					//setting last read for each device			
 					scope.data[scope.$index].lread = value ;			
 				}
 				
@@ -305,20 +255,8 @@ sfarm
 
 }) //eof devicedata
 	
-.directive('logBtn',function(){
-	return{
-		restrict:'A',		
-		
-		link : function(scope,ele,attr){
-
-			ele.bind("click",function(event){		
-			 
-			})
-		}
-	}
-
-}) 
 .directive('noClick',function(){
+	//directive to prevent default click to open panel header
 	return{
 		restrict:'A',		
 		
@@ -333,45 +271,13 @@ sfarm
 
 }) //eof devicedata
 
-.directive('flexibleDiv', function () {
-        return {
-            scope: {
-                opts: '=' 
-            },
-            link: function (scope, element, attr) {
-
-                // Watching height of parent div
-                scope.$watch(function () {
-                    return element.parent(0).height();
-                }, updateHeight);
-
-                // Watching width of parent div
-                scope.$watch(function () {
-                    return element.parent(0).width();
-                }, updateWidth);
-
-                function updateHeight() {
-                    scope.opts.chart.height = element.parent(0).height()-150; //150 custom padding
-                }
-
-                function updateWidth() {
-                    scope.opts.chart.width = element.parent(0).width()-50; //50 custom padding
-                }
-            }
-        }
-    })
-.directive('uibTooltip', function(){
-    return {
-        restrict: 'EA',        
-        link:function(){
-            
-        }
-    }
-})
 .directive('resize', function ($window) {
+    //directive to collapse panel header on window resize
+    //receives horizontal value from html element to trigger collapse
     return function (scope, elm, attr) {
 
         var w = angular.element($window);
+        //when elements are initialized
            if($window.innerWidth < attr.hvalue ){
                 
                     elm.addClass('collapse')
@@ -381,7 +287,7 @@ sfarm
                 }
 
         w.bind('resize', function () {
-            
+        //resize done on the fly            
           if($window.innerWidth < attr.hvalue ){
                 
                     elm.addClass('collapse')
@@ -390,7 +296,7 @@ sfarm
                 {
                     elm.removeClass('collapse')
                 }
-            //scope.$apply();
+            
         });
     }
 })
@@ -409,9 +315,7 @@ sfarm
 	function($scope,device,Notification,Poller,$rootScope,$timeout,$state,$interval,$filter,mygraphFactory,$sce){
 
 
-	//$scope.flag = true;
-	//$scope.newdata = null;
-	//$scope.graph = [];
+	
 	$scope.isLoading =true;
 	$scope.graphLoading = true;
 	// pulling data from server for devices
@@ -479,25 +383,18 @@ sfarm
 	'USER_ROLES',
 	'$rootScope',
   function ($scope,$state,USER_ROLES,$rootScope) {  
+  // Main application controller	
 
   $scope.userRoles = USER_ROLES;
-  $state.go('app.dashboard');  
-  $scope.showModal = false;
+  //default route to dashboard
+  $state.go('app.dashboard'); 
+
+  
 }])
 
 
 
 
-.controller('DashboardCtrl',[
-	'$rootScope',
-	'$scope',
-	'$state',
-	'$interval',
-	'sessionService',
-	'$http',
-	function($rootScope,$scope,$state,$interval,sessionService,$http){
-
-}])
 .controller('deviceStatusCtrl',[
 	'$scope',
 	'UpdateService',
@@ -534,17 +431,24 @@ $scope.statusToggle = function(){
 	'UpdateService',
 	'notify',
 	'$interval',
-function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval) {  
-	
+function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval) { 
+
+	//Device Friendly Name Editor Modal Controller 
+	//Click event initiates a modal via directive
 	$scope.selectedDevice = selectedDevice;
 
   	$scope.ok = function() {    
+  	//Retreiving changes	
   	var data ={"_id" : $scope.selectedDevice._id ,"newname" : $scope.editFname.fname.$modelValue};	  
   	  
+  	  //updating on server
   	  UpdateService.deviceStatus('update/fname',data).then(function(response){
   	  		$scope.selectedDevice.name = $scope.editFname.fname.$modelValue;
+
+  	  		//closing modal and initiating message
 			$uibModalInstance.close();
 			$interval( notify({ message:'Device Name updated for #' + $scope.selectedDevice._id , duration:'10000',position:'right' } ), 1000); 
+
 		},function(response){
 			alert('Update failed');
 		})
@@ -552,6 +456,7 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
 	};
 
 	$scope.cancel = function() {
+		//closing modal on cancel click
 	  $uibModalInstance.dismiss('cancel');
 	};	
   
@@ -571,18 +476,22 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
     password: ''
   };
   
+  //main login page controller. 
   
   $scope.login = function(credentials){
-  	LoginService.login(credentials).then(function(response){
-    if(!response){
-    Notification.error({ title:'Login Failed',message:'Incorrect Credentials' ,delay : 4000 } );
 
+    //Checking credintials
+  	LoginService.login(credentials).then(function(response){
+
+    if(!response){
+    //if no response recevied
+    Notification.error({ title:'Login Failed',message:'Incorrect Credentials' ,delay : 4000 } );
     }
-    //$rootScope.details = response.data.details;
-  
+    
+    //routing to main application on successful login
     $state.go('app');
   	},function(response){
-      console.log(response)   ;
+         //console.log(response)   ;
   		
   	});
   	
@@ -596,14 +505,19 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
 	'sessionService',
 	'$http',
 	function($rootScope,$scope,$state,$interval,sessionService,$http){
+//Navigation bar controller		
 
 	$scope.logout = function(){		
+		//retreiving user to logout
 		var key =sessionStorage.getItem('user') 
 		sessionService.destroy(key)
+		//destroying headers
 		$http.defaults.headers.common['X-Auth-Token'] = undefined;
 		$http.defaults.headers.common['Bearer'] = undefined;
+		//routing to login page
 		$state.go('login',{}, {reload:true});
 	}
+	//retreiving username to display on Navbar
 	var username = sessionStorage.getItem('user');
 	if (username) $scope.userName = username
 	
@@ -612,8 +526,10 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
 }])
 .controller('rawDataCtrl' ,['$scope','userFactory','$state','$rootScope',function ($scope,userFactory,$state,$rootScope) {
 	
+//Temporary controller for raw data from device
 
 $scope.refresh= function(){	
+	//pull data on button click
 	userFactory.receive('fetch/getrawdata').then(function(response){
   			var data = response;        
   			$scope.rawdata = data;  		
@@ -621,12 +537,15 @@ $scope.refresh= function(){
 				console.log(response);
 		});
 }
+//called to receive data when controller initiated
 $scope.refresh();
 }])
 .controller('TimeCtrl', ['$scope','$timeout', function ($scope,$timeout) {
+
+	//Login page timer controller
  	$scope.clock = "loading clock..."; // initialise the time variable
     $scope.tickInterval = 1000 //ms
-
+    //Clocl settings
     var tick = function() {
         $scope.clock = Date.now() // get the current time
         $timeout(tick, $scope.tickInterval); // reset the timer
@@ -643,17 +562,17 @@ $scope.refresh();
 	'$interval',
 function($rootScope,$state,LoginService,sessionService,$http,$interval){	
 	
-	 
+	 // Default run of application
 
 	$rootScope.$on('$stateChangeStart', 
-		function(event, toState, toParams, fromState, fromParams) {
-			
+		//cancel the timer pulling information from server when page is routed from dashboard
+		function(event, toState, toParams, fromState, fromParams) {			
 			var cancelEvents =function(){
 		 	 $interval.cancel($rootScope.timer);
 		 }
 		 cancelEvents();
 	    /*	    
-		Validation
+		Add Authorization token on each request
 		*/
 	    if(toState.name !== 'login'){	    
 	    	var token = sessionStorage.getItem('reqTok');		    	
@@ -666,6 +585,7 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 	    	}
 	    	else 
 	    	{	
+	    		//if no token or bearer found
 	    		event.preventDefault();
 	    		sessionService.destroy('user');
 	    		$http.defaults.headers.common['X-Auth-Token'] = undefined
@@ -679,12 +599,13 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 }])
 
 .factory('device',['$http','$q','reqInspect',function($http,$q,reqInspect){
+    //Factory to recevie user device data and readings based on user
 return{
+
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-                url:'http://www.smartafarm.com.au/api/fetch/getdevices',
-               // url:'http://www.smartafarm.com.au/api/fetch/getdevices',
+                url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
@@ -696,6 +617,9 @@ return{
 		      
    }	
 }])// eof getdevices
+
+//Ajax poller to fetch data
+//current timer 11 seconds
 .factory('Poller', function($http,$q,reqInspect){
                return {
                     poll : function(api){
@@ -716,6 +640,7 @@ return{
 
 
 .factory('mygraphFactory', function()
+  //Factory to prepare graph data for each device
 {
 
  return{
@@ -742,31 +667,31 @@ return{
               ]}
 
                 //initializing rows
-                
-
                 $scope.graphLevel[myIndex].data['rows'] = {};
 
                 //temp rows for creating data array for graph
-                
                 var c = [];                
-                level["rows"] = [];
-                
+                level["rows"] = [];                
                 var index = -1;
+
                 angular.forEach(deviceReadings.readings, function(readingData, keya){ 
                   index =index +1 ; 
-                  var dt =   new Date(readingData.dt); 
-                 
+                  var dt =   new Date(readingData.dt);                  
                   dt1 = dt.getDate()  + "/" + dt.getMonth()  + "/" + dt.getFullYear()  + dt.getHours() + ':' +dt.getMinutes();
-                  
-                    //level
                     level.rows[index]=[];
                     level.rows[index]['c'] = []
+                    //pushing reading date
+                    
                     level.rows[index].c.push({'v' : dt }); 
+                    
                     angular.forEach(readingData.data, function(data, keyb){
                      var sensor= readingData.data.sensorID;                   
                       var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")                
+                    
                       angular.forEach(data.sdata, function(sdata, keyc){ 
+                        //pushing reading data
                         level.rows[index].c.push({'v' : parseFloat(sdata.value)/10});
+                    
                       });// eof sdata
 
                     });//eof data
@@ -780,9 +705,7 @@ return{
               
               //setting chart options
               var dt = new Date();
-             // console.log(dt);
               var dt1 = new Date(dt.getFullYear()  ,dt.getMonth() ,dt.getDate() )
-              //console.log(dt1);
               $scope.graphLevel[myIndex].options = {
                 'title': 'Level',                
                  "fill": 20,       
@@ -803,8 +726,7 @@ return{
                   'displayAnnotations' : false,
                   'displayAnnotationsFilter' :false,                  
                   'displayLegendDots' :false,
-                  'scaleColumns' : [1,2],
-                  //'allValuesSuffix' : '%',
+                  'scaleColumns' : [1,2],             
                   'scaleType' : 'allmaximized',
                   'table':{
                     'sortAscending' :false
@@ -817,182 +739,26 @@ return{
               };
               console.log($scope.graphLevel[myIndex]);
                
-          })}}})  
+          }
+        )}
+}})  
 
-// angular JS chart library function version 1.
-
-/*    angularChart.js:function($scope,$filter){
-            // creating graph value array
-             $scope.labels =[];
-              $scope.series = [['Temprature'],['Level']];  
-              var myIndex = -1;
-              angular.forEach($scope.data, function(deviceReadings, key){      
-                myIndex = myIndex + 1;
-                $scope.graph[myIndex] = [];
-                var temp = {};
-                var level = {};
-                var axisLabels = []; 
-                var series = [];
-                series[0] = [];
-                series[1] = []; 
-                angular.forEach(deviceReadings.readings, function(readingData, keya){    
-                  axisLabels.push($filter('date')(readingData.dt, 'h:mm a'));
-                    angular.forEach(readingData.data, function(data, keyb){
-                      angular.forEach(data.sdata, function(sdata, keyc){
-                      if(sdata.type === 'Temp')
-                        {
-                          if(!temp[sdata.id]){
-                            temp[sdata.id] = []; 
-                            series[0].push(sdata.id);
-                          }
-                          temp[sdata.id].push(parseFloat(sdata.value));
-                        }else if(sdata.type === 'Level')
-                        {
-                          if(!level[sdata.id]){               
-                            level[sdata.id] = []; 
-                            series[1].push(sdata.id)           
-                          }
-                          level[sdata.id].push(parseFloat(sdata.value));
-                        }
-                      });// eof sdata
-                    });//eof data
-                })//eof reading data;
-               $scope.graph[myIndex]['temp'] = [];
-               $scope.graph[myIndex]['level'] = [];
-               $scope.graph[myIndex]['series'] = series;
-               $scope.graph[myIndex]['labels'] = axisLabels;
-               angular.forEach(temp,function(value,key){     
-                $scope.graph[myIndex]['temp'].push(value);     
-               });
-              angular.forEach(level,function(value,key){     
-                $scope.graph[myIndex]['level'].push(value);     
-               });     
-              });
-
-
-              // chart options temprature
-              $scope.chart_options_temp = {
-                  multiTooltipTemplate: function(label) {
-                  return label.datasetLabel + ': ' + label.value;
-                  },
-                  tooltipTemplate: function(label) {
-                  return label.datasetLabel + ' : ' + label.value +' ℃ ';
-                  },
-                  scaleBeginAtZero: false,
-                  yAxisLabel: "My Y Axis Label"
-                  //scale options for chart
-                  /*scaleBeginAtZero: false,
-                  scaleOverride: true,
-                  scaleSteps: Math.ceil((max-start)/step),
-                  scaleStepWidth: step,
-                  scaleStartValue: start
-              }; 
-              $scope.chart_options_level = {
-                  multiTooltipTemplate: function(label) {
-                  return label.datasetLabel + ': ' + label.value;
-                  },
-                  tooltipTemplate: function(label) {
-                  return label.datasetLabel + ' : ' + label.value +' % ';
-                  },
-                  scaleBeginAtZero: false,
-                  yAxisLabel: "My Y Axis Label"
-
-                  //scale options for chart
-                  /*scaleBeginAtZero: false,
-                  scaleOverride: true,
-                  scaleSteps: Math.ceil((max-start)/step),
-                  scaleStepWidth: step,
-                  scaleStartValue: start
-              }; 
-              // clicking dot points event
-              $scope.onClick = function (points, evt) {
-                  console.log(points, evt);
-                };
-              $scope.testShow1= false;
-              //setting graph colours
-              $scope.colours= [{ 
-                // default
-                fillColor: 'rgba(3, 108, 48, 0.2)',
-                pointColor: 'green',
-                strokeColor: 'rgba(47, 132, 71, 0.8)',
-                highlightFill: 'rgba(47, 132, 71, 0.8)',
-                highlightStroke: 'rgba(47, 132, 71, 0.8)'
-                /* "fillColor": "rgba(3, 108, 48, 0.2)",
-                "strokeColor": "rgba(207,100,103,1)",
-                "pointColor": "rgba(220,220,220,1)",
-                "pointStrokeColor": "#fff",
-                "pointHighlightFill": "#fff",
-                "pointHighlightStroke": "rgba(151,187,205,0.8)"
-              }]
-
-    },
-    setValue:function($scope,$filter,myIndex){
-            // creating graph value array
-             $scope.labels =[];
-              $scope.series = [['Temprature'],['Level']];  
-              
-              angular.forEach($scope.data[myIndex], function(deviceReadings, key){                  
-                
-                $scope.graph[myIndex] = [];
-                var temp = {};
-                var level = {};
-                var axisLabels = []; 
-                var series = [];
-                series[0] = [];
-                series[1] = []; 
-                angular.forEach($scope.data[myIndex].readings, function(readingData, keya){   
-                  
-                  axisLabels.push($filter('date')(readingData.dt, 'h:mm a'));
-                    angular.forEach(readingData.data, function(data, keyb){
-                      angular.forEach(data.sdata, function(sdata, keyc){
-                      if(sdata.type === 'Temp')
-                        {
-                          if(!temp[sdata.id]){
-                            temp[sdata.id] = []; 
-                            series[0].push(sdata.id);
-                          }
-                          temp[sdata.id].push(parseFloat(sdata.value));
-                        }else if(sdata.type === 'Level')
-                        {
-                          if(!level[sdata.id]){               
-                            level[sdata.id] = []; 
-                            series[1].push(sdata.id)           
-                          }
-                          level[sdata.id].push(parseFloat(sdata.value));
-                        }
-                      });// eof sdata
-                    });//eof data
-                })//eof reading data;
-               $scope.graph[myIndex]['temp'] = [];
-               $scope.graph[myIndex]['level'] = [];
-               $scope.graph[myIndex]['series'] = series;
-               $scope.graph[myIndex]['labels'] = axisLabels;
-               angular.forEach(temp,function(value,key){     
-                $scope.graph[myIndex]['temp'].push(value);     
-               });
-              angular.forEach(level,function(value,key){     
-                $scope.graph[myIndex]['level'].push(value);     
-               });     
-              });
-
-    },*/
-  
-
-  
- 
 .factory('LoginService', ['$http','$q', function($http,$q){
+	//Factory for user login
 	return {
 		login : function(credentials){
+		//main login function to set user credentials
 			var deferred = $q.defer();
 			$http({
+				//setting headers
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				url:'http://www.smartafarm.com.au/api/login/authenticate',
-				//	url:'http://localhost/api/login/authenticate',
+				url:'http://www.smartafarm.com.au/api/login/authenticate',				
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){
 				
 				if(response){
+								//setting sessions in browser
 								sessionStorage.setItem('user',response.data.id) ;
 								sessionStorage.setItem('reqTok',response.data.token) ;
 
@@ -1005,7 +771,9 @@ return{
 			});
 		 	return deferred.promise
 		},
+
 		isAuth : function(token,id){
+		//authorize token on each request			
 			var deferred = $q.defer();
 			$http({
 				url:'http://www.smartafarm.com.au/api/login/validate',
@@ -1018,7 +786,9 @@ return{
 			});
 		 	return deferred.promise;
 			},
+
 		destroy : function(key){
+		//destroy token and user credentials
 			var deferred = $q.defer();
 			$http({
 				url:'http://www.smartafarm.com.au/api/login/destroy',
@@ -1035,11 +805,13 @@ return{
 }])
 
 .factory('reqInspect',['$injector',
+	//factory to intercept each request
 	function($injector){
 	return{	
-	
+	//intercepting response error
 	 responseError: function(rejection) {
         if (rejection.status === 401) {         
+    	//if response status 401 then route to login and destroy credentials
          var sessionService = $injector.get('sessionService');
          var $http = $injector.get('$http');
          var $state = $injector.get('$state');
@@ -1055,6 +827,7 @@ return{
 }])
 
 .factory('sessionService', ['LoginService','$interval','$rootScope', function(LoginService,$interval,$rootScope){
+	//Factory to set session
 	return {
 			set:function(key,value){
 				return sessionStorage.setItem(key,value);
@@ -1065,7 +838,7 @@ return{
 			destroy:function(){
 				//cancelling the update timer
 				$rootScope.$broadcast('timerEvent:stopped');
-			//	$interval.cancel($scope.timer);
+				//destroying the values
 				var key = sessionStorage.getItem('user');
 				LoginService.destroy(key);
 				sessionStorage.removeItem('user');						
@@ -1076,6 +849,7 @@ return{
 	
 }])
 .factory('UpdateService', ['$http','$q', function($http,$q){
+	//factory to update device status
 	return {
 		deviceStatus : function(api,serverData){
 			var deferred = $q.defer();			
@@ -1094,6 +868,7 @@ return{
 		}
 }])
 .factory('userFactory', ['$http','$q', function($http,$q){
+	//factory to sending and receiving information
 	return {
 		receive : function(api){
 			var deferred = $q.defer();			

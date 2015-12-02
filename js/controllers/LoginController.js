@@ -11,18 +11,22 @@
     password: ''
   };
   
+  //main login page controller. 
   
   $scope.login = function(credentials){
-  	LoginService.login(credentials).then(function(response){
-    if(!response){
-    Notification.error({ title:'Login Failed',message:'Incorrect Credentials' ,delay : 4000 } );
 
+    //Checking credintials
+  	LoginService.login(credentials).then(function(response){
+
+    if(!response){
+    //if no response recevied
+    Notification.error({ title:'Login Failed',message:'Incorrect Credentials' ,delay : 4000 } );
     }
-    //$rootScope.details = response.data.details;
-  
+    
+    //routing to main application on successful login
     $state.go('app');
   	},function(response){
-      console.log(response)   ;
+         //console.log(response)   ;
   		
   	});
   	
