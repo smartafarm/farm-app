@@ -6,7 +6,6 @@ var sfarm = angular
 'ui.bootstrap',
 'cgNotify',
 'ngAnimate',
-'nvd3',
 'oc.lazyLoad',
 'ui.grid',
 'ui.grid.selection',
@@ -15,7 +14,9 @@ var sfarm = angular
 'ui.grid.resizeColumns',
 'ui.grid.pagination',
 'googlechart',
-//'chart.js',
+'ngMaterial',
+'ngAria',
+'angularUtils.directives.dirPagination'
 
 
 ])
@@ -92,7 +93,8 @@ sfarm
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
-                templateUrl: 'templates/dashboard.html' ,                
+                templateUrl: 'templates/dashboard.html' ,
+                controller:'dashboardMasterCtrl'  ,               
                 parent:'app'
             })
               .state('app.rawdata' ,{
@@ -154,6 +156,16 @@ sfarm
 
 
 
+.directive('devicePanel', [function () {
+	return {
+		restrict: 'E',
+		templateUrl:'partials/devicePanel.html',
+		
+		link:function(scope,elm,attr){
+			
+		}
+	};
+}])
 .directive('deviceSwitch',function(){
 	// directive to enable/disable device status
 	return{
@@ -205,12 +217,20 @@ sfarm
 
 }) //eof devicedata
 
-.directive('googleGraph', [function ($scope,$window,$timeout) {
+.directive('googleGraph', [function ($scope) {
 //directive to print google annotation graph
 	return {
 		restrict: 'EA',		
 		templateUrl:'partials/googlegraph.html',
-        controller : 'testCtrl'
+        controller : 'testCtrl',
+        link:function(scope,attr,elm,testCtrl){
+        	if(scope.device.readings){
+                        
+        		scope.getGraph();
+        	}else{
+        		
+        	}
+        }
 	}
 		
  		
@@ -220,11 +240,7 @@ sfarm
  */
 
 .controller('testCtrl',  function ($scope,mygraphFactory,$filter,$rootScope,$rootScope) {	
-	
-	    $scope.trigger =function(){
-  	 	//triggering resize for proper graph display when accordion header is clicked
-  			 $rootScope.$emit('resizeMsg');  	 
-  }})
+})
 
 
 
@@ -233,23 +249,26 @@ sfarm
 	return{
 		restrict:'A',	
 		link : function(scope,ele,attr){	
-			//date comparision for currently available data
-			var dates=[];
-			var readings = scope.data[scope.$index].readings;
-			readings.forEach(function(value,key){
-				dates.push(new Date(value.dt));
-			})
-			var maxDate=Math.max.apply(null,dates);
-			scope.data[scope.$index].lread =new Date(maxDate);			
-
-			readings.forEach(function(value,key){	
-
-				if(new Date (value.dt).getTime() === new Date(maxDate).getTime() ){		
-					//setting last read for each device			
-					scope.data[scope.$index].lread = value ;			
-				}
+			//date comparision for currently available 
+			
+			scope.$watch('device', function(){
+				var dates=[];
+						var readings = scope.device.readings;
+						readings.forEach(function(value,key){
+							dates.push(new Date(value.dt));
+						})
+						var maxDate=Math.max.apply(null,dates);
+						scope.device.lread =new Date(maxDate);			
+			
+						readings.forEach(function(value,key){	
+			
+							if(new Date (value.dt).getTime() === new Date(maxDate).getTime() ){		
+								//setting last read for each device			
+								scope.device.lread = value ;			
+							}
+						})
 				
-			})
+			},true)
 		}
 	}
 
@@ -287,6 +306,7 @@ sfarm
                 }
 
         w.bind('resize', function () {
+            
         //resize done on the fly            
           if($window.innerWidth < attr.hvalue ){
                 
@@ -429,25 +449,33 @@ $scope.statusToggle = function(){
 	'$uibModalInstance',
 	'selectedDevice',
 	'UpdateService',
-	'notify',
+	'Notification',
 	'$interval',
-function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval) { 
+function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$interval) { 
 
 	//Device Friendly Name Editor Modal Controller 
 	//Click event initiates a modal via directive
+	$scope.sensorUpdate =[];
 	$scope.selectedDevice = selectedDevice;
 
   	$scope.ok = function() {    
   	//Retreiving changes	
-  	var data ={"_id" : $scope.selectedDevice._id ,"newname" : $scope.editFname.fname.$modelValue};	  
-  	  
-  	  //updating on server
-  	  UpdateService.deviceStatus('update/fname',data).then(function(response){
+  	var data ={"_id" : $scope.selectedDevice._id ,"newname" : $scope.editFname.fname.$modelValue , "sensor" : $scope.sensorUpdate};	    	
+  	
+  	
+  	//updating on server
+  	 UpdateService.deviceStatus('update/fname',data).then(function(response){
   	  		$scope.selectedDevice.name = $scope.editFname.fname.$modelValue;
+  	  		selectedDevice.sensor.forEach(function(value,key){
+		  	  for(i=0;i<$scope.sensorUpdate.length;i++){
+		  	  	if(value.id == $scope.sensorUpdate[i].id)
+		  	  		value.fname = $scope.sensorUpdate[i].fname;
+		  	   }
+		  	})
 
   	  		//closing modal and initiating message
 			$uibModalInstance.close();
-			$interval( notify({ message:'Device Name updated for #' + $scope.selectedDevice._id , duration:'10000',position:'right' } ), 1000); 
+			Notification.success({ message:'Update successful' , delay:4000 })
 
 		},function(response){
 			alert('Update failed');
@@ -457,10 +485,11 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
 
 	$scope.cancel = function() {
 		//closing modal on cancel click
+		
 	  $uibModalInstance.dismiss('cancel');
 	};	
   
-
+	
 }])
 
 .controller('LoginCtrl',[
@@ -479,7 +508,7 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
   //main login page controller. 
   
   $scope.login = function(credentials){
-
+    
     //Checking credintials
   	LoginService.login(credentials).then(function(response){
 
@@ -498,6 +527,63 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,notify,$interval
   }
 }])
 
+.controller('dashboardMasterCtrl', [
+	'$scope',
+	'device',
+	'$rootScope',
+	'mygraphFactory',
+	'$filter',
+	'$window',
+ function ($scope,device,$rootScope,mygraphFactory,$filter,$window) {
+ 	
+ 	$scope.listData = [];
+	$scope.isLoading = true;	
+	$scope.graphLoading = true;
+	$scope.changeCall  = true;
+	device.all().then(function(data){
+		$scope.data = data;
+		$scope.isLoading = false;
+		$scope.device = $scope.data[0]
+		
+		
+	})
+  $scope.graphready = function(test){
+  				
+				$scope.graphLoading = false;			
+				if($scope.changeCall){
+					//if device is changed resize is called to adjust graph correctly
+					$scope.trigger();
+					$scope.changeCall = false;
+				}
+                };
+$scope.getGraph = function(){	
+	//variable to trigger the graph resize message
+	$scope.changeCall = true
+
+	if($scope.device.readings.length > 0) 
+		{
+			mygraphFactory.getGraph($scope).then(function(){		
+			})
+			
+		}
+
+}
+	    $scope.trigger =function(){
+  	 	//triggering resize for proper graph display when accordion header is clicked
+  			 $rootScope.$emit('resizeMsg');  	 
+  }
+$scope.getdate = function (MyDate) {
+   	if(MyDate){
+   		MyDate =  MyDate.getFullYear() +'-'+
+   			('0' + (MyDate.getMonth()+1)).slice(-2) + '-' +
+   			('0' + MyDate.getDate()).slice(-2)
+   	
+   	    return MyDate;
+   	}
+
+  };
+  
+}])
 .controller('NavCtrl', ['$rootScope',
 	'$scope',
 	'$state',
@@ -586,7 +672,7 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 	    	else 
 	    	{	
 	    		//if no token or bearer found
-	    		event.preventDefault();
+	    		event.preventDefault();	    		
 	    		sessionService.destroy('user');
 	    		$http.defaults.headers.common['X-Auth-Token'] = undefined
 	    		$http.defaults.headers.common['Bearer'] = undefined   			    			    
@@ -605,7 +691,8 @@ return{
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-                url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+                //url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+                url:'http://localhost/api/fetch/getdevices',   
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
@@ -639,12 +726,152 @@ return{
 
 
 
-.factory('mygraphFactory', function()
+.factory('mygraphFactory', function($q)
   //Factory to prepare graph data for each device
 {
 
  return{
-  
+     getGraph:function($scope){   
+    
+       // Creating Graph Data container
+        var deferred = $q.defer();
+      
+             $scope.graph = {};
+               var myIndex = -1;
+               var level = {};
+               var sensor ='a' ;
+               var checksensor = [];
+               var hit = false;
+               var info ;
+                myIndex = myIndex + 1;
+                // initializing data
+                $scope.graph = {};
+                
+
+                //initializing rows
+                
+
+                //temp rows for creating data array for graph
+                             
+                var index = []
+
+                angular.forEach($scope.device.readings, function(readingData, keya){ 
+                  
+                    angular.forEach(readingData.data, function(data, keyb){
+                    
+                     sensor = data.sensorID; 
+                                       
+                      if(checksensor.indexOf(sensor) == -1){   
+                          index[sensor] = -1;
+                          checksensor.push (sensor)     ;
+                          level[sensor] = [];               ;
+                          level[sensor]["rows"] = [];
+                          $scope.graph[sensor] = {};
+                          info = {};
+                          /*$scope.graph[sensor]['gid'] = sensor*/
+                          
+                          $scope.device.sensor.forEach(function(sensorValue,key){
+                            if(sensor == sensorValue.id){
+                              info = sensorValue;
+                              hit = true;
+                            }
+                          
+                          })
+                          
+                          if(hit){
+                            $scope.graph[sensor]['info'] = info;
+                            hit =false;
+                          }else
+                          {
+                            $scope.graph[sensor]['info'] = {'id': sensor , 'fname' : 'Sensor info unavailable'};
+                          }
+                          
+                          //console.log($scope.graph);
+                          $scope.graph[sensor]['data'] = {};
+                            //setting coloums
+                          
+                          $scope.graph[sensor].data = {"cols": [
+                              {id: "t", label: "Time", type: "date"},
+                              {id: "t01", label: "T01", type: "number"},
+                              {id: "l01", label: "L01", type: "number"},
+                              
+                          ]}
+                          $scope.graph[sensor].data['rows'] = {};
+                                             
+                          
+                           $scope.graph[sensor].type = 'AnnotationChart';              
+              
+                          //setting chart options
+                          var startDate = new Date();
+                          var dt1 = new Date(startDate.getFullYear()  ,startDate.getMonth() ,startDate.getDate() )
+                          $scope.graph[sensor].options = {
+                            'title': 'Level',                
+                             "fill": 20,       
+                            "animation" : {
+                                    'startup' : true,
+                                    'duration': 400,
+                                   'easing': 'inAndOut',                      
+                              },
+                              "chartArea" :{
+                                'backgroundColor' :
+                                {'stroke': 'blue'}
+                                
+                              },
+                              'colors': ['blue','green'],
+                               'pointSize': 10,
+                              'zoomStartTime' : dt1,     
+                              'zoomEndTime' : startDate  ,           
+                              'displayAnnotations' : false,
+                              'displayAnnotationsFilter' :false,                  
+                              'displayLegendDots' :false,
+                              'scaleColumns' : [1,2],             
+                              'scaleType' : 'allmaximized',
+                              'table':{
+                                'sortAscending' :false
+                              },                  
+                              min : 0,                 
+                              displayLegends :false,
+                              legendPosition:'newRow',
+                              //scaleFormat : '#\'%\'',
+                              dateFormat:'hh:mm a dd-MM-yy'                  
+                          };
+                                                     
+                            
+                          
+                      }
+                     // debugger;
+                      var dt =   new Date(readingData.dt); 
+                      index[sensor] = index[sensor] + 1 ;
+                      level[sensor].rows[index[sensor]]=[];
+                      level[sensor].rows[index[sensor]]['c'] = []
+                            //pushing reading date
+                            
+                      level[sensor].rows[index[sensor]].c.push({'v' : dt }); 
+                      var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")                
+                    
+                      angular.forEach(data.sdata, function(sdata, keyc){ 
+                        //pushing reading data
+                        level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)/10});
+                    
+                      });// eof sdata
+
+                    });//eof data
+
+                })//eof reading data;
+              
+              //push temp array to graph[sensor] array                
+              checksensor.forEach(function(value,key){
+                $scope.graph[value].data['rows'] =level[value]['rows'];  
+              })
+             deferred.resolve();
+             
+         return deferred.promise;   
+              //defining chart type              
+             
+             
+              
+
+  },
     googleGraph:function($scope,$filter){
   
             
@@ -740,7 +967,103 @@ return{
               console.log($scope.graphLevel[myIndex]);
                
           }
-        )}
+        )},
+ /* getGraph:function($scope){
+    console.log($scope.data.indexOf($scope.device._id));
+      $scope.trigger();
+       // Creating Graph Data container
+             $scope.graph = {};
+               var myIndex = -1;
+               var level = {};
+              
+                myIndex = myIndex + 1;
+                // initializing data
+                $scope.graph = {};
+                $scope.graph['data'] = {};
+                //setting coloums
+              
+              $scope.graph.data = {"cols": [
+                  {id: "t", label: "Time", type: "date"},
+                  {id: "t01", label: "T01", type: "number"},
+                  {id: "l01", label: "L01", type: "number"},
+                  
+              ]}
+
+                //initializing rows
+                $scope.graph.data['rows'] = {};
+
+                //temp rows for creating data array for graph
+                var c = [];                
+                level["rows"] = [];                
+                var index = -1;
+
+                angular.forEach($scope.device.readings, function(readingData, keya){ 
+                  index =index +1 ; 
+                  var dt =   new Date(readingData.dt);                  
+                  dt1 = dt.getDate()  + "/" + dt.getMonth()  + "/" + dt.getFullYear()  + dt.getHours() + ':' +dt.getMinutes();
+                    level.rows[index]=[];
+                    level.rows[index]['c'] = []
+                    //pushing reading date
+                    
+                    level.rows[index].c.push({'v' : dt }); 
+                    
+                    angular.forEach(readingData.data, function(data, keyb){
+                     var sensor= readingData.data.sensorID;                   
+                      var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2})., "$1")                
+                    
+                      angular.forEach(data.sdata, function(sdata, keyc){ 
+                        //pushing reading data
+                        level.rows[index].c.push({'v' : parseFloat(sdata.value)/10});
+                    
+                      });// eof sdata
+
+                    });//eof data
+
+                })//eof reading data;
+
+              //push temp array to graph array                
+              $scope.graph.data['rows'] =level['rows'];
+              //defining chart type              
+              $scope.graph.type = 'AnnotationChart';              
+              
+              //setting chart options
+              var dt = new Date();
+              var dt1 = new Date(dt.getFullYear()  ,dt.getMonth() ,dt.getDate() )
+              $scope.graph.options = {
+                'title': 'Level',                
+                 "fill": 20,       
+                "animation" : {
+                        'startup' : true,
+                        'duration': 400,
+                       'easing': 'inAndOut',                      
+                  },
+                  "chartArea" :{
+                    'backgroundColor' :
+                    {'stroke': 'blue'}
+                    
+                  },
+                  'colors': ['blue','green'],
+                   'pointSize': 10,
+                  'zoomStartTime' : dt1,     
+                  'zoomEndTime' : dt  ,           
+                  'displayAnnotations' : false,
+                  'displayAnnotationsFilter' :false,                  
+                  'displayLegendDots' :false,
+                  'scaleColumns' : [1,2],             
+                  'scaleType' : 'allmaximized',
+                  'table':{
+                    'sortAscending' :false
+                  },                  
+                  min : 0,                 
+                  displayLegends :false,
+                  legendPosition:'newRow',
+                  //scaleFormat : '#\'%\'',
+                  dateFormat:'hh:mm a dd-MM-yy'                  
+              };
+
+
+  }*/
+
 }})  
 
 .factory('LoginService', ['$http','$q', function($http,$q){
@@ -761,10 +1084,11 @@ return{
 								//setting sessions in browser
 								sessionStorage.setItem('user',response.data.id) ;
 								sessionStorage.setItem('reqTok',response.data.token) ;
-
+								
+								
 							}
-			
-				deferred.resolve(response)
+					deferred.resolve(response);
+				
 			},function(reject){
 				
 				deferred.reject(reject);
@@ -791,11 +1115,12 @@ return{
 		//destroy token and user credentials
 			var deferred = $q.defer();
 			$http({
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				url:'http://www.smartafarm.com.au/api/login/destroy',
 				method:'POST',
 				data: {'user' : key }
 			}).then(function(response){
-				deferred.resolve(response.data);
+				deferred.resolve();
 			},function(response){
 				 deferred.reject("Failed");
 			});
@@ -840,7 +1165,8 @@ return{
 				$rootScope.$broadcast('timerEvent:stopped');
 				//destroying the values
 				var key = sessionStorage.getItem('user');
-				LoginService.destroy(key);
+				if(key)
+				{LoginService.destroy(key);}
 				sessionStorage.removeItem('user');						
 				sessionStorage.removeItem('reqTok');
 				return;
@@ -854,8 +1180,8 @@ return{
 		deviceStatus : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
+				url:'http://localhost/api/'+api,
 				//url:'http://www.smartafarm.com.au/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

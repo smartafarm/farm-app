@@ -30,7 +30,7 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 	    	else 
 	    	{	
 	    		//if no token or bearer found
-	    		event.preventDefault();
+	    		event.preventDefault();	    		
 	    		sessionService.destroy('user');
 	    		$http.defaults.headers.common['X-Auth-Token'] = undefined
 	    		$http.defaults.headers.common['Bearer'] = undefined   			    			    

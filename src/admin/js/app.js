@@ -1,4 +1,4 @@
-angular.module("sfarm")
+angular.module('sfarm')
 .directive('addUser',function($uibModal){
 	return{
 		restrict:'A',					
@@ -65,7 +65,7 @@ angular.module("sfarm")
 
 }
 })
-
+angular.module('sfarm')
 .controller('addUserCtrl',[
 	'$scope',
 	'$uibModalInstance',	

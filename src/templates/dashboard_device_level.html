@@ -1,0 +1,143 @@
+<ng-include src = "'templates/nav.html'"> </ng-include>
+<div class="container" style="padding-top:80px">
+
+	<h2>Dashboard</h2><br>
+	
+	<div class="row" ng-model="data">
+		<div class="col-md-12" id="device-data" ng-model="data">
+			<div ng-controller="uib-accordion">
+			<div ng-if="isLoading"><i class="fa fa-refresh fa-spin fa-5x"></i></div>
+				<div ng-repeat="device in data" id="{{device._id}}">
+					<uib-accordion close-others="oneAtATime">
+						<uib-accordion-group>
+						<!-- Device Panel Header placeholder-->
+						 <uib-accordion-heading>
+        					<span ng-click="trigger($window)" test-directive1>{{ device.name }}</span>
+							
+        					<div class="pull-right"  no-click>
+
+								<span resize hvalue ="576" last-reading style="cursor: default; font-size: 75%; margin-top:-14px;margin-right: 15px;" >   
+								<i> <span style="color:MediumBlue">Last Reading</span>
+								<span ng-class="{'fa fa-spinner fa-spin': data[$index].lread.dt === undefined}">{{ data[$index].lread.dt | date:'dd-MM-yyyy h:mm a' }}&nbsp
+								<span ng-repeat= "sensor in data[$index].lread.data"> <i><strong style="color:green">{{sensor.sensorID }}</strong></i> 
+								<span ng-repeat= "sensorData in sensor.sdata"> {{sensorData | valueFilter}}</span>
+								</span>	
+								</span> 
+								</i>
+								</span>
+
+	    						<span  resize hvalue ="406" style="cursor: default; font-size: 75%; margin-top:-14px;" >  
+	    						<i>Serial No:{{ device._id }} </i>
+	    						</span>	    						
+								
+    							<span
+									class="fa fa-pencil-square-o "
+									tooltip-trigger="mouseenter"
+									tooltip-placement="left"
+									uib-tooltip ="Edit Device Name"
+									tooltip-popup-delay='400' id="{{device._id}}"
+									style="margin-left:10px ;margin right:10px"
+									ng-if="device.func  && device.func.indexOf('D01') != -1 "
+									friendly-name >
+    							</span>
+
+    							<span device-switch
+	    							ng-class="device.Status==1 ? 'fa fa-toggle-on fa-lg' : 'fa fa-toggle-off fa-lg'"
+	    							style="margin-top:-6px ;margin-left:10px ;color:{{device.Status==1 ? 'green' : 'red'}}"
+	    							ng-click="statusToggle()"
+	    							tooltip-trigger="mouseenter"
+	    							tooltip-placement="right"
+	    							ng-if="device.func  && device.func.indexOf('D02') != -1  "
+	    							uib-tooltip ="{{device.Status==1 ? 'Active' : 'Inactive'}}"
+	    							tooltip-popup-delay='400'
+    							 >
+    							</span>
+    							
+        					</div>
+    					 </uib-accordion-heading>
+    					  <!-- EOF Panel Header placeholder-->
+
+    					 <!-- Button placeholder-->
+	    					 <div class="row">
+	    					 	<button
+	    					 	
+	    					 		class="pull-right"
+	    							log-btn
+	    							ng-click="dread = !dread"
+	    							tooltip-trigger="mouseenter"
+	    							tooltip-placement="left"
+	    							uib-tooltip ="{{dread==true ? 'View Graph' : 'View Log'}}"
+	    							tooltip-popup-delay='400'>
+	    							<i ng-class="dread==true ? 'fa fa-line-chart' : 'fa fa-file-text-o'" ></i>
+    							</button>
+							<!-- Log Filter Button  placeholder-->
+    							<p class="input-group">
+						            <button
+										uib-datepicker-popup="dd-MM-yyyy"
+										ng-model="cdate"
+										is-open="picker.open"
+										ng-click = "picker.open = true"
+										max-date="maxDate"
+										datepicker-options="dateOptions"
+										ng-required="true"
+										close-text="Close"
+										class="input-md"
+										tooltip-trigger="mouseenter"
+										tooltip-placement="left"
+										uib-tooltip ="Filter"
+										tooltip-popup-delay='400'
+										ng-show="!cdate && dread">
+		    							<i class="fa fa-calendar-check-o"></i>
+		    						</button>
+							       	<button
+							       		ng-click ="cdate=undefined"
+								        tooltip-trigger="mouseenter"
+		    							tooltip-placement="right"
+		    							uib-tooltip ="Clear Filter"
+		    							tooltip-popup-delay='400'
+		    							ng-show = "cdate && dread">
+		    							<i class="fa fa-times"></i>
+	    							</button>
+					            </p>
+					            </div>
+				            <!--EOF Log Filter Button  placeholder-->
+  							<!-- Graph and log placeholder -->
+						<div class = "row">
+						 <div ng-show="dread" style="margin-left: 40px; margin-right: 30px;">
+						 	  
+						 	<div ng-repeat= "reading in device.readings |filter : {dt : getdate(cdate)} | orderBy:'-dt' | limitTo:20" >
+                                    <devicedata reading = "reading" ></devicedata>
+                            </div>
+					   	</div>
+
+					   	<div ng-show="!dread" >					 
+					   		<div ng-show="graphLoading" style="width:20%;margin: 0 auto;">Loading..<i class="fa fa-refresh fa-spin fa-3x" ></i></div>  	
+					   		
+			 		  		<span id="levelLabel" style="float:left;display:block; margin-top: 155px; padding-left: 20px;padding-top: 0px;padding-bottom: 35px;"><strong>Level (%)</strong></span>			   		
+
+								<google-graph style="float:center"></google-graph>
+							
+							<span id="tempLabel" style="float: right; border-style: solid; margin-top: -165px; margin-right: 0px;border-left-width: 0px;border-bottom-width: 0px;border-top-width: 0px;border-right-width: 0px;padding-bottom: 55px;">
+							<strong>Temprature (℃)</strong></span>			
+
+						</div>
+						</div>
+					 
+
+						<!-- EOF Button placeholder-->
+
+
+			         
+					</uib-accordion>
+
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<!--
+	-->

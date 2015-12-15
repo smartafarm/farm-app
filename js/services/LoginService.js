@@ -16,10 +16,11 @@
 								//setting sessions in browser
 								sessionStorage.setItem('user',response.data.id) ;
 								sessionStorage.setItem('reqTok',response.data.token) ;
-
+								
+								
 							}
-			
-				deferred.resolve(response)
+					deferred.resolve(response);
+				
 			},function(reject){
 				
 				deferred.reject(reject);
@@ -46,11 +47,12 @@
 		//destroy token and user credentials
 			var deferred = $q.defer();
 			$http({
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				url:'http://www.smartafarm.com.au/api/login/destroy',
 				method:'POST',
 				data: {'user' : key }
 			}).then(function(response){
-				deferred.resolve(response.data);
+				deferred.resolve();
 			},function(response){
 				 deferred.reject("Failed");
 			});

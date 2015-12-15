@@ -1,3 +1,4 @@
+angular.module('sfarm')
 .directive('addUser',function($uibModal){
 	return{
 		restrict:'A',					

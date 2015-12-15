@@ -1,7 +1,39 @@
 <div class ="row" >
+	
 
-	<h4>S01</h4>
+		<div ng-repeat = "graphData in graph">
+		<!-- Sensor Panel Div -->
+		<div class="row">
+			<div class="col-xs-10 col-xs-offset-1 col-md-10 col-md-offset-1 " style="display:block">
+				<div class="panel panel-default" style="margin-top: 10px;margin-bottom:10px " id="sensorbar">
+				  <div class="panel-heading" id="sensorbar">	  	
+				    <h3 class="panel-title">{{graphData.info.fname}}</h3>
+				    <div class="pull-right"  no-click style="margin-top:-18px">
+						<span  resize hvalue ="444" style="font-size: 75%; margin-top:-14px;" >  
+						<i>Sensor # :</i>
+						</span>	  
+						<span  style="font-size: 75%; margin-top:-14px;" >  
+						<i>{{graphData.info.id}} </i>
+						</span>	  						
+					</div>
+		  			</div>	  
+				</div>
+			</div>
+		</div>
+		
 	<!-- Google Graph Div -->
-	<div google-chart chart="graphLevel[$index]" style= "width:85%; height:300px" on-ready="graphready(chartWrapper)" ></div>
+		<div class="row">
+			<!-- <div style="margin-left: 100px;"><h4 style="margin-bottom:10px;margin-top:5px" >{{graphData.gid}}</h4></div> -->
+			<span id="levelLabel" style="float:left;display:block; margin-top: 155px; padding-left: 50pxpadding-bottom: 50px;"><strong>Level (%)</strong></span>			   		
+				
+				<div google-chart chart="graphData" style= "width:85%; height:300px" on-ready="graphready(chartWrapper)"  ></div>
+			
+			<span id="tempLabel" style="float: right; border-style: solid; margin-top: -165px; margin-right: 0px;border-left-width: 0px;border-bottom-width: 0px;border-top-width: 0px;border-right-width: 0px;padding-bottom: 30px;">
+				<strong>Temprature (℃)</strong></span>
+			<div style="margin-bottom: 50px;"></div>
+			</div>
+			
+		</div>
+		
 
 </div>

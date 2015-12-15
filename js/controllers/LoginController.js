@@ -14,7 +14,7 @@
   //main login page controller. 
   
   $scope.login = function(credentials){
-
+    
     //Checking credintials
   	LoginService.login(credentials).then(function(response){
 

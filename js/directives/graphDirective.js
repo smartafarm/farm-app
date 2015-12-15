@@ -1,9 +1,17 @@
-.directive('googleGraph', [function ($scope,$window,$timeout) {
+.directive('googleGraph', [function ($scope) {
 //directive to print google annotation graph
 	return {
 		restrict: 'EA',		
 		templateUrl:'partials/googlegraph.html',
-        controller : 'testCtrl'
+        controller : 'testCtrl',
+        link:function(scope,attr,elm,testCtrl){
+        	if(scope.device.readings){
+                        
+        		scope.getGraph();
+        	}else{
+        		
+        	}
+        }
 	}
 		
  		
@@ -13,10 +21,6 @@
  */
 
 .controller('testCtrl',  function ($scope,mygraphFactory,$filter,$rootScope,$rootScope) {	
-	
-	    $scope.trigger =function(){
-  	 	//triggering resize for proper graph display when accordion header is clicked
-  			 $rootScope.$emit('resizeMsg');  	 
-  }})
+})
 
 

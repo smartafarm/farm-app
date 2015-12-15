@@ -1,3 +1,125 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+ /*  background-image: transparent url(../img/loginBackground.jpg) ;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-attachment: fixed;  */ 
+  
+}
+.footer {
+  position: fixed;
+  bottom:0px;
+  width: 100%;
+  /* clear:both; */
+  /* Set the fixed height of the footer here */
+  height: 40px;
+  background-color: #424040;
+}
+.nav{
+  border-color: #000;
+}
+
+#background {
+    /* position: fixed; 
+    top: 0;
+    left: 0;*/
+    width: 100%;
+    height: 100%;
+    background: transparent url(../img/loginBackground.jpg) ;
+    /* background-repeat: no-repeat;
+    background-attachment: fixed;    
+    background-size: 100% 100%; */
+  
+}
+#menubar
+{
+  height: 40px;  
+  margin: 0 auto;
+  background: transparent url(../img/menu_pattern.jpg) repeat;
+  background-size: 100% 100%;
+  border-radius: 15px 15px 15px 15px;
+  -moz-border-radius: 15px 15px 15px 15px;
+  -webkit-border: 15px 15px 15px 15px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+
+    color: #000;
+  }
+  #sensorbar
+{
+  height: 40px;  
+  margin: 0 auto;
+  background: transparent url(../img/sensor_pattern.jpg) repeat;
+  background-size: 100% 100%;
+  border-radius: 15px 15px 15px 15px;
+  -moz-border-radius: 15px 15px 15px 15px;
+  -webkit-border: 15px 15px 15px 15px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+
+    color: #000;
+  }
+.jumbotron 
+{
+ 
+  background: transparent url(../img/pattern.jpg) repeat;
+  background-size: 100% 100%;
+  border-radius: 15px 15px 15px 15px;
+  -moz-border-radius: 15px 15px 15px 15px;
+  -webkit-border: 15px 15px 15px 15px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
+
+    color: #000;
+  }  
+
+.container .text-muted {
+  margin: 20px 0;
+}
+
+.text-center {
+  text-align: center;
+}
+li span {
+  float: right;
+  cursor: pointer;
+}
+
+.fade {
+  transition: 1s linear all;
+  -webkit-transition: 1s linear all;
+}
+
+.fade.ng-enter {
+  opacity: 0;
+}
+
+.fade.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+.fade.ng-leave {
+  opacity: 1;
+}
+
+.fade.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+.md-select-menu-container{
+  margin-top: 50px;
+}
+
 /* google graph zoom buttons customizations */
 .google-visualization-atl button {
     
@@ -9,16 +131,22 @@
     font-size: 12px;
   
 }
-/**
-*hiding google charts zoom options buttons
- */
-/* #_AnnotationChart_zoomControlContainer_5-days,
-#_AnnotationChart_zoomControlContainer_1-hour,
+
+#_AnnotationChart_zoomControlContainer{
+  display : block;
+}
+.legend{
+  float:right;
+}
+/*hiding google charts zoom options buttons*/
+#_AnnotationChart_zoomControlContainer_5-days,
+/* #_AnnotationChart_zoomControlContainer_1-hour, */
 #_AnnotationChart_zoomControlContainer_3-months,
-#_AnnotationChart_zoomControlContainer_max
+/* #_AnnotationChart_zoomControlContainer_max, */
+_AnnotationChart_zoomControlContainer_1-year
  {
     display: none;
-} */
+}
 
 /* rotatin graph labels */
 #tempLabel {

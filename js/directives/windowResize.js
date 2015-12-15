@@ -14,6 +14,7 @@
                 }
 
         w.bind('resize', function () {
+            
         //resize done on the fly            
           if($window.innerWidth < attr.hvalue ){
                 

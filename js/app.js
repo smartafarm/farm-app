@@ -6,7 +6,6 @@ var sfarm = angular
 'ui.bootstrap',
 'cgNotify',
 'ngAnimate',
-'nvd3',
 'oc.lazyLoad',
 'ui.grid',
 'ui.grid.selection',
@@ -15,7 +14,9 @@ var sfarm = angular
 'ui.grid.resizeColumns',
 'ui.grid.pagination',
 'googlechart',
-//'chart.js',
+'ngMaterial',
+'ngAria',
+'angularUtils.directives.dirPagination'
 
 
 ])

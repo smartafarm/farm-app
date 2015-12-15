@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top" ng-show="!currentUser" ng-controller ="NavCtrl" >
+<nav class="navbar navbar-default navbar-fixed-top" ng-show="!currentUser" ng-controller ="NavCtrl" style="margin-top: -10px;">
 	<a class="navbar-brand" ui-sref="app.dashboard">
 	<img alt="Brand" src="templates/smartfarm.png" style="width: 200px;"></a>
 	<div class="container" style="padding-top: 20px;">
@@ -20,9 +20,9 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<li uib-dropdown>
-					<a href="#"  uib-dropdown-toggle>{{ userName | ucf }}<span class="caret"></span></a>
+					<a href="#"  uib-dropdown-toggle>{{ userName | ucf }}<span class="caret" style="margin-top: 8px;"></span></a>
 					<ul class="dropdown-menu" uib-dropdown-menu>
-						<li><a ng-click="logout()" >Logout</a></li>
+						<li role="menuitem"><a ng-click="logout()" >Logout</a></li>
 					</ul>
 				</li>
 			</ul>

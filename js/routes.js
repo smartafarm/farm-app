@@ -24,7 +24,8 @@ sfarm
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
-                templateUrl: 'templates/dashboard.html' ,                
+                templateUrl: 'templates/dashboard.html' ,
+                controller:'dashboardMasterCtrl'  ,               
                 parent:'app'
             })
               .state('app.rawdata' ,{

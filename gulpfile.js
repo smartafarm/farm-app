@@ -11,17 +11,17 @@ var ngAnnotate 		= require('gulp-ng-annotate');
 /* tasks */
 gulp.task('depsjs', function(){
 	return gulp.src([
-		'bower_components/angular/angular.min.js',
+		'bower_components/angular/angular.js',
 		'bower_components/angular-ui-router/release/angular-ui-router.min.js',
 		'bower_components/angular-route/angular-route.min.js',
 		'bower_components/angular-animate/angular-animate.min.js',
+		'bower_components/angular-aria/angular-aria.js',
+		'bower_components/angular-material/angular-material.js',		
 		'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
 		'bower_components/oclazyload/dist/ocLazyLoad.min.js',
 		'bower_components/angular-base64/angular-base64.min.js',
 		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.js',	
-		'bower_components/d3/d3.min.js',
-		'bower_components/nvd3/build/nv.d3.js',
-		'bower_components/angular-nvd3/dist/angular-nvd3.min.js',			
+		'bower_components/angularUtils-pagination/dirPagination.js',
 		'bower_components/angular-ui-grid/ui-grid.min.js',	
 		'bower_components/checklist-model/checklist-model.js'	,
 		'bower_components/Chart.js/Chart.min.js',
@@ -37,7 +37,7 @@ gulp.task('depsjs', function(){
 
 })// eof depsjs
 gulp.task('appjs', function(){
-	return gulp.src([
+	return gulp.src([		
 		'js/*.js',
 		'js/directives/*.js',
 		'js/controllers/*.js',
@@ -59,7 +59,8 @@ gulp.task('css', function(){
 		'css/angular-notify.css',
 		'bower_components/angular-chart.js/dist/angular-chart.css',
 		'bower_components/angular-ui-grid/ui-grid.min.css',
-		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.css'		
+		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.css'	,
+		'bower_components/angular-material/angular-material.css'	
 		])// eof gul src
 	.pipe(concat('smartafarm.css'))
 	.pipe(gulp.dest('src/css'))
@@ -85,12 +86,12 @@ gulp.task('adminappjs', function(){
 
 
 gulp.task('watch', function(){
-	gulp.watch(['js/*.js','js/controllers/*.js','js/directives/*.js','js/deps/*.js','js/services/*.js',
+	gulp.watch(['css/*.css','js/*.js','js/controllers/*.js','js/directives/*.js','js/deps/*.js','js/services/*.js',
 		'js/admin/*.js','js/admin/controllers/*.js','js/admin/directives/*.js','js/admin/deps/*.js','js/admin/services/*.js'
 		,'gulpfile.js'], ['default']);	
 })// eof appjs
 
 
 gulp.task('default', function(callback){
-	runSequence('appjs','depsjs','adminappjs',callback)
+	runSequence('css','appjs','depsjs','adminappjs',callback)
 });// eof defaultgulp
