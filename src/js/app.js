@@ -189,8 +189,7 @@ sfarm
 	//directive to edit friendly name of the device
 	//triggers a modal
 	return{
-		restrict:'A',		
-		scope:{device : '='}	,		
+		restrict:'A',					
 		link : function(scope,ele,attr){
 			
 			ele.bind("click",function(event){
@@ -205,7 +204,12 @@ sfarm
 		      		
 		      		var data =scope.$parent.device;
 		      		return data
-		      	}
+		      	},
+		      	graphdata : function(){
+		      		
+		      		var data =scope.$parent.graph;
+		      		return data
+		      	},
 		      }
 	        });
 	        //prevent default click event
@@ -290,6 +294,19 @@ sfarm
 
 }) //eof devicedata
 
+.directive('saveSensor', ['Notification',function (Notification) {
+	return {
+		restrict: 'A',
+		
+		link: function (scope, ele, iAttrs) {
+			ele.bind('click',function(){	
+				scope.checkSensor (scope.$index);
+			
+				/**/
+			})
+		}
+	};
+}])
 .directive('resize', function ($window) {
     //directive to collapse panel header on window resize
     //receives horizontal value from html element to trigger collapse
@@ -451,26 +468,36 @@ $scope.statusToggle = function(){
 	'UpdateService',
 	'Notification',
 	'$interval',
-function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$interval) { 
+	'graphdata',
+function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$interval,graphdata) { 
 
 	//Device Friendly Name Editor Modal Controller 
 	//Click event initiates a modal via directive
+	$scope.addSensorbtn = false;
 	$scope.sensorUpdate =[];
+	$scope.newSensor = [];
 	$scope.selectedDevice = selectedDevice;
 
   	$scope.ok = function() {    
   	//Retreiving changes	
   	var data ={"_id" : $scope.selectedDevice._id ,"newname" : $scope.editFname.fname.$modelValue , "sensor" : $scope.sensorUpdate};	    	
-  	
+
   	
   	//updating on server
   	 UpdateService.deviceStatus('update/fname',data).then(function(response){
   	  		$scope.selectedDevice.name = $scope.editFname.fname.$modelValue;
+  	  		
   	  		selectedDevice.sensor.forEach(function(value,key){
 		  	  for(i=0;i<$scope.sensorUpdate.length;i++){
 		  	  	if(value.id == $scope.sensorUpdate[i].id)
-		  	  		value.fname = $scope.sensorUpdate[i].fname;
+		  	  		value.fname = $scope.sensorUpdate[i].fname;	
+		  	  		 if(graphdata[$scope.sensorUpdate[i].id])
+			  	   {
+			  	   	if(graphdata[$scope.sensorUpdate[i].id].info.id == $scope.sensorUpdate[i].id)
+			  	   	 {graphdata[$scope.sensorUpdate[i].id].info.fname = $scope.sensorUpdate[i].fname};
+			  	   }			  	  		
 		  	   }
+		  	  
 		  	})
 
   	  		//closing modal and initiating message
@@ -478,17 +505,38 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$in
 			Notification.success({ message:'Update successful' , delay:4000 })
 
 		},function(response){
-			alert('Update failed');
+			Notification.error('Update failed');
 		})
 	
 	};
-
+	$scope.addSensor = function(){
+		$scope.addSensorbtn = true;
+  		$scope.newSensor.push({'id' : 'No' , 'fname' : 'Friendly Name'});  		
+  	}
 	$scope.cancel = function() {
 		//closing modal on cancel click
 		
 	  $uibModalInstance.dismiss('cancel');
 	};	
-  
+  	$scope.checkSensor = function(index){  	
+
+  				
+  			
+  				
+  				var data= {'id' : $scope.selectedDevice._id , 'sensor' : $scope.newSensor[index].id}
+				UpdateService.deviceStatus('update/checksensor',data).then(function(response){
+					if(response == true){
+						$scope.selectedDevice.sensor.push({'id': $scope.newSensor[index].id ,'fname' : $scope.newSensor[index].fname})						
+						$scope.addSensorbtn = false;				
+						$scope.newSensor.splice(index,1);
+						Notification.success({ message:'Sensor Added' , delay:3000 });
+					}else{
+						Notification.error({ message:'Sensor Exists' , delay:3000 });
+					}
+				})
+
+			}
+
 	
 }])
 
@@ -549,7 +597,8 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$in
 	})
   $scope.graphready = function(test){
   				
-				$scope.graphLoading = false;			
+				$scope.graphLoading = false;	
+				
 				if($scope.changeCall){
 					//if device is changed resize is called to adjust graph correctly
 					$scope.trigger();

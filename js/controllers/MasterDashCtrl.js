@@ -20,7 +20,8 @@
 	})
   $scope.graphready = function(test){
   				
-				$scope.graphLoading = false;			
+				$scope.graphLoading = false;	
+				
 				if($scope.changeCall){
 					//if device is changed resize is called to adjust graph correctly
 					$scope.trigger();

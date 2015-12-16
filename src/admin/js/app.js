@@ -65,7 +65,7 @@ angular.module('sfarm')
 
 }
 })
-angular.module('sfarm')
+
 .controller('addUserCtrl',[
 	'$scope',
 	'$uibModalInstance',	

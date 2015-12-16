@@ -2,8 +2,7 @@
 	//directive to edit friendly name of the device
 	//triggers a modal
 	return{
-		restrict:'A',		
-		scope:{device : '='}	,		
+		restrict:'A',					
 		link : function(scope,ele,attr){
 			
 			ele.bind("click",function(event){
@@ -18,7 +17,12 @@
 		      		
 		      		var data =scope.$parent.device;
 		      		return data
-		      	}
+		      	},
+		      	graphdata : function(){
+		      		
+		      		var data =scope.$parent.graph;
+		      		return data
+		      	},
 		      }
 	        });
 	        //prevent default click event
