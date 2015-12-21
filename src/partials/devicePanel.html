@@ -5,11 +5,7 @@
 
 			<span resize hvalue ="993" last-reading style="cursor: default; font-size: 75%; margin-top:-14px;margin-right: 15px;" >   
 			<i> <span style="color:MediumBlue">Last Reading</span>
-			<span ng-class="{'fa fa-spinner fa-spin': device.lread.dt === undefined}">{{ device.lread.dt | date:'dd-MM-yyyy h:mm a' }}&nbsp
-			<span ng-repeat= "sensor in device.lread.data"> <i><strong style="color:green">{{sensor.sensorID }}</strong></i> 
-			<span ng-repeat= "sensorData in sensor.sdata"> {{sensorData | valueFilter}}</span>
-			</span>	
-			</span> 
+			<span ng-class="{'fa fa-spinner fa-spin': device.lread.dt === undefined}">{{ device.lread.dt | date:'dd-MM-yyyy h:mm a' }}&nbsp </span> 
 			</i>
 			</span>
 

@@ -53,7 +53,7 @@ angular.module('sfarm')
 				      controller: 'editDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
-		      						
+		      						console.log(scope.gridApi.selection.getSelectedRows(0))
 						      		return scope.gridApi.selection.getSelectedRows(0);
 		      				}	
 	      				}    
@@ -114,8 +114,7 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
  var cancelEvents =function(){
  	 $interval.cancel($rootScope.timer);
  }
- cancelEvents();
- $state.go('admin.users');  
+ cancelEvents(); 
 
 }])
 .controller('editDeviceCtrl',[
@@ -125,26 +124,54 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
 	'userFactory',
 	'Notification',
 function ($scope,$uibModalInstance,devices,userFactory,Notification) {  
-	
+	$scope.test = true;
+	$scope.selectedDevices = {};
 	userFactory.receive('admin/getDeviceFunc').then(function(response){
   			$scope.dfunc = response;  			
   		},function(response){				
 				console.log(response);
 		});
 	userFactory.receive('admin/getAllDevices').then(function(response){
-  			$scope.data = response;  	  					
-  			$scope.selectedDevices=[];
-  			
-		if(devices[0].devices){
-  			$scope.selectedDevices = devices[0].devices
-  		}
+  			$scope.data = response;  	  				
 
-  		
+  			
+  
+  		$scope.data.forEach(function(deviceProp,value){ 
+         
+  			if(devices[0].devices[deviceProp._id]){
+
+  				if(devices[0].devices[deviceProp._id].status == true){
+					$scope.selectedDevices[deviceProp._id] = devices[0].devices[deviceProp._id]  					
+
+          if(!devices[0].devices[deviceProp._id].func){            
+            $scope.selectedDevices[deviceProp._id].func = [];
+          }
+        }
+				}
+          
+  			else{
+				$scope.selectedDevices[deviceProp._id] = {'status' : false , 'func' : []}  				
+  			}
+  			
+  		})
+  		console.log($scope.selectedDevices);
   		},function(response){				
 				console.log(response);
 		});
-
-
+$scope.changeAlert = function(device,test){
+	console.log($scope.selectedDevices);
+	
+}
+$scope.changeFunc =function(device ,funct){
+  
+	var index = $scope.selectedDevices[device].func.indexOf(funct);
+	if($scope.selectedDevices[device].func.indexOf(funct) == -1){
+		$scope.selectedDevices[device].func.push(funct);
+	}else{
+		$scope.selectedDevices[device].func.splice(index,1);
+	}
+	console.log($scope.selectedDevices);
+}
 
 // eof testing
 	
@@ -152,8 +179,17 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
   	$scope.ok = function() {  
   		
   		var data = {};
-  		data.uname = devices[0].uname;  		
-  		data.dAccess = $scope.selectedDevices;   		  		
+  		
+  		data.uname = devices[0].uname;  
+  		data.dAccess ={};
+  		angular.forEach($scope.selectedDevices,function(value,key){
+  			if(value.status == true){
+  				data.dAccess[key] = value;
+  			}
+  		})
+  		
+  		console.log(data);
+  		
   			userFactory.submit('admin/setDeviceAccess',data).then(function(response){  	
   				if(response.status == 202){
   					Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
@@ -163,7 +199,7 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
 					$uibModalInstance.dismiss('cancel');
 					Notification.success({message : 'Device Settings Updated' ,delay : 3000})	
 				}
-  			});  		
+  			});  	
 	};
 
 	$scope.cancel = function() {
@@ -172,6 +208,14 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
   	
 
 }])
+
+.controller('orgCtrl',[
+	'$scope',
+	
+function ($scope) {  	
+	console.log('organisation controller');
+}])
+
 .controller('userCtrl', ['$scope','userFactory', function ($scope,userFactory) {
   
 	userFactory.receive('admin/getUsers').then(function(response){
@@ -207,11 +251,11 @@ function ($scope,$uibModalInstance,devices,userFactory,Notification) {
         paginationPageSize: 10,
 	      columnDefs:[
   			 { field: 'First Name' }	,
-          	 { field: 'Last Name' }	,
-          	 { field: 'uname',displayName:'User Name' }	,
-          	 { field: 'Email' ,width: 200}	,
-          	 { field: 'Organisation' }	,
-          	 { field: 'Phone No' }	      
+      	 { field: 'Last Name' }	,
+      	 { field: 'uname',displayName:'User Name' }	,
+      	 { field: 'Email' ,width: 200}	,
+      	 { field: 'Organisation' }	,
+      	 { field: 'Phone No' }	      
 	      ] 
 	  }
       $scope.gridOptions.onRegisterApi = function(gridApi){

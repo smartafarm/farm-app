@@ -2,7 +2,6 @@
  var cancelEvents =function(){
  	 $interval.cancel($rootScope.timer);
  }
- cancelEvents();
- $state.go('admin.users');  
+ cancelEvents(); 
 
 }])

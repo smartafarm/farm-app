@@ -125,12 +125,12 @@ sfarm
                 }         
               
             })
-            .state('admin.functions' ,{
-            url: '/functionalities',
+            .state('admin.organisation' ,{
+            url: '/organisation',
             parent:'admin',
             views :{
                     "display":{
-                        templateUrl: 'admin/partials/functions.html'           
+                        templateUrl: 'admin/partials/organisation.html'           
                     }
                 }
             
@@ -1229,8 +1229,8 @@ return{
 		deviceStatus : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/api/'+api,
-				//url:'http://www.smartafarm.com.au/api/'+api,
+				//url:'http://localhost/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){
@@ -1248,8 +1248,8 @@ return{
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
+				url:'http://localhost/api/'+api,
 				//url:'http://www.smartafarm.com.au/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);
@@ -1261,8 +1261,8 @@ return{
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
+				url:'http://localhost/api/'+api,
 				//url:'http://www.smartafarm.com.au/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

@@ -56,12 +56,12 @@ sfarm
                 }         
               
             })
-            .state('admin.functions' ,{
-            url: '/functionalities',
+            .state('admin.organisation' ,{
+            url: '/organisation',
             parent:'admin',
             views :{
                     "display":{
-                        templateUrl: 'admin/partials/functions.html'           
+                        templateUrl: 'admin/partials/organisation.html'           
                     }
                 }
             

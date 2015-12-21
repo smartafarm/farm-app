@@ -33,11 +33,11 @@
         paginationPageSize: 10,
 	      columnDefs:[
   			 { field: 'First Name' }	,
-          	 { field: 'Last Name' }	,
-          	 { field: 'uname',displayName:'User Name' }	,
-          	 { field: 'Email' ,width: 200}	,
-          	 { field: 'Organisation' }	,
-          	 { field: 'Phone No' }	      
+      	 { field: 'Last Name' }	,
+      	 { field: 'uname',displayName:'User Name' }	,
+      	 { field: 'Email' ,width: 200}	,
+      	 { field: 'Organisation' }	,
+      	 { field: 'Phone No' }	      
 	      ] 
 	  }
       $scope.gridOptions.onRegisterApi = function(gridApi){

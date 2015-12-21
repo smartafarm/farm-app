@@ -14,7 +14,14 @@
 						</span>	  
 						<span  style="font-size: 75%; margin-top:-14px;" >  
 						<i>{{graphData.info.id}} </i>
-						</span>	  						
+						</span>	
+						<span ng-class="{'fa fa-spinner fa-spin': device.lread.dt === undefined}"> </span> 
+				    	<span ng-repeat= "sensor in device.lread.data"> 
+				    	<span ng-if="sensor.sensorID == graphData.info.id" style="font-size: 75%">
+					    	<strong style="color:green">Last Reading</strong>
+							<span ng-repeat= "sensorData in sensor.sdata"> {{sensorData | valueFilter}}</span>
+						</span>
+						</span>			
 					</div>
 		  			</div>	  
 				</div>
@@ -24,12 +31,12 @@
 	<!-- Google Graph Div -->
 		<div class="row">
 			<!-- <div style="margin-left: 100px;"><h4 style="margin-bottom:10px;margin-top:5px" >{{graphData.gid}}</h4></div> -->
-			<span id="levelLabel" style="float:left;display:block; margin-top: 155px; padding-left: 50pxpadding-bottom: 50px;"><strong>Level (%)</strong></span>			   		
+			<span id="levelLabel" style="float:left;display:block; margin-top: 155px; padding-left: 50pxpadding-bottom: 50px;"><strong style="color:green">Level (%)</strong></span>			   		
 				
 				<div google-chart chart="graphData" style= "width:85%; height:300px" on-ready="graphready(chartWrapper)"  ></div>
 			
 			<span id="tempLabel" style="float: right; border-style: solid; margin-top: -165px; margin-right: 0px;border-left-width: 0px;border-bottom-width: 0px;border-top-width: 0px;border-right-width: 0px;padding-bottom: 30px;">
-				<strong>Temprature (℃)</strong></span>
+				<strong style="color:blue">Temperature (℃)</strong></span>
 			<div style="margin-bottom: 50px;"></div>
 			</div>
 			
