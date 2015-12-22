@@ -1,0 +1,122 @@
+<div modal="addOrgModal" close="cancel()">
+ <!--  <form name="newOrg"> -->
+  <div class="modal-header">
+      <h4>Add New Organisation</h4>      
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" name="newOrg" id="newOrg" style="font-size:85%" novalidate>
+    <div class="row">      
+          <div class=" col-sm-8 col-sm-offset-1 col-md-offset-0 col-md-6">
+            <h4><strong>Organisation Details</strong></h4>
+          </div>
+    </div>          
+    <div class="row">     
+      <div class="form-group" ng-class="{ 'has-error' : newOrg.name.$invalid && !newOrg.name.$pristine }">
+        <label for="name" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Name</label>
+        <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+          <input type="text" class="form-control" name="name" placeholder="Name" ng-model="org.name" required>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group" ng-class="{ 'has-error' : newOrg.cperson.$invalid && !newOrg.cperson.$pristine }">
+          <label for="cperson" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Contact Person</label>
+          <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+            <input type="text" class="form-control" name="cperson" placeholder="Contact person" ng-model="org.cperson" required>
+          </div>
+      </div>
+    </div>
+
+    <div class="row">
+       <div class="form-group" ng-class="{ 'has-error' : newOrg.pno.$invalid && !newOrg.pno.$pristine }">
+            <label for="pno" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Phone No</label>
+            <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+              <input type="text" ng-pattern="/^\D*0(\D*\d){9}\D*$/" class="form-control" name="pno" placeholder="Phone No" ng-model="org.pno" required>
+            </div>
+          </div>
+    </div>
+   <div class="row">
+     <div class="form-group" ng-class="{ 'has-error' : newOrg.email.$invalid && !newOrg.email.$pristine }">
+            <label for="email" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Email</label>
+            <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+              <input type="email" class="form-control" name="email" placeholder="Email" ng-model="org.email" required>
+            </div>
+          </div> 
+   </div>  
+   <div class="row">
+      <div class="form-group" ng-class="{ 'has-error' : newOrg.orgType.$invalid && !newOrg.orgType.$pristine }">
+          <label class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label" for="orgType">Organisation Type</label>
+            <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+              <select id="orgType" name="orgType" class="form-control"  ng-model="org.type" required>
+                <option value="farmer">Farmer</option>
+                <option value="producer">Producer</option>
+                <option value="logistic">Logistic</option>
+                <option value="other" selected="selected">Other</option>
+              </select>              
+            </div>
+          </div>
+   </div>              
+   <div class="row">
+       <div  class=" col-sm-8 col-sm-offset-1 col-md-offset-0 col-md-4">
+            <h4><strong>Address Details</strong></h4>
+        </div>   
+   </div>              
+   <div class="row">
+       
+        <div class="form-group">
+          <label for="a1" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Address</label>
+          <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+            <input type="text" class="form-control" name="a1" placeholder="Address 1" ng-model="org.address.add1">
+          </div>
+        </div>
+   </div>   
+   <div class="row">
+     <div class="form-group">
+          <label for="town" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Suburb</label>
+          <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+            <input type="text" class="form-control" name="town" placeholder="Town" ng-model="org.address.sub">
+          </div>
+        </div>
+   </div>              
+   <div class="row">
+     <div class="form-group">
+          <label for="state" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">State</label>
+          <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+            <input type="text" class="form-control" name="state" placeholder="State" ng-model="org.address.state">
+          </div>
+        </div>
+   </div>              
+   <div class="row">
+     
+        <div class="form-group">
+          <label for="pocode" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Postal Code</label>
+          <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+            <input type="text" class="form-control" name="pocode" placeholder="Postal Code" ng-model="org.address.pocode">
+          </div>
+        </div>
+   </div>                         
+     
+      
+  </div>
+  <div class="modal-footer">
+      <div class="form-group">
+        <div class="col-sm-5  col-md-5 col-lg-5">
+          <button type="submit" class="btn btn-success" ng-click="ok()" ng-disabled = "newOrg.$invalid"> + Add Organisation</button>
+        </div>
+        <div class="col-sm-3  col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-faliure" ng-click="cancel()" > Cancel</button>
+        </div>
+      </div>
+  </div>
+  </form>
+ <!-- <div>
+       <h4><strong>Personal Details</strong></h4>
+   </div>
+       <h4><strong>Address Details</strong> </h4>
+    <div class="modal-footer">
+      <button class="btn btn-success" ng-click="ok()" >Add User</button>
+      <button class="btn" ng-click="cancel()">Cancel</button>
+    </div>
+  </form> -->
+</div>
+

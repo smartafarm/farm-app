@@ -3,8 +3,8 @@
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
+				url:'http://localhost/api/'+api,
 				//url:'http://www.smartafarm.com.au/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

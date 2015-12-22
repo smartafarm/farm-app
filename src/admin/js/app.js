@@ -1,4 +1,29 @@
 angular.module('sfarm')
+.directive('addOrg',function($uibModal){
+	return{
+		restrict:'A',					
+		link : function(scope,ele,attr){
+			
+			ele.bind("click",function(event){
+		
+			$uibModal.open({
+		      animation: true,
+		      templateUrl: 'admin/templates/addOrgModal.html',
+		      controller: 'addOrgCtrl',
+		      resolve:{
+		      				myData : function(){	
+		      						//providing data to add new org in table
+						      		return scope.myData;
+		      				}	
+	      				} 			    
+	        });
+			})
+		}
+	}
+
+}) //eof devicedata
+
+angular.module('sfarm')
 .directive('addUser',function($uibModal){
 	return{
 		restrict:'A',					
@@ -65,6 +90,47 @@ angular.module('sfarm')
 
 }
 })
+
+.controller('addOrgCtrl',[
+	'$scope',
+  'adminService',
+  'myData',
+  'Notification',
+  '$uibModalInstance',
+	
+function ($scope,adminService,myData,Notification,$uibModalInstance) {  
+	
+$scope.user ={};
+
+  	$scope.ok = function() {          
+      
+  		adminService.submit('admin/createOrg',$scope.org).then(function(response){
+      if(response.status == 202){
+            Notification.error({message : 'Creation Failed . Please try again' ,delay : 3000})
+          }else
+          {       
+          myData.push(
+            {
+              "Name" : $scope.org.name,
+              "cperson" : $scope.org.cperson,
+              "Phone No" :$scope.org.pno ,          
+              "Email" : $scope.org.email,
+              "add" : $scope.org.address.add1 + ' ' + $scope.org.address.sub + ' ' + $scope.org.address.state + ' ' + $scope.org.address.pocode
+            })
+            Notification.success({message : 'Organisation Added' ,delay : 3000})
+          }
+  		},function(response){				
+				console.log(response);
+		});
+  		$uibModalInstance.dismiss('cancel');
+	};
+	$scope.cancel = function() {
+	  $uibModalInstance.dismiss('cancel');
+	};	
+  	
+
+}])
+
 
 .controller('addUserCtrl',[
 	'$scope',
@@ -211,9 +277,53 @@ $scope.changeFunc =function(device ,funct){
 
 .controller('orgCtrl',[
 	'$scope',
-	
-function ($scope) {  	
-	console.log('organisation controller');
+	'userFactory',
+function ($scope,userFactory) {  	
+		userFactory.receive('admin/getorg').then(function(response){
+  			var data = response;      
+  			
+  			$scope.myData = [];
+  			data.forEach(function(value,key){  		
+
+  				$scope.myData.push(
+  					{
+  						"Name" : value.name,
+  						"cperson" : value.cperson,
+  						"Phone No" :value.pno ,					 
+  						"Email" : value.email,
+  						"add" : value.address.add1 + ' ' + value.address.sub + ' ' + value.address.state + ' ' + value.address.pocode,
+  						"type" : value.type.substring(0,1).toUpperCase() + value.type.slice(1)
+  					})
+          
+  			})
+  		},function(response){				
+				console.log(response);
+		});
+	 $scope.gridOptions = {	    
+	      data: 'myData',
+	        enableGridMenu: true,
+	        enableRowSelection: true,		    
+	    	selectionRowHeaderWidth: 35,
+		    rowHeight: 35,
+        rowWidth : 20,
+		    enableColumnResizing : true,
+        paginationPageSizes: [10, 20, 30],
+        paginationPageSize: 10,
+	      columnDefs:[
+		 { field: 'Name' }	,      	 
+      	 { field: 'cperson',displayName:'Contact Person' }	,
+      	 { field: 'Email' ,width: 200}	,
+      	 { field: 'add',displayName:'Address' }	,
+      	 { field: 'Phone No' }	  ,
+      	 { field: 'type',displayName:'Type' }    
+	    ] 
+	  }
+      $scope.gridOptions.onRegisterApi = function(gridApi){
+      //set gridApi on scope      
+      $scope.gridApi = gridApi;
+      gridApi.selection.setMultiSelect(false);
+      }
+ 
 }])
 
 .controller('userCtrl', ['$scope','userFactory', function ($scope,userFactory) {
@@ -270,8 +380,8 @@ function ($scope) {
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
+				url:'http://localhost/api/'+api,
 				//url:'http://www.smartafarm.com.au/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

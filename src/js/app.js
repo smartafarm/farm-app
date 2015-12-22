@@ -88,8 +88,7 @@ sfarm
             .state('app', {
                 url: '/',   
                 templateUrl: "index.html",
-                controller: "AppCtrl"
-              
+                controller: "AppCtrl"              
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
