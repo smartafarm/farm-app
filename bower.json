@@ -38,6 +38,7 @@
     "checklist-model": "~0.6.0",
     "tc-angular-chartjs": "~1.0.12",
     "angularUtils-pagination": "angular-utils-pagination#~0.9.3"
+    "angular": "~1.4.8"
   },
   "devDependencies": {
     "angular-material": "master",
