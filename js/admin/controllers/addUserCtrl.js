@@ -9,7 +9,8 @@
 function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {  
 	
 	$scope.user ={};
-
+    //getting all organisation for adding user
+    adminService.submit('admin/getOrg/addUser').then(function(response){$scope.org = response})
   	$scope.ok = function() {    
   		adminService.submit('admin/createUser',$scope.user).then(function(response){
         if(response.status == 202){
@@ -37,8 +38,24 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
 	};
 
 	$scope.cancel = function() {
+    
 	  $uibModalInstance.dismiss('cancel');
 	};	
-  	console.log('here');
+  	
+  $scope.selOrg =function(){
+  if(!$scope.user.details){
+    $scope.user.details = {};
+    $scope.user.details.address = {};
+  }
+  if(!$scope.user.details){
+   
+    $scope.user.details.address = {};
+  }
+   $scope.user.details.address.a1= $scope.bname.address.add1;
+   $scope.user.details.address.town= $scope.bname.address.sub;
+   $scope.user.details.address.state= $scope.bname.address.state;
+   $scope.user.details.address.pocode= $scope.bname.address.pocode;
+   $scope.user.details.bname= $scope.bname.name;
+  }    
 
 }])

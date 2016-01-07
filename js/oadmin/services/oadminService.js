@@ -1,4 +1,4 @@
-.factory('adminService', ['$http','$q', function($http,$q){
+.factory('oadminService', ['$http','$q', function($http,$q){
 	return {
 		submit : function(api,serverData){
 			var deferred = $q.defer();			

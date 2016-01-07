@@ -19,9 +19,19 @@
 				    	<span ng-repeat= "sensor in device.lread.data"> 
 				    	<span ng-if="sensor.sensorID == graphData.info.id" style="font-size: 75%">
 					    	<strong style="color:green">Last Reading</strong>
+					    	<span>{{ device.lread.dt | date:'dd-MM-yyyy h:mm a' }}&nbsp</span>
 							<span ng-repeat= "sensorData in sensor.sdata"> {{sensorData | valueFilter}}</span>
 						</span>
-						</span>			
+						</span>	
+						<span 
+							class="fa fa-power-off fa-lg"
+							style="margin-top:-6px ;margin-left:10px ;color:{{device.Status==1 ? 'green' : 'red'}}"
+							tooltip-trigger="mouseenter"
+							tooltip-placement="right"							
+							uib-tooltip ="{{device.Status==1 ? 'Active' : 'Inactive'}}"
+							tooltip-popup-delay='400'
+						 >	</span>							 
+						
 					</div>
 		  			</div>	  
 				</div>

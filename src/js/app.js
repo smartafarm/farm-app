@@ -16,8 +16,7 @@ var sfarm = angular
 'googlechart',
 'ngMaterial',
 'ngAria',
-'angularUtils.directives.dirPagination'
-
+'angularUtils.directives.dirPagination',
 
 ])
 .constant('USER_ROLES', {
@@ -33,9 +32,13 @@ var sfarm = angular
 .filter('ucf', function()
 {
     //filter to convert text into sentence case
+   
     return function(word)
     {
-        return word.substring(0,1).toUpperCase() + word.slice(1);
+       if(word)
+      {
+          return word.substring(0,1).toUpperCase() + word.slice(1);
+      }
     }
 })
 .filter('valueFilter', function()
@@ -65,7 +68,7 @@ var sfarm = angular
       //configuartion to animate accordion for UIB ANGULAR BOOTSTRAP
       $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
   }
-]);
+])
 
 //APPLICATION ROUTING SCRIPT
 
@@ -88,7 +91,7 @@ sfarm
             .state('app', {
                 url: '/',   
                 templateUrl: "index.html",
-                controller: "AppCtrl"              
+                controller: "AppCtrl"  
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
@@ -102,6 +105,8 @@ sfarm
                 controller :'rawDataCtrl',
                 parent:'app'
             })
+
+              // admin routes
            .state('admin' ,{
             url: '/admin',
             templateUrl: 'admin/test.html',
@@ -135,6 +140,29 @@ sfarm
             
               
             })
+            .state('oadmin' ,{
+            url: '/manage',
+            templateUrl: 'oadmin/index.html',
+            controller:'oadminCtrl',
+            resolve: { 
+                        //LAZY loading organization admin scripts 
+                        loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
+                                 return $ocLazyLoad.load('oadmin/js/app.js');
+                        }]
+                    }
+              
+            })
+            .state('oadmin.users' ,{
+            url: '/users',
+            parent:'oadmin',views :{
+                    "display":{
+                        templateUrl: 'oadmin/partials/users.html'           
+                    }
+                    
+                }         
+              
+            })
+
     }
 ]);
 
@@ -547,6 +575,7 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$in
   'LoginService',
   'sessionService',
  function ($scope, $rootScope,Notification,$state,LoginService,sessionService) {
+
   $scope.credentials = {
     username: '',
     password: ''
@@ -565,7 +594,7 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$in
     }
     
     //routing to main application on successful login
-    $state.go('app');
+    $state.go('app.dashboard');
   	},function(response){
          //console.log(response)   ;
   		
@@ -630,7 +659,12 @@ $scope.getdate = function (MyDate) {
    	}
 
   };
-  
+	
+	$rootScope.getuser.then(function(response){
+		$rootScope.user = response;				
+	})
+console.log($scope);
+	
 }])
 .controller('NavCtrl', ['$rootScope',
 	'$scope',
@@ -694,7 +728,8 @@ $scope.refresh();
 	'sessionService',
 	'$http',
 	'$interval',
-function($rootScope,$state,LoginService,sessionService,$http,$interval){	
+	'userFactory',
+function($rootScope,$state,LoginService,sessionService,$http,$interval,userFactory){	
 	
 	 // Default run of application
 
@@ -710,12 +745,24 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 		*/
 	    if(toState.name !== 'login'){	    
 	    	var token = sessionStorage.getItem('reqTok');		    	
-	    	var bearer = sessionStorage.getItem('user');		    	
+	    	var bearer = sessionStorage.getItem('user');
+
 	    	if (token && bearer){
 	    		$http.defaults.headers.post = { 'Content-Type': 'application/x-www-form-urlencoded' }
 	    		$http.defaults.headers.get = { 'Content-Type': 'application/json' }
 	    		$http.defaults.headers.common['X-Auth-Token'] = token   ;
 	    		$http.defaults.headers.common['Bearer'] = bearer			    			    ;
+	    		
+		    	if(!$rootScope.user){
+	                                                     
+	                $rootScope.getuser = userFactory.receive('fetch/getuserinfo/'+bearer).then
+	                (function(response){
+	                   if(response){
+	                        return response;      
+	                   }
+	                  return
+	               })
+            	}
 	    	}
 	    	else 
 	    	{	
@@ -724,8 +771,14 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 	    		sessionService.destroy('user');
 	    		$http.defaults.headers.common['X-Auth-Token'] = undefined
 	    		$http.defaults.headers.common['Bearer'] = undefined   			    			    
+
 	    		$state.go('login')
 	    	};
+	    }else{
+	    	
+	    	if($rootScope.user){	    			
+	    			 delete $rootScope.user ;
+	    		}
 	    }
 	})
 
@@ -1123,7 +1176,8 @@ return{
 			$http({
 				//setting headers
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				url:'http://www.smartafarm.com.au/api/login/authenticate',				
+				//url:'http://www.smartafarm.com.au/api/login/authenticate',				
+				url:'http://localhost/api/login/authenticate',		
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){

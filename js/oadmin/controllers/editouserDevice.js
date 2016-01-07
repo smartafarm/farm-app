@@ -1,21 +1,22 @@
-.controller('editDeviceCtrl',[
+.controller('editouserDeviceCtrl',[
 	'$scope',
 	'$uibModalInstance',
 	'devices',
-	'adminService',
+	'oadminService',
 	'Notification',
-function ($scope,$uibModalInstance,devices,adminService,Notification) {  
-	$scope.test = true;
+function ($scope,$uibModalInstance,devices,oadminService,Notification) {  
+  console.log($scope);
+
 	$scope.selectedDevices = {};
-	adminService.getData('admin/getDeviceFunc').then(function(response){
+	oadminService.getData('oadmin/getDeviceFunc').then(function(response){
   			$scope.dfunc = response;  			
   		},function(response){				
 				console.log(response);
 		});
-	adminService.getData('admin/getDevices/'+devices[0].Organisation).then(function(response){
+  var username = $scope.$parent.user.uname
+	oadminService.getData('oadmin/getoadminDevices/'+username).then(function(response){
   			$scope.data = response;  	  				
 
-  			
   
   		$scope.data.forEach(function(deviceProp,value){ 
          
@@ -27,9 +28,9 @@ function ($scope,$uibModalInstance,devices,adminService,Notification) {
           if(!devices[0].devices[deviceProp._id].func){            
             $scope.selectedDevices[deviceProp._id].func = [];
           }
-        }
+          }
 				}
-          
+      
   			else{
 				$scope.selectedDevices[deviceProp._id] = {'status' : false , 'func' : []}  				
   			}
@@ -54,7 +55,6 @@ $scope.changeFunc =function(device ,funct){
 	console.log($scope.selectedDevices);
 }
 
-// eof testing
 	
 	
   	$scope.ok = function() {  
@@ -69,9 +69,9 @@ $scope.changeFunc =function(device ,funct){
   			}
   		})
   		
-  		console.log(data);
   		
-  			adminService.submit('admin/setDeviceAccess',data).then(function(response){  	
+  		
+  			oadminService.submit('oadmin/setDeviceAccess',data).then(function(response){  	
   				if(response.status == 202){
   					Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
   				}else

@@ -1,7 +1,7 @@
 <div modal="addUserModal" close="cancel()">
  <!--  <form name="newUser"> -->
   <div class="modal-header">
-      <h4>Add New User</h4>      
+      <h5>Add New User for {{user.details.bname}}</h5>      
   </div>
   <div class="modal-body">
     <form class="form-horizontal" name="newUser" id="newUser" style="font-size:85%" novalidate>
@@ -40,14 +40,7 @@
               <input type="email" class="form-control" name="email" placeholder="Email" ng-model="user.details.email" required>
             </div>
           </div>
-          <div class="form-group" ng-class="{ 'has-error' : newUser.bname.$invalid && !newUser.bname.$pristine }">
-            <label for="bname" class="col-sm-2 col-md-4 control-label">Organisation</label>
-            <div class="col-sm-8 col-md-8 ">
-              <select name="bname" class="form-control" ng-model="bname" ng-options="org.name for org in org" ng-change="selOrg()" style="font-size: 95%" required>
-              <option >org</option>     
-              </select>
-            </div>
-          </div>
+          
           
       </div> <!-- Half page div -->
       <div class="col-sm-12 col-md-6 col-lg-6">
@@ -79,18 +72,17 @@
             <input type="text" class="form-control" name="pocode" placeholder="Postal Code" ng-model="user.details.address.pocode">
           </div>
         </div>
-        <div>
-            <h4><strong>Authorization</strong></h4>
+      <div>
+          <h4><strong>Authorization</strong></h4>
+      </div>
+      <div class="form-group">
+      <label for="type" class="col-sm-2 col-md-4 control-label">Role</label>
+        <div class="col-sm-8 col-md-8 ">
+          <select name="type" class="form-control" ng-model="user.details.type"  required>
+            <option>User</option>     
+            <option>Other</option>     
+          </select>
         </div>
-        <div class="form-group">
-        <label for="type" class="col-sm-2 col-md-4 control-label">Role</label>
-          <div class="col-sm-8 col-md-8 ">
-            <select name="type" class="form-control" ng-model="user.details.type"  required>
-              <option>Admin</option>     
-              <option>User</option>     
-              <option>Other</option>
-            </select>
-          </div>
         </div>
 
       </div> <!-- Half page div -->

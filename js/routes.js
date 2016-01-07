@@ -19,7 +19,7 @@ sfarm
             .state('app', {
                 url: '/',   
                 templateUrl: "index.html",
-                controller: "AppCtrl"              
+                controller: "AppCtrl"  
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
@@ -33,6 +33,8 @@ sfarm
                 controller :'rawDataCtrl',
                 parent:'app'
             })
+
+              // admin routes
            .state('admin' ,{
             url: '/admin',
             templateUrl: 'admin/test.html',
@@ -66,5 +68,28 @@ sfarm
             
               
             })
+            .state('oadmin' ,{
+            url: '/manage',
+            templateUrl: 'oadmin/index.html',
+            controller:'oadminCtrl',
+            resolve: { 
+                        //LAZY loading organization admin scripts 
+                        loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
+                                 return $ocLazyLoad.load('oadmin/js/app.js');
+                        }]
+                    }
+              
+            })
+            .state('oadmin.users' ,{
+            url: '/users',
+            parent:'oadmin',views :{
+                    "display":{
+                        templateUrl: 'oadmin/partials/users.html'           
+                    }
+                    
+                }         
+              
+            })
+
     }
 ]);

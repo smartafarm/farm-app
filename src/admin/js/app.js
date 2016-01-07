@@ -70,12 +70,39 @@ angular.module('sfarm')
 			
 			ele.bind("click",function(){
 				if(scope.gridApi.selection.getSelectedRows().length == 0){
-					Notification.error({message: 'Please Select a User to edit Device Settings', delay: 3000});
+					Notification.error({message: 'Please Select a User ', delay: 3000});
+				}else{
+					$uibModal.open({
+				      animation: true,
+				      templateUrl: 'admin/templates/editUserDeviceModal.html',
+				      controller: 'editDeviceCtrl',	
+				      resolve:{
+		      				devices : function(){	
+		      						console.log(scope.gridApi.selection.getSelectedRows(0))
+						      		return scope.gridApi.selection.getSelectedRows(0);
+		      				}	
+	      				}    
+			        });
+					
+				}
+			})
+	}
+
+}
+})
+.directive('editOrgDevice',function(Notification,$uibModal){
+	return{
+		restrict:'A',					
+		link : function(scope,ele,attr){
+			
+			ele.bind("click",function(){
+				if(scope.gridApi.selection.getSelectedRows().length == 0){
+					Notification.error({message: 'Please select an organisation ', delay: 3000});
 				}else{
 					$uibModal.open({
 				      animation: true,
 				      templateUrl: 'admin/templates/editDeviceModal.html',
-				      controller: 'editDeviceCtrl',	
+				      controller: 'editOrgDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
 		      						console.log(scope.gridApi.selection.getSelectedRows(0))
@@ -142,7 +169,8 @@ $scope.user ={};
 function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {  
 	
 	$scope.user ={};
-
+    //getting all organisation for adding user
+    adminService.submit('admin/getOrg/addUser').then(function(response){$scope.org = response})
   	$scope.ok = function() {    
   		adminService.submit('admin/createUser',$scope.user).then(function(response){
         if(response.status == 202){
@@ -170,9 +198,25 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
 	};
 
 	$scope.cancel = function() {
+    
 	  $uibModalInstance.dismiss('cancel');
 	};	
-  	console.log('here');
+  	
+  $scope.selOrg =function(){
+  if(!$scope.user.details){
+    $scope.user.details = {};
+    $scope.user.details.address = {};
+  }
+  if(!$scope.user.details){
+   
+    $scope.user.details.address = {};
+  }
+   $scope.user.details.address.a1= $scope.bname.address.add1;
+   $scope.user.details.address.town= $scope.bname.address.sub;
+   $scope.user.details.address.state= $scope.bname.address.state;
+   $scope.user.details.address.pocode= $scope.bname.address.pocode;
+   $scope.user.details.bname= $scope.bname.name;
+  }    
 
 }])
 
@@ -187,17 +231,17 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
 	'$scope',
 	'$uibModalInstance',
 	'devices',
-	'userFactory',
+	'adminService',
 	'Notification',
-function ($scope,$uibModalInstance,devices,userFactory,Notification) {  
+function ($scope,$uibModalInstance,devices,adminService,Notification) {  
 	$scope.test = true;
 	$scope.selectedDevices = {};
-	userFactory.receive('admin/getDeviceFunc').then(function(response){
+	adminService.getData('admin/getDeviceFunc').then(function(response){
   			$scope.dfunc = response;  			
   		},function(response){				
 				console.log(response);
 		});
-	userFactory.receive('admin/getAllDevices').then(function(response){
+	adminService.getData('admin/getDevices/'+devices[0].Organisation).then(function(response){
   			$scope.data = response;  	  				
 
   			
@@ -256,7 +300,99 @@ $scope.changeFunc =function(device ,funct){
   		
   		console.log(data);
   		
-  			userFactory.submit('admin/setDeviceAccess',data).then(function(response){  	
+  			adminService.submit('admin/setDeviceAccess',data).then(function(response){  	
+  				if(response.status == 202){
+  					Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
+  				}else
+  				{				
+					devices[0].devices = $scope.selectedDevices;
+					$uibModalInstance.dismiss('cancel');
+					Notification.success({message : 'Device Settings Updated' ,delay : 3000})	
+				}
+  			});  	
+	};
+
+	$scope.cancel = function() {
+	  $uibModalInstance.dismiss('cancel');
+	};	
+  	
+
+}])
+.controller('editOrgDeviceCtrl',[
+	'$scope',
+	'$uibModalInstance',
+	'devices',
+	'userFactory',
+  'adminService',
+	'Notification',
+function ($scope,$uibModalInstance,devices,userFactory,adminService,Notification) {  
+	$scope.test = true;
+	$scope.selectedDevices = {};
+	userFactory.receive('admin/getDeviceFunc').then(function(response){
+  			$scope.dfunc = response;  			
+  		},function(response){				
+				console.log(response);
+		});
+	userFactory.receive('admin/getAllDevices').then(function(response){
+  			$scope.data = response;  	  				
+
+  			
+  
+  		$scope.data.forEach(function(deviceProp,value){ 
+         
+  			if(devices[0].devices[deviceProp._id]){
+
+  				if(devices[0].devices[deviceProp._id].status == true){
+					$scope.selectedDevices[deviceProp._id] = devices[0].devices[deviceProp._id]  					
+
+          if(!devices[0].devices[deviceProp._id].func){            
+            $scope.selectedDevices[deviceProp._id].func = [];
+          }
+        }
+				}
+          
+  			else{
+				$scope.selectedDevices[deviceProp._id] = {'status' : false , 'func' : []}  				
+  			}
+  			
+  		})
+  		
+  		},function(response){				
+				console.log(response);
+		});
+$scope.changeAlert = function(device,test){
+	console.log($scope.selectedDevices);
+	
+}
+$scope.changeFunc =function(device ,funct){
+  
+	var index = $scope.selectedDevices[device].func.indexOf(funct);
+	if($scope.selectedDevices[device].func.indexOf(funct) == -1){
+		$scope.selectedDevices[device].func.push(funct);
+	}else{
+		$scope.selectedDevices[device].func.splice(index,1);
+	}
+	
+}
+
+// eof testing
+	
+	
+  	$scope.ok = function() {  
+  		
+  		var data = {};
+  		
+  		data.oname = devices[0].Name;  
+  		data.dAccess ={};
+  		angular.forEach($scope.selectedDevices,function(value,key){
+  			if(value.status == true){
+  				data.dAccess[key] = value;
+  			}
+  		})
+  		
+  		console.log(data);
+  		
+  			adminService.submit('admin/setOrgDeviceAccess',data).then(function(response){  	
   				if(response.status == 202){
   					Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
   				}else
@@ -292,7 +428,8 @@ function ($scope,userFactory) {
   						"Phone No" :value.pno ,					 
   						"Email" : value.email,
   						"add" : value.address.add1 + ' ' + value.address.sub + ' ' + value.address.state + ' ' + value.address.pocode,
-  						"type" : value.type.substring(0,1).toUpperCase() + value.type.slice(1)
+  						"type" : value.type.substring(0,1).toUpperCase() + value.type.slice(1),
+              "devices" : value.device
   					})
           
   			})
@@ -383,6 +520,20 @@ function ($scope,userFactory) {
 				url:'http://localhost/api/'+api,
 				//url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
+				data: {serverData:serverData}
+			}).then(function(response){
+				deferred.resolve(response.data);
+			},function(response){				
+				deferred.reject("Failed");
+			});
+		 	return deferred.promise;
+			},
+		getData : function(api,serverData){
+			var deferred = $q.defer();			
+			$http({
+				url:'http://localhost/api/'+api,
+				//url:'http://www.smartafarm.com.au/api/'+api,
+				method:'GET',
 				data: {serverData:serverData}
 			}).then(function(response){
 				deferred.resolve(response.data);

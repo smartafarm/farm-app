@@ -4,7 +4,8 @@
 	'sessionService',
 	'$http',
 	'$interval',
-function($rootScope,$state,LoginService,sessionService,$http,$interval){	
+	'userFactory',
+function($rootScope,$state,LoginService,sessionService,$http,$interval,userFactory){	
 	
 	 // Default run of application
 
@@ -20,12 +21,24 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 		*/
 	    if(toState.name !== 'login'){	    
 	    	var token = sessionStorage.getItem('reqTok');		    	
-	    	var bearer = sessionStorage.getItem('user');		    	
+	    	var bearer = sessionStorage.getItem('user');
+
 	    	if (token && bearer){
 	    		$http.defaults.headers.post = { 'Content-Type': 'application/x-www-form-urlencoded' }
 	    		$http.defaults.headers.get = { 'Content-Type': 'application/json' }
 	    		$http.defaults.headers.common['X-Auth-Token'] = token   ;
 	    		$http.defaults.headers.common['Bearer'] = bearer			    			    ;
+	    		
+		    	if(!$rootScope.user){
+	                                                     
+	                $rootScope.getuser = userFactory.receive('fetch/getuserinfo/'+bearer).then
+	                (function(response){
+	                   if(response){
+	                        return response;      
+	                   }
+	                  return
+	               })
+            	}
 	    	}
 	    	else 
 	    	{	
@@ -34,8 +47,14 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval){
 	    		sessionService.destroy('user');
 	    		$http.defaults.headers.common['X-Auth-Token'] = undefined
 	    		$http.defaults.headers.common['Bearer'] = undefined   			    			    
+
 	    		$state.go('login')
 	    	};
+	    }else{
+	    	
+	    	if($rootScope.user){	    			
+	    			 delete $rootScope.user ;
+	    		}
 	    }
 	})
 

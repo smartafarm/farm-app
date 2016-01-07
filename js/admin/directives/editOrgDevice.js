@@ -1,16 +1,16 @@
-.directive('editDevice',function(Notification,$uibModal){
+.directive('editOrgDevice',function(Notification,$uibModal){
 	return{
 		restrict:'A',					
 		link : function(scope,ele,attr){
 			
 			ele.bind("click",function(){
 				if(scope.gridApi.selection.getSelectedRows().length == 0){
-					Notification.error({message: 'Please Select a User ', delay: 3000});
+					Notification.error({message: 'Please select an organisation ', delay: 3000});
 				}else{
 					$uibModal.open({
 				      animation: true,
-				      templateUrl: 'admin/templates/editUserDeviceModal.html',
-				      controller: 'editDeviceCtrl',	
+				      templateUrl: 'admin/templates/editDeviceModal.html',
+				      controller: 'editOrgDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
 		      						console.log(scope.gridApi.selection.getSelectedRows(0))

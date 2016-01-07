@@ -16,7 +16,8 @@ function ($scope,userFactory) {
   						"Phone No" :value.pno ,					 
   						"Email" : value.email,
   						"add" : value.address.add1 + ' ' + value.address.sub + ' ' + value.address.state + ' ' + value.address.pocode,
-  						"type" : value.type.substring(0,1).toUpperCase() + value.type.slice(1)
+  						"type" : value.type.substring(0,1).toUpperCase() + value.type.slice(1),
+              "devices" : value.device
   					})
           
   			})

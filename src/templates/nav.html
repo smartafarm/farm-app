@@ -10,24 +10,33 @@
 				<span class="icon-bar"></span>	
 			</button>			
 		</div>
-		<div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
-			<ul class="nav navbar-nav" >
-				<li><a ui-sref="app.dashboard">Dashboard </a></li>				
-				<li><a href="http://localhost/feeder" target="_blank">Feeder </a></li>				
-		        <li><a ui-sref="app.rawdata" >Raw Data</a></li> 
-		        <li ng-if="userName === 'admin'"><a ui-sref="admin.users" >Admin Portal</a></li>     
+	<div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+		<ul class="nav navbar-nav" >
+			<li><a ui-sref="app.dashboard">Dashboard </a></li>				
+			<li><a href="http://localhost/feeder" target="_blank">Feeder </a></li>				
+	        <li><a ui-sref="app.rawdata" >Raw Data</a></li> 
+	        <li><a ui-sref="oadmin.users" ng-if="user.details.type === 'oadmin'" >Admin</a></li> 
+	        <li ng-if="user.details.type === 'admin'"><a ui-sref="admin.users" >Admin Portal</a></li>     
 
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li uib-dropdown>
-					<a href="#"  uib-dropdown-toggle>{{ userName | ucf }}<span class="caret" style="margin-top: 8px;"></span></a>
-					<ul class="dropdown-menu" uib-dropdown-menu>
-						<li role="menuitem"><a ng-click="logout()" >Logout</a></li>
-					</ul>
-				</li>
-			</ul>
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li uib-dropdown>
+				<a href="#"  uib-dropdown-toggle>{{ user.details.fname | ucf }} {{ user.details.lname | ucf }}<span class="caret" style="margin-top: 8px;"></span></a>
+				<ul class="dropdown-menu" uib-dropdown-menu>
+					<li role="menuitem"><a ng-click="logout()" >Logout</a></li>
+				</ul>
+			</li>
+		</ul>
 	</div> 
 			
 	</div>
 		
 </nav>
+
+
+
+
+
+
+
+

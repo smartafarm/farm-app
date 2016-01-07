@@ -26,7 +26,7 @@ gulp.task('depsjs', function(){
 		'bower_components/checklist-model/checklist-model.js'	,
 		'bower_components/Chart.js/Chart.min.js',
 		'bower_components/angular-chart.js/dist/angular-chart.min.js',		
-		'node_modules/angular-google-chart/ng-google-chart.js',
+		'node_modules/angular-google-chart/ng-google-chart.js',		
 		'js/deps/angular-notify.js'			
 		])// eof gul src
 	.pipe(concat('devdeps.js'))
@@ -84,14 +84,29 @@ gulp.task('adminappjs', function(){
 
 })// eof appjs
 
+gulp.task('oadminappjs', function(){
+	return gulp.src([
+		'js/oadmin/*.js',
+		'js/oadmin/directives/*.js',
+		'js/oadmin/controllers/*.js',
+		'js/oadmin/services/*.js'		
+		])// eof gul srcgulp wa
+	.pipe(concat('app.js'))
+	.pipe(gulp.dest('src/oadmin/js'))
+	//.pipe(uglify())
+	//.pipe(gulp.dest('src/js'))
+
+})// eof organsation appjs
+
 
 gulp.task('watch', function(){
 	gulp.watch(['css/*.css','js/*.js','js/controllers/*.js','js/directives/*.js','js/deps/*.js','js/services/*.js',
-		'js/admin/*.js','js/admin/controllers/*.js','js/admin/directives/*.js','js/admin/deps/*.js','js/admin/services/*.js'
+		'js/admin/*.js','js/admin/controllers/*.js','js/admin/directives/*.js','js/admin/deps/*.js','js/admin/services/*.js',
+		'js/oadmin/*.js','js/oadmin/controllers/*.js','js/oadmin/directives/*.js','js/oadmin/services/*.js'
 		,'gulpfile.js'], ['default']);	
 })// eof appjs
 
 
 gulp.task('default', function(callback){
-	runSequence('css','appjs','depsjs','adminappjs',callback)
+	runSequence('css','appjs','depsjs','adminappjs','oadminappjs',callback)
 });// eof defaultgulp

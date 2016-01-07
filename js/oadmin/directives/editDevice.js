@@ -1,4 +1,4 @@
-.directive('editDevice',function(Notification,$uibModal){
+.directive('editouserDevice',function(Notification,$uibModal){
 	return{
 		restrict:'A',					
 		link : function(scope,ele,attr){
@@ -9,8 +9,8 @@
 				}else{
 					$uibModal.open({
 				      animation: true,
-				      templateUrl: 'admin/templates/editUserDeviceModal.html',
-				      controller: 'editDeviceCtrl',	
+				      templateUrl: 'oadmin/templates/editUserDeviceModal.html',
+				      controller: 'editouserDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
 		      						console.log(scope.gridApi.selection.getSelectedRows(0))

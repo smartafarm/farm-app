@@ -6,6 +6,7 @@
   'LoginService',
   'sessionService',
  function ($scope, $rootScope,Notification,$state,LoginService,sessionService) {
+
   $scope.credentials = {
     username: '',
     password: ''
@@ -24,7 +25,7 @@
     }
     
     //routing to main application on successful login
-    $state.go('app');
+    $state.go('app.dashboard');
   	},function(response){
          //console.log(response)   ;
   		

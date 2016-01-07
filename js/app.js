@@ -16,8 +16,7 @@ var sfarm = angular
 'googlechart',
 'ngMaterial',
 'ngAria',
-'angularUtils.directives.dirPagination'
-
+'angularUtils.directives.dirPagination',
 
 ])
 .constant('USER_ROLES', {
@@ -33,9 +32,13 @@ var sfarm = angular
 .filter('ucf', function()
 {
     //filter to convert text into sentence case
+   
     return function(word)
     {
-        return word.substring(0,1).toUpperCase() + word.slice(1);
+       if(word)
+      {
+          return word.substring(0,1).toUpperCase() + word.slice(1);
+      }
     }
 })
 .filter('valueFilter', function()
@@ -65,4 +68,4 @@ var sfarm = angular
       //configuartion to animate accordion for UIB ANGULAR BOOTSTRAP
       $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
   }
-]);
+])

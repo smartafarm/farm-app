@@ -54,5 +54,10 @@ $scope.getdate = function (MyDate) {
    	}
 
   };
-  
+	
+	$rootScope.getuser.then(function(response){
+		$rootScope.user = response;				
+	})
+console.log($scope);
+	
 }])

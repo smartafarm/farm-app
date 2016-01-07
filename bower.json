@@ -37,7 +37,8 @@
     "angular-ui-notification": "~0.0.14",
     "checklist-model": "~0.6.0",
     "tc-angular-chartjs": "~1.0.12",
-    "angularUtils-pagination": "angular-utils-pagination#~0.9.3"
+    "angularUtils-pagination": "angular-utils-pagination#~0.9.3",
+    "angular-material-design-lite": "~0.4.3"
   },
   "devDependencies": {
     "angular-material": "master",
