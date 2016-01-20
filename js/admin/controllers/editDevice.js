@@ -2,17 +2,17 @@
 	'$scope',
 	'$uibModalInstance',
 	'devices',
-	'userFactory',
+	'adminService',
 	'Notification',
-function ($scope,$uibModalInstance,devices,userFactory,Notification) {  
+function ($scope,$uibModalInstance,devices,adminService,Notification) {  
 	$scope.test = true;
 	$scope.selectedDevices = {};
-	userFactory.receive('admin/getDeviceFunc').then(function(response){
+	adminService.getData('admin/getDeviceFunc').then(function(response){
   			$scope.dfunc = response;  			
   		},function(response){				
 				console.log(response);
 		});
-	userFactory.receive('admin/getAllDevices').then(function(response){
+	adminService.getData('admin/getDevices/'+devices[0].Organisation).then(function(response){
   			$scope.data = response;  	  				
 
   			
@@ -71,7 +71,7 @@ $scope.changeFunc =function(device ,funct){
   		
   		console.log(data);
   		
-  			userFactory.submit('admin/setDeviceAccess',data).then(function(response){  	
+  			adminService.submit('admin/setDeviceAccess',data).then(function(response){  	
   				if(response.status == 202){
   					Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
   				}else

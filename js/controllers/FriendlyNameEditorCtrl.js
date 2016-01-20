@@ -3,77 +3,61 @@
 	'$scope',
 	'$uibModalInstance',
 	'selectedDevice',
-	'UpdateService',
+	'userFactory',
 	'Notification',
 	'$interval',
 	'graphdata',
-function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$interval,graphdata) { 
+function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$interval,graphdata) { 
 
 	//Device Friendly Name Editor Modal Controller 
-	//Click event initiates a modal via directive
-	$scope.addSensorbtn = false;
-	$scope.sensorUpdate =[];
-	$scope.newSensor = [];
-	$scope.selectedDevice = selectedDevice;
-
-  	$scope.ok = function() {    
-  	//Retreiving changes	
-  	var data ={"_id" : $scope.selectedDevice._id ,"newname" : $scope.editFname.fname.$modelValue , "sensor" : $scope.sensorUpdate};	    	
-
-  	
-  	//updating on server
-  	 UpdateService.deviceStatus('update/fname',data).then(function(response){
-  	  		$scope.selectedDevice.name = $scope.editFname.fname.$modelValue;
-  	  		
-  	  		selectedDevice.sensor.forEach(function(value,key){
-		  	  for(i=0;i<$scope.sensorUpdate.length;i++){
-		  	  	if(value.id == $scope.sensorUpdate[i].id)
-		  	  		value.fname = $scope.sensorUpdate[i].fname;	
-		  	  		 if(graphdata[$scope.sensorUpdate[i].id])
-			  	   {
-			  	   	if(graphdata[$scope.sensorUpdate[i].id].info.id == $scope.sensorUpdate[i].id)
-			  	   	 {graphdata[$scope.sensorUpdate[i].id].info.fname = $scope.sensorUpdate[i].fname};
-			  	   }			  	  		
-		  	   }
-		  	  
-		  	})
-
-  	  		//closing modal and initiating message
-			$uibModalInstance.close();
-			Notification.success({ message:'Update successful' , delay:4000 })
-
-		},function(response){
-			Notification.error('Update failed');
-		})
+	//Click event initiates a modal via directive	
 	
-	};
-	$scope.addSensor = function(){
-		$scope.addSensorbtn = true;
-  		$scope.newSensor.push({'id' : 'No' , 'fname' : 'Friendly Name'});  		
-  	}
+	$scope.sensorUpdate =[];	
+	$scope.selectedDevice = selectedDevice;
+	/*console.log('Selecteddevice')	
+	console.log($scope.selectedDevice);
+	console.log('graphdata');
+	console.log(graphdata)*/
+  	$scope.saveDeviceName = function() {    
+  	//Updating Fname
+  
+  	var data ={"_id" : $scope.selectedDevice._id ,"fname" : $scope.newfname};	
+  		userFactory.submit('update/fname',data).then(function(response){
+  	  		if(response.status ==200){
+  	  			$scope.selectedDevice.name = $scope.newfname;  	
+	  	  		Notification.success({ message:'Device Name Updated' , delay:4000 })	  	  		
+	  	  	}
+		})   
+  				
+  
+  	console.log($scope.fnameUpdate);
+ 	}
+ 	$scope.saveSensor = function(asset){
+ 		/*console.log('asset');
+ 		console.log(asset);*/
+ 		var data={"_id" : $scope.selectedDevice._id ,"asset" : asset.assetInfo.id ,"fname" : asset.fnameUpdate}	
+ 		userFactory.submit('update/sname',data).then(function(response){
+
+			if(response.status == 200){
+	  	  		angular.forEach(selectedDevice.asset,function(value,key){
+		 			if(value.id === asset.assetInfo.id){
+		 				value.fname = asset.fnameUpdate;
+		 				graphdata[asset.assetInfo.assigned].info.fname = asset.fnameUpdate;
+		 			}
+	
+				})	
+				Notification.success({ message:'Sensor Name Updated' , delay:4000 })
+			}
+
+		}) 
+ 		
+
+ 	}
 	$scope.cancel = function() {
 		//closing modal on cancel click
 		
 	  $uibModalInstance.dismiss('cancel');
 	};	
-  	$scope.checkSensor = function(index){  	
-
-  				
-  			
-  				
-  				var data= {'id' : $scope.selectedDevice._id , 'sensor' : $scope.newSensor[index].id}
-				UpdateService.deviceStatus('update/checksensor',data).then(function(response){
-					if(response == true){
-						$scope.selectedDevice.sensor.push({'id': $scope.newSensor[index].id ,'fname' : $scope.newSensor[index].fname})						
-						$scope.addSensorbtn = false;				
-						$scope.newSensor.splice(index,1);
-						Notification.success({ message:'Sensor Added' , delay:3000 });
-					}else{
-						Notification.error({ message:'Sensor Exists' , delay:3000 });
-					}
-				})
-
-			}
 
 	
 }])

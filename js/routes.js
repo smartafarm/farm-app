@@ -19,13 +19,22 @@ sfarm
             .state('app', {
                 url: '/',   
                 templateUrl: "index.html",
-                controller: "AppCtrl"
-              
+                controller: "AppCtrl"  
+            })
+            .state('forgot', {                
+                url: '/forgot',   
+                templateUrl: 'templates/forgot.html'                  
             })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
                 templateUrl: 'templates/dashboard.html' ,
                 controller:'dashboardMasterCtrl'  ,               
+                parent:'app'
+            })
+            .state('app.reports' ,{
+                url: 'app/reports',
+                templateUrl: 'templates/reports.html' ,
+                controller:'reportsCtrl'  ,               
                 parent:'app'
             })
               .state('app.rawdata' ,{
@@ -34,6 +43,8 @@ sfarm
                 controller :'rawDataCtrl',
                 parent:'app'
             })
+
+              // admin routes
            .state('admin' ,{
             url: '/admin',
             templateUrl: 'admin/test.html',
@@ -67,5 +78,39 @@ sfarm
             
               
             })
+            .state('admin.device' ,{
+            url: '/device',
+            parent:'admin',
+            views :{
+                    "display":{
+                        templateUrl: 'admin/partials/device.html'           
+                    }
+                }
+            
+              
+            })
+            .state('oadmin' ,{
+            url: '/manage',
+            templateUrl: 'oadmin/index.html',
+            controller:'oadminCtrl',
+            resolve: { 
+                        //LAZY loading organization admin scripts 
+                        loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
+                                 return $ocLazyLoad.load('oadmin/js/app.js');
+                        }]
+                    }
+              
+            })
+            .state('oadmin.users' ,{
+            url: '/users',
+            parent:'oadmin',views :{
+                    "display":{
+                        templateUrl: 'oadmin/partials/users.html'           
+                    }
+                    
+                }         
+              
+            })
+
     }
 ]);

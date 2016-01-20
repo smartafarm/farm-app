@@ -1,0 +1,74 @@
+<div modal="addUserModal" close="cancel()">
+ <!--  <form name="newDevice"> -->
+ <div class="modal-header">
+  <h4>Add New Device</h4> 
+  <div class="pull-right tags" style="display: inline-block;margin-top: -30px"><i >Device type  : Controller</i></div>     
+</div>
+<div class="modal-body">
+  <form class="form-horizontal" name="newDevice" id="newDevice" style="font-size:85%" novalidate>
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-12">
+        <div>
+          <h4><strong>Device Details</strong></h4>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error' : newDevice.id.$invalid && !newDevice.id.$pristine }">
+          <label for="id" class="col-sm-2 col-md-2 control-label">ID</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="id" ng-blur="checkName()"placeholder="Device id" ng-model="device.id" required>
+            <span style="margin-left: 8px; display:inline-block;color:{{nameIsvalid ? 'green' : 'red'}}" ng-if="!newDevice.id.$pristine && nameIsvalid != undefined">
+              <i class="fa" ng-class="{'fa-check' : nameIsvalid ,'fa-times' : !nameIsvalid }"></i> 
+              {{ nameIsvalid ? 'Device ID Vaild' : 'Device ID Exists' }}
+            </span>
+          </div>
+        </div>
+         <div class="form-group" ng-class="{ 'has-error' : newDevice.name.$invalid && !newDevice.name.$pristine }">
+          <label for="name" class="col-sm-2 col-md-2 control-label">Device Name</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="name" placeholder="Device Name" ng-model="device.name" required>
+          </div>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error' : newDevice.desc.$invalid && !newDevice.desc.$pristine }">
+          <label for="desc" class="col-sm-2 col-md-2 control-label">Description</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="desc" placeholder="Description" ng-model="device.desc" required>
+          </div>
+        </div>
+        <div class="form-group" ng-class="{ 'has-error' : newDevice.EquipName.$invalid && !newDevice.EquipName.$pristine }">
+          <label for="EquipName" class="col-sm-2 col-md-2 control-label">Friendly Name</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="EquipName" placeholder="Friendly Name" ng-init = "device.EquipName = 'Device Friendly Name'" ng-model="device.EquipName" required>
+          </div>
+        </div>
+         <div class="form-group">
+          <label for="status" class="col-sm-2 col-md-2 control-label">Status</label>
+          <div class="col-sm-8 col-md-8 " style="margin-top : 5px">
+           <span               
+              ng-class=" {'fa fa-toggle-on fa-lg':device.status==1,'fa fa-toggle-off fa-lg' : device.status!=1} "
+              style="margin-left:10px ;color:{{device.status==1 ? 'green' : 'red'}}"              
+              ng-init = "device.status = 0" 
+              ng-click = "device.status == 1 ? device.status = 0 : device.status = 1"             
+             ></span>
+             <span style="margin-left: 10px">{{device.status == 1 ? 'Active' : 'Inactive'}}</span>
+          </div>
+        </div>
+        
+        
+      </div> 
+    </div>   
+      <div class="modal-footer">
+        <div class="form-group">
+          <div class="col-sm-2  col-md-2 col-lg-2">
+            <button type="submit" class="btn btn-success" ng-click="ok()" ng-disabled = "newDevice.$invalid || !nameIsvalid"> + Add device</button>
+          </div>
+          <div class="col-sm-2  col-md-3 col-lg-3">
+            <button type="submit" class="btn btn-faliure" ng-click="cancel()" > Cancel</button>
+          </div>
+        </div>
+      </div>    
+    
+
+  </form>
+
+</div>
+</div>
+

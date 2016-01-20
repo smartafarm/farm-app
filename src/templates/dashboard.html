@@ -1,23 +1,17 @@
-<div id="background">
-	<ng-include src = "'templates/nav.html'"> </ng-include>
-	<div class="container" style="padding-top: 80px; margin-bottom: 130px;" >
-	<div class="jumbotron" >
-		<div ng-if="isLoading"><i class="fa fa-refresh fa-spin fa-2x"></i></div>
-		<div ng-show="!isLoading">
-		<h2 style="font-family: 'Pacifico', cursive;">My Dashboard</h2><br>     
-		<label for="singleSelect"> Select controller: </label> 
-		    <select name="singleSelect" ng-model="device" ng-options="selectedDevice.name+' ('+selectedDevice._id + ')' for selectedDevice in data" ng-change="getGraph()">
-				<option >device</option>     
-		    </select><br>
-			<device-panel ng-if="device"></device-panel>
-		</div>
-	</div>
+
+<ng-include src = "'templates/nav.html'"> </ng-include>
+<div class="container" style="padding-top: 80px; margin-bottom: 130px;" >
+<div class="jumbotron" style="background-color: white">
+	<div ng-if="isLoading"><i class="fa fa-refresh fa-spin fa-2x"></i></div>
+	<div ng-show="!isLoading">
+	<h2 style="font-family: 'Pacifico', cursive;">My Dashboard</h2><br>     
+	<label for="singleSelect"> Select controller: </label> 
+	    <select name="singleSelect" ng-model="device" ng-options="selectedDevice.name+' ('+selectedDevice._id + ')' for selectedDevice in data" ng-change="getGraph()">
+			<option >device</option>     
+	    </select><br>
+		<device-panel ng-if="device"></device-panel>
 	</div>
 </div>
-<div class="push"></div>
-<footer class="footer">
-  <div class="container">
-    <p class="text-muted">Place sticky footer content here.</p>
-  </div>
-</footer>
+</div>
 
+<ng-include src = "'templates/footer.html'"> </ng-include>

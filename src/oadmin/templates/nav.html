@@ -1,0 +1,32 @@
+<nav class="navbar navbar-default navbar-fixed-top" ng-show="!currentUser" ng-controller ="NavCtrl" >
+	<a class="navbar-brand" ui-sref="app.dashboard">
+	<img alt="Brand" src="templates/smartfarm.png" style="width: 200px;"></a>
+	<div class="container" style="padding-top: 20px;">
+		<div class ="navbar-header" >		
+			<button type="button"  class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" >
+				<span class="sr-only"> Toggle Navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>	
+			</button>			
+		</div>
+  
+		<div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+			<ul class="nav navbar-nav" >								
+				<!-- <li><a ui-sref="oadmin.users">Users</a></li>	        		       -->
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a ui-sref="app.dashboard">User Dashboard</a></li>				
+   				<li uib-dropdown>
+					<a href="#"  uib-dropdown-toggle>{{ userName | ucf }}  <span class="caret" style="margin-top: 8px;"></span></a>
+					<ul class="dropdown-menu" uib-dropdown-menu>
+						<li><a ng-click="logout()" >Logout</a></li>
+					</ul>
+				</li>
+				
+			</ul>
+	</div> 
+			
+	</div>
+		
+</nav>

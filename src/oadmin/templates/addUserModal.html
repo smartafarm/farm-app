@@ -1,0 +1,110 @@
+<div modal="addUserModal" close="cancel()">
+ <!--  <form name="newUser"> -->
+  <div class="modal-header">
+      <h5>Add New User for {{user.details.bname}}</h5>      
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" name="newUser" id="newUser" style="font-size:85%" novalidate>
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-6">
+          <div>
+            <h4><strong>Personal Details</strong></h4>
+          </div>
+          <div class="form-group" ng-class="{ 'has-error' : newUser.fname.$invalid && !newUser.fname.$pristine }">
+            <label for="fname" class="col-sm-2 col-md-4 control-label">First Name</label>
+            <div class="col-sm-8 col-md-8 ">
+              <input type="text" class="form-control" name="fname" placeholder="First Name" ng-model="user.details.fname" required>
+            </div>
+          </div>
+           <div class="form-group" ng-class="{ 'has-error' : newUser.lname.$invalid && !newUser.lname.$pristine }">
+            <label for="lname" class="col-sm-2 col-md-4 control-label">Last Name</label>
+            <div class="col-sm-8 col-md-8 ">
+              <input type="text" class="form-control" name="lname" placeholder="Last Name" ng-model="user.details.lname" ng-required="true">
+            </div>
+          </div>
+          <div class="form-group" ng-class="{ 'has-error' : newUser.uname.$invalid && !newUser.uname.$pristine }">
+            <label for="pno" class="col-sm-2 col-md-4 control-label">User Name</label>
+            <div class="col-sm-8 col-md-8 ">
+              <input type="text" class="form-control" name="uname" placeholder="Username" ng-model="user.uname" required>
+            </div>
+          </div>
+          <div class="form-group" ng-class="{ 'has-error' : newUser.pno.$invalid && !newUser.pno.$pristine }">
+            <label for="pno" class="col-sm-2 col-md-4 control-label">Phone No</label>
+            <div class="col-sm-8 col-md-8 ">
+              <input type="text" ng-pattern="/^\D*0(\D*\d){9}\D*$/" class="form-control" name="pno" placeholder="Phone No" ng-model="user.details.pno" required>
+            </div>
+          </div>
+          <div class="form-group" ng-class="{ 'has-error' : newUser.email.$invalid && !newUser.email.$pristine }">
+            <label for="email" class="col-sm-2 col-md-4 control-label">Email</label>
+            <div class="col-sm-8 col-md-8 ">
+              <input type="email" class="form-control" name="email" placeholder="Email" ng-model="user.details.email" required>
+            </div>
+          </div>
+          
+          
+      </div> <!-- Half page div -->
+      <div class="col-sm-12 col-md-6 col-lg-6">
+        <div>
+            <h4><strong>Address Details</strong></h4>
+        </div>
+       
+        <div class="form-group">
+          <label for="a1" class="col-sm-2 col-md-4 control-label">Address</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="a1" placeholder="Address" ng-model="user.details.address.a1">
+          </div>
+        </div>      
+        <div class="form-group">
+          <label for="town" class="col-sm-2 col-md-4 control-label">Town</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="town" placeholder="Town" ng-model="user.details.address.town">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="state" class="col-sm-2 col-md-4 control-label">State</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="state" placeholder="Street" ng-model="user.details.address.state">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="pocode" class="col-sm-2 col-md-4 control-label">Postal Code</label>
+          <div class="col-sm-8 col-md-8 ">
+            <input type="text" class="form-control" name="pocode" placeholder="Postal Code" ng-model="user.details.address.pocode">
+          </div>
+        </div>
+      <div>
+          <h4><strong>Authorization</strong></h4>
+      </div>
+      <div class="form-group">
+      <label for="type" class="col-sm-2 col-md-4 control-label">Role</label>
+        <div class="col-sm-8 col-md-8 ">
+          <select name="type" class="form-control" ng-model="user.details.type"  required>
+            <option>User</option>     
+            <option>Other</option>     
+          </select>
+        </div>
+        </div>
+
+      </div> <!-- Half page div -->
+  </div>
+  <div class="modal-footer">
+      <div class="form-group">
+        <div class="col-sm-2  col-md-2 col-lg-2">
+          <button type="submit" class="btn btn-success" ng-click="ok()" ng-disabled = "newUser.$invalid"> + Add User</button>
+        </div>
+        <div class="col-sm-2  col-md-3 col-lg-3">
+          <button type="submit" class="btn btn-faliure" ng-click="cancel()" > Cancel</button>
+        </div>
+      </div>
+  </div>
+  </form>
+ <!-- <div>
+       <h4><strong>Personal Details</strong></h4>
+   </div>
+       <h4><strong>Address Details</strong> </h4>
+    <div class="modal-footer">
+      <button class="btn btn-success" ng-click="ok()" >Add User</button>
+      <button class="btn" ng-click="cancel()">Cancel</button>
+    </div>
+  </form> -->
+</div>

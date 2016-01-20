@@ -20,7 +20,7 @@
 	//retreiving username to display on Navbar
 	var username = sessionStorage.getItem('user');
 	if (username) $scope.userName = username
-	
+	$scope.footdt = new Date();
 	
 	
 }])

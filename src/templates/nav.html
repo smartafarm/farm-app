@@ -1,6 +1,10 @@
 <nav class="navbar navbar-default navbar-fixed-top" ng-show="!currentUser" ng-controller ="NavCtrl" style="margin-top: -10px;">
-	<a class="navbar-brand" ui-sref="app.dashboard">
-	<img alt="Brand" src="templates/smartfarm.png" style="width: 200px;"></a>
+	
+	<div class="navbar-brand">
+	<a ui-sref="app.dashboard">
+	<img alt="Brand" src="templates/smartfarm.png" style="width: 200px;">	
+	</a>	
+	</div>
 	<div class="container" style="padding-top: 20px;">
 		<div class ="navbar-header" >		
 			<button type="button"  class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" >
@@ -10,24 +14,35 @@
 				<span class="icon-bar"></span>	
 			</button>			
 		</div>
-		<div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
-			<ul class="nav navbar-nav" >
-				<li><a ui-sref="app.dashboard">Dashboard </a></li>				
-				<li><a href="http://localhost/feeder" target="_blank">Feeder </a></li>				
-		        <li><a ui-sref="app.rawdata" >Raw Data</a></li> 
-		        <li ng-if="userName === 'admin'"><a ui-sref="admin.users" >Change Priviledges</a></li>     
+	<div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+		<ul class="nav navbar-nav" >
+			<li><a ui-sref="app.dashboard">Dashboard </a></li>				
+			<li><a ui-sref="app.reports">Reports </a></li>
+			<!-- <li><a href="http://localhost/feeder" target="_blank">Feeder </a></li> -->				
+	        <li><a ui-sref="app.rawdata" >Raw Data</a></li> 
+	        <li><a ui-sref="oadmin.users" ng-if="user.details.type === 'oadmin'" >Admin</a></li> 
+	        <li ng-if="user.details.type === 'admin'"><a ui-sref="admin.users" >Admin Portal</a></li>     
 
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li uib-dropdown>
-					<a href="#"  uib-dropdown-toggle>{{ userName | ucf }}<span class="caret" style="margin-top: 8px;"></span></a>
-					<ul class="dropdown-menu" uib-dropdown-menu>
-						<li role="menuitem"><a ng-click="logout()" >Logout</a></li>
-					</ul>
-				</li>
-			</ul>
-	</div> 
-			
+		</ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li uib-dropdown>
+				<a href="#"  uib-dropdown-toggle>{{ user.details.fname | ucf }} {{ user.details.lname | ucf }}<span class="caret" style="margin-top: 8px;"></span></a>
+				<ul class="dropdown-menu" uib-dropdown-menu>
+					<li role="menuitem"><a ng-click="logout()" >Logout</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div> 			
 	</div>
+	
 		
+	
 </nav>
+
+
+
+
+
+
+
+

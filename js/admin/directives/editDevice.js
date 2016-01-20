@@ -5,11 +5,11 @@
 			
 			ele.bind("click",function(){
 				if(scope.gridApi.selection.getSelectedRows().length == 0){
-					Notification.error({message: 'Please Select a User to edit Device Settings', delay: 3000});
+					Notification.error({message: 'Please Select a User ', delay: 3000});
 				}else{
 					$uibModal.open({
 				      animation: true,
-				      templateUrl: 'admin/templates/editDeviceModal.html',
+				      templateUrl: 'admin/templates/editUserDeviceModal.html',
 				      controller: 'editDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	

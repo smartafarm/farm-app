@@ -1,9 +1,10 @@
 <div class ="row" >
+	<div ng-repeat = "assetInfo in device.asset">
 	
-
 		<div ng-repeat = "graphData in graph">
 		<!-- Sensor Panel Div -->
-		<div class="row">
+		<div ng-if="assetInfo.assigned === graphData.info.id">
+		<div class="row" >
 			<div class="col-xs-10 col-xs-offset-1 col-md-10 col-md-offset-1 " style="display:block">
 				<div class="panel panel-default" style="margin-top: 10px;margin-bottom:10px " id="sensorbar">
 				  <div class="panel-heading" id="sensorbar">	  	
@@ -19,9 +20,19 @@
 				    	<span ng-repeat= "sensor in device.lread.data"> 
 				    	<span ng-if="sensor.sensorID == graphData.info.id" style="font-size: 75%">
 					    	<strong style="color:green">Last Reading</strong>
+					    	<span>{{ device.lread.dt | date:'dd-MM-yyyy h:mm a' }}&nbsp</span>
 							<span ng-repeat= "sensorData in sensor.sdata"> {{sensorData | valueFilter}}</span>
 						</span>
-						</span>			
+						</span>	
+						<span 
+							class="fa fa-power-off fa-lg"
+							style="margin-top:-6px ;margin-left:10px ;color:{{device.Status==1 ? 'green' : 'red'}}"
+							tooltip-trigger="mouseenter"
+							tooltip-placement="right"							
+							uib-tooltip ="{{device.Status==1 ? 'Active' : 'Inactive'}}"
+							tooltip-popup-delay='400'
+						 >	</span>							 
+						
 					</div>
 		  			</div>	  
 				</div>
@@ -38,8 +49,9 @@
 			<span id="tempLabel" style="float: right; border-style: solid; margin-top: -165px; margin-right: 0px;border-left-width: 0px;border-bottom-width: 0px;border-top-width: 0px;border-right-width: 0px;padding-bottom: 30px;">
 				<strong style="color:blue">Temperature (℃)</strong></span>
 			<div style="margin-bottom: 50px;"></div>
-			</div>
+		</div>
 			
+		</div>
 		</div>
 		
 
