@@ -31,7 +31,7 @@
 $scope.getGraph = function(){	
 	//variable to trigger the graph resize message
 	$scope.changeCall = true
-
+	
 	if($scope.device.readings.length > 0) 
 		{
 			mygraphFactory.getGraph($scope).then(function(){		
@@ -58,6 +58,6 @@ $scope.getdate = function (MyDate) {
 	$rootScope.getuser.then(function(response){
 		$rootScope.user = response;				
 	})
-console.log($scope);
+
 	
 }])

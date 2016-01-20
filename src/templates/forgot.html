@@ -1,0 +1,92 @@
+	<nav class="navbar navbar-default">
+		<div class="container-fluid row" style="height: 80px;">
+				<div class ="navbar-header">
+							<a class="navbar-brand" href="#" > <img alt="Brand"
+								src="templates/smartfarm.png" style="width: 250px;">
+							</a>			
+				</div>
+				<div class="navbar-collapse collapse">		
+					<div class="nav navbar-nav navbar-right">
+						<span class="pull-right" href="#" style="padding-top: 50px;padding-right: 5px;"> 
+						<div ng-controller='TimeCtrl' >
+						    <p>{{ clock  | date:'medium'}}</p>
+						</div>
+						</span>
+					</div>
+				</div>
+		</div>
+	</nav>
+</nav>
+<div class="container" style="padding:80px" ng-controller="forgotCtrl">		
+	<div class="row">
+		<div  class=" panel panel-default col-md-7 center-block" style="float:none" >
+			<div class="panel-body" >	
+			<div class="col-md-10 center-block well well-sm" style="float:none ;background-color: #EA7272;text-align:center" ng-show= "error">
+							<p >{{error}}</p>						 	
+			</div>	
+			<div class="col-md-3 center-block" style="float:none ;text-align:center" ng-show="loading">
+							<span><i class="fa fa-refresh fa-spin fa-2x"></i></span>						 	
+			</div>					
+			<div ng-show ="!success">
+				 <div class="col-md-5 center-block" style="float:none">
+				 	
+					 <form name="frgtFrm" id="frgtFrm" novalidate> 
+					      <div class="form-group" >
+						        <label for="uname" >Username or Email Address</label>				          
+					     </div>
+					     <div class="form-group" ng-class="{ 'has-error' : frgtFrm.uname.$invalid && !frgtFrm.uname.$pristine }">
+						        <input type="text" id="uname" name="uname" class="form-control" placeholder="username or email" ng-model="frgot.uname" required autofocus>
+					     </div>
+					      <div class="form-group">
+						        <button class="btn  btn-primary btn-block" type="submit" ng-click="submit()" ng-disabled = "frgtFrm.$invalid">Reset</button>
+					     </div>					   
+					</form>						
+				</div>
+				<div class="row" style="margin-top:10px">
+					<div class="col-md-12 center-block" style="float:none">
+						<div class="well">
+							<label>Please note:</label><br>
+							<ul>
+								<li>If account exist , A link to reset password will sent in the registered email. </li>
+								<li>If you do not receive link ,please check the junk/spam folder and adjust your email account settings </li>
+								<li>Please contact administrator for further information </li>
+							</ul>
+						 	
+						</div>
+					</div>
+				</div>
+			</div> 
+			<div ng-show="success">
+				<div class="col-md-5 center-block" style="float:none">
+					<div class="well">
+								<label>Reset link Geneated</label><br>
+								<a ui-sref="login">Login</a>
+					</div>
+				</div>
+			</div>	
+			</div>
+		</div>
+	</div>
+</div>
+			<!-- 			<div class="row" style="margin-top:10px">
+			<div class="col-md-5 center-block" style="float:none">
+			<label for="uname" >Username or Email Address</label>
+			<div class="form-group" ng-class="{ 'has-error' : frgtFrm.uname.$invalid && !frgtFrm.uname.$pristine }">
+							      	  <input type="text" id="uname" class="form-control" placeholder="username or email" ng-model="frgot.uname" required autofocus>
+						      	    </div>
+			</div>
+			 
+			</div>	
+			
+			<div class="row" style="margin-top:10px">
+				
+				 
+				 </div>
+			</div>	
+			
+			
+					      	</form>
+						</div>
+					</div>	
+				</div> -->
+	

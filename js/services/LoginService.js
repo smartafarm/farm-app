@@ -7,8 +7,8 @@
 			$http({
 				//setting headers
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				//url:'http://www.smartafarm.com.au/api/login/authenticate',				
-				url:'http://localhost/api/login/authenticate',		
+				url:'http://www.smartafarm.com.au/api/login/authenticate',				
+				//url:'http://localhost/api/login/authenticate',		
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){
@@ -58,6 +58,25 @@
 				 deferred.reject("Failed");
 			});
 		 	return deferred.promise;
+			},
+
+		getd : function(api,key){
+		//destroy token and user credentials
+			var deferred = $q.defer();
+			$http({
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				url:'http://www.smartafarm.com.au/api/' + api,
+				//url:'http://localhost/api/' + api,
+				method:'POST',
+				data: {'user' : key }
+			}).then(function(response){
+				deferred.resolve(response);
+			},function(response){
+				 deferred.reject("Failed");
+			});
+		 	return deferred.promise;
 			}					
-		}
+		
+		}	
+		
 }])

@@ -23,6 +23,7 @@ $scope.user ={};
               "cperson" : $scope.org.cperson,
               "Phone No" :$scope.org.pno ,          
               "Email" : $scope.org.email,
+              "type" : $scope.org.type,
               "add" : $scope.org.address.add1 + ' ' + $scope.org.address.sub + ' ' + $scope.org.address.state + ' ' + $scope.org.address.pocode
             })
             Notification.success({message : 'Organisation Added' ,delay : 3000})

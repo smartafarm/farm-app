@@ -21,10 +21,20 @@ sfarm
                 templateUrl: "index.html",
                 controller: "AppCtrl"  
             })
+            .state('forgot', {                
+                url: '/forgot',   
+                templateUrl: 'templates/forgot.html'                  
+            })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
                 templateUrl: 'templates/dashboard.html' ,
                 controller:'dashboardMasterCtrl'  ,               
+                parent:'app'
+            })
+            .state('app.reports' ,{
+                url: 'app/reports',
+                templateUrl: 'templates/reports.html' ,
+                controller:'reportsCtrl'  ,               
                 parent:'app'
             })
               .state('app.rawdata' ,{
@@ -63,6 +73,17 @@ sfarm
             views :{
                     "display":{
                         templateUrl: 'admin/partials/organisation.html'           
+                    }
+                }
+            
+              
+            })
+            .state('admin.device' ,{
+            url: '/device',
+            parent:'admin',
+            views :{
+                    "display":{
+                        templateUrl: 'admin/partials/device.html'           
                     }
                 }
             

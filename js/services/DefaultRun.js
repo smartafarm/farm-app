@@ -19,7 +19,8 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval,userFacto
 	    /*	    
 		Add Authorization token on each request
 		*/
-	    if(toState.name !== 'login'){	    
+	    if(toState.name !== 'login' && toState.name !== 'forgot' ){	   
+	    	
 	    	var token = sessionStorage.getItem('reqTok');		    	
 	    	var bearer = sessionStorage.getItem('user');
 

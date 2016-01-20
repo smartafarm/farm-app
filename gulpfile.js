@@ -26,7 +26,9 @@ gulp.task('depsjs', function(){
 		'bower_components/checklist-model/checklist-model.js'	,
 		'bower_components/Chart.js/Chart.min.js',
 		'bower_components/angular-chart.js/dist/angular-chart.min.js',		
-		'node_modules/angular-google-chart/ng-google-chart.js',		
+		'node_modules/angular-google-chart/ng-google-chart.js',	
+		'bower_components/pdfmake/build/pdfmake.min.js',
+		'bower_components/pdfmake/build/vfs_fonts.js',			
 		'js/deps/angular-notify.js'			
 		])// eof gul src
 	.pipe(concat('devdeps.js'))
@@ -78,8 +80,11 @@ gulp.task('adminappjs', function(){
 		'js/admin/routes.js'
 		])// eof gul srcgulp wa
 	.pipe(concat('app.js'))
+	/*.pipe(ngAnnotate())
+	.pipe(uglify())*/
 	.pipe(gulp.dest('src/admin/js'))
-	//.pipe(uglify())
+
+	
 	//.pipe(gulp.dest('src/js'))
 
 })// eof appjs

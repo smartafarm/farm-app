@@ -17,6 +17,8 @@ var sfarm = angular
 'ngMaterial',
 'ngAria',
 'angularUtils.directives.dirPagination',
+'checklist-model',
+'ui.grid.exporter'
 
 ])
 .constant('USER_ROLES', {

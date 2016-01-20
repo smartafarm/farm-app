@@ -17,6 +17,8 @@ var sfarm = angular
 'ngMaterial',
 'ngAria',
 'angularUtils.directives.dirPagination',
+'checklist-model',
+'ui.grid.exporter'
 
 ])
 .constant('USER_ROLES', {
@@ -93,10 +95,20 @@ sfarm
                 templateUrl: "index.html",
                 controller: "AppCtrl"  
             })
+            .state('forgot', {                
+                url: '/forgot',   
+                templateUrl: 'templates/forgot.html'                  
+            })
             .state('app.dashboard' ,{
                 url: 'app/dashboard',
                 templateUrl: 'templates/dashboard.html' ,
                 controller:'dashboardMasterCtrl'  ,               
+                parent:'app'
+            })
+            .state('app.reports' ,{
+                url: 'app/reports',
+                templateUrl: 'templates/reports.html' ,
+                controller:'reportsCtrl'  ,               
                 parent:'app'
             })
               .state('app.rawdata' ,{
@@ -135,6 +147,17 @@ sfarm
             views :{
                     "display":{
                         templateUrl: 'admin/partials/organisation.html'           
+                    }
+                }
+            
+              
+            })
+            .state('admin.device' ,{
+            url: '/device',
+            parent:'admin',
+            views :{
+                    "display":{
+                        templateUrl: 'admin/partials/device.html'           
                     }
                 }
             
@@ -448,10 +471,10 @@ sfarm
 	'$rootScope',
   function ($scope,$state,USER_ROLES,$rootScope) {  
   // Main application controller	
-
+		
   $scope.userRoles = USER_ROLES;
   //default route to dashboard
-  $state.go('app.dashboard'); 
+ // $state.go('app.dashboard'); 
 
   
 }])
@@ -487,82 +510,97 @@ $scope.statusToggle = function(){
 
 }])
 
+.controller('forgotCtrl',[
+  '$scope', 
+  '$rootScope', 
+  'Notification',
+  '$state',
+  'LoginService',
+  
+ function ($scope, $rootScope,Notification,$state,LoginService) { 
+  
+  
+  
+  $scope.submit = function(credentials){
+    
+    //Checking credintials
+    $scope.loading = true;
+  	LoginService.getd('login/forgot/exists',$scope.frgot.uname).then(function(response){
+    	if(response.status == 200){
+    		if(response.data ==1){
+    			Notification.success({message:'Reset Link Sent'});
+    			$scope.success = true;
+    			$scope.error = false;
+    		}else{
+    			$scope.error = "Usename does not exist";
+    		}
+    	}
+    	$scope.loading = false;
+	  	},function(response){
+	  	});
+  	
+  	}
+}])
 
 .controller('FriendlyNameEditorCtrl',[
 	'$scope',
 	'$uibModalInstance',
 	'selectedDevice',
-	'UpdateService',
+	'userFactory',
 	'Notification',
 	'$interval',
 	'graphdata',
-function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$interval,graphdata) { 
+function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$interval,graphdata) { 
 
 	//Device Friendly Name Editor Modal Controller 
-	//Click event initiates a modal via directive
-	$scope.addSensorbtn = false;
-	$scope.sensorUpdate =[];
-	$scope.newSensor = [];
-	$scope.selectedDevice = selectedDevice;
-
-  	$scope.ok = function() {    
-  	//Retreiving changes	
-  	var data ={"_id" : $scope.selectedDevice._id ,"newname" : $scope.editFname.fname.$modelValue , "sensor" : $scope.sensorUpdate};	    	
-
-  	
-  	//updating on server
-  	 UpdateService.deviceStatus('update/fname',data).then(function(response){
-  	  		$scope.selectedDevice.name = $scope.editFname.fname.$modelValue;
-  	  		
-  	  		selectedDevice.sensor.forEach(function(value,key){
-		  	  for(i=0;i<$scope.sensorUpdate.length;i++){
-		  	  	if(value.id == $scope.sensorUpdate[i].id)
-		  	  		value.fname = $scope.sensorUpdate[i].fname;	
-		  	  		 if(graphdata[$scope.sensorUpdate[i].id])
-			  	   {
-			  	   	if(graphdata[$scope.sensorUpdate[i].id].info.id == $scope.sensorUpdate[i].id)
-			  	   	 {graphdata[$scope.sensorUpdate[i].id].info.fname = $scope.sensorUpdate[i].fname};
-			  	   }			  	  		
-		  	   }
-		  	  
-		  	})
-
-  	  		//closing modal and initiating message
-			$uibModalInstance.close();
-			Notification.success({ message:'Update successful' , delay:4000 })
-
-		},function(response){
-			Notification.error('Update failed');
-		})
+	//Click event initiates a modal via directive	
 	
-	};
-	$scope.addSensor = function(){
-		$scope.addSensorbtn = true;
-  		$scope.newSensor.push({'id' : 'No' , 'fname' : 'Friendly Name'});  		
-  	}
+	$scope.sensorUpdate =[];	
+	$scope.selectedDevice = selectedDevice;
+	/*console.log('Selecteddevice')	
+	console.log($scope.selectedDevice);
+	console.log('graphdata');
+	console.log(graphdata)*/
+  	$scope.saveDeviceName = function() {    
+  	//Updating Fname
+  
+  	var data ={"_id" : $scope.selectedDevice._id ,"fname" : $scope.newfname};	
+  		userFactory.submit('update/fname',data).then(function(response){
+  	  		if(response.status ==200){
+  	  			$scope.selectedDevice.name = $scope.newfname;  	
+	  	  		Notification.success({ message:'Device Name Updated' , delay:4000 })	  	  		
+	  	  	}
+		})   
+  				
+  
+  	console.log($scope.fnameUpdate);
+ 	}
+ 	$scope.saveSensor = function(asset){
+ 		/*console.log('asset');
+ 		console.log(asset);*/
+ 		var data={"_id" : $scope.selectedDevice._id ,"asset" : asset.assetInfo.id ,"fname" : asset.fnameUpdate}	
+ 		userFactory.submit('update/sname',data).then(function(response){
+
+			if(response.status == 200){
+	  	  		angular.forEach(selectedDevice.asset,function(value,key){
+		 			if(value.id === asset.assetInfo.id){
+		 				value.fname = asset.fnameUpdate;
+		 				graphdata[asset.assetInfo.assigned].info.fname = asset.fnameUpdate;
+		 			}
+	
+				})	
+				Notification.success({ message:'Sensor Name Updated' , delay:4000 })
+			}
+
+		}) 
+ 		
+
+ 	}
 	$scope.cancel = function() {
 		//closing modal on cancel click
 		
 	  $uibModalInstance.dismiss('cancel');
 	};	
-  	$scope.checkSensor = function(index){  	
-
-  				
-  			
-  				
-  				var data= {'id' : $scope.selectedDevice._id , 'sensor' : $scope.newSensor[index].id}
-				UpdateService.deviceStatus('update/checksensor',data).then(function(response){
-					if(response == true){
-						$scope.selectedDevice.sensor.push({'id': $scope.newSensor[index].id ,'fname' : $scope.newSensor[index].fname})						
-						$scope.addSensorbtn = false;				
-						$scope.newSensor.splice(index,1);
-						Notification.success({ message:'Sensor Added' , delay:3000 });
-					}else{
-						Notification.error({ message:'Sensor Exists' , delay:3000 });
-					}
-				})
-
-			}
 
 	
 }])
@@ -636,7 +674,7 @@ function ($scope,$uibModalInstance,selectedDevice,UpdateService,Notification,$in
 $scope.getGraph = function(){	
 	//variable to trigger the graph resize message
 	$scope.changeCall = true
-
+	
 	if($scope.device.readings.length > 0) 
 		{
 			mygraphFactory.getGraph($scope).then(function(){		
@@ -663,7 +701,7 @@ $scope.getdate = function (MyDate) {
 	$rootScope.getuser.then(function(response){
 		$rootScope.user = response;				
 	})
-console.log($scope);
+
 	
 }])
 .controller('NavCtrl', ['$rootScope',
@@ -688,7 +726,7 @@ console.log($scope);
 	//retreiving username to display on Navbar
 	var username = sessionStorage.getItem('user');
 	if (username) $scope.userName = username
-	
+	$scope.footdt = new Date();
 	
 	
 }])
@@ -707,6 +745,138 @@ $scope.refresh= function(){
 }
 //called to receive data when controller initiated
 $scope.refresh();
+}])
+.controller('reportsCtrl', [
+	'$scope',
+	'$rootScope',
+	'userFactory',
+  '$filter',
+	
+ function ($scope,$rootScope,userFactory,$filter) {
+//getting global user properties
+$scope.myData = [];
+$scope.selAsset =[];
+$rootScope.getuser.then(function(response){
+	$rootScope.user = response;		
+	//Receiving User Devices
+	$scope.devices = [];
+	var index = 0;
+	angular.forEach(response.device,function(value,key){		
+		userFactory.receive('fetch/readings/deviceInfo?did='+ key).then(function(response1){
+		//setting default selection
+		if(index == 0) {
+      $scope.sensors = [];
+      $scope.device = response1[0];
+      angular.forEach($scope.device.asset , function(asset,key){
+        angular.forEach(asset.sensor,function(sensor,key1){
+          $scope.sensors.push(sensor);
+        })
+      })
+      //fetching data
+      $scope.refreshData();
+
+    }
+		$scope.devices.push(response1[0]);
+		index = index + 1;
+		})
+	})	
+})	
+
+
+
+
+
+$scope.checkAll = function(){  
+  angular.copy($scope.sensors,$scope.selAsset);
+}
+
+
+$scope.uncheckAll = function(){  
+  angular.copy([],$scope.selAsset);
+}
+
+
+$scope.refreshData = function(){
+  //receivng data
+  $scope.loading = true;
+  userFactory.receive('fetch/readings/device?did='+$scope.device._id).then(function(response){
+  $scope.data =response;  
+  //filling data table
+  $scope.generateReport();     
+  })  
+  $scope.sensors = [];
+  //creating checklist model
+  angular.forEach($scope.device.asset , function(asset,key){
+        angular.forEach(asset.sensor,function(sensor,key1){
+          $scope.sensors.push(sensor);
+        })
+      })
+  //checking all sensors by default
+  $scope.checkAll();  
+}
+
+
+ //setting grid view
+  $scope.gridOptions = {      
+   data: 'myData',
+   enableGridMenu: true,
+   enableRowSelection: true,        
+   selectionRowHeaderWidth: 35,
+   rowHeight: 35,
+   rowWidth : 20,
+   exporterMenuPdf: false,
+   enableColumnResizing : true,
+   paginationPageSizes: [50,100,150,200],
+   paginationPageSize: 50,
+   columnDefs:[
+   { field: 'did' ,displayName:'Device' }  ,
+   { field: 'date',displayName:'Date',width:140,cellFilter: 'date' } ,
+   { field: 'time',displayName:'Time',width:140 }  ,
+   { field: 'sensor' ,displayName:'Sensor ID'},
+   { field: 'type' ,displayName:'Read Type'},
+   { field: 'value' ,displayName:'Read value'}
+   ]   
+ }
+ 
+ 
+
+$scope.gridOptions.onRegisterApi = function(gridApi){
+      //set gridApi on scope      
+      
+      $scope.gridApi = gridApi;
+      gridApi.selection.setMultiSelect(false);
+
+    }
+
+$scope.generateReport = function(){
+  //refresing data
+  $scope.myData = [];
+  
+  angular.forEach($scope.data ,function(readings,key){
+    angular.forEach(readings.data,function(rdata,key1){
+      angular.forEach(rdata.sdata,function(sdata,key2){
+        if($scope.selAsset.indexOf(rdata.sensorID) != -1)
+        //query filter
+        { 
+          var dt = new Date(readings.dt); 
+          $scope.myData.push(
+            {
+              "did" : readings.did, //device id
+              "date" :$filter('date')(dt,'dd-MM-yyyy'), //date
+              "time" :$filter('date')(dt,'shortTime'), //time
+              "sensor" : rdata.sensorID , //sensor id
+              "type" :sdata.id, // temp or level
+              "value":parseFloat(sdata.value)/10  //reading                      
+            })//eof mydata push
+        }
+     })//eof sdata
+    })  //eof rdata
+  }) // eof readings
+$scope.loading = false; 
+}
+
+
+	
 }])
 .controller('TimeCtrl', ['$scope','$timeout', function ($scope,$timeout) {
 
@@ -743,7 +913,8 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval,userFacto
 	    /*	    
 		Add Authorization token on each request
 		*/
-	    if(toState.name !== 'login'){	    
+	    if(toState.name !== 'login' && toState.name !== 'forgot' ){	   
+	    	
 	    	var token = sessionStorage.getItem('reqTok');		    	
 	    	var bearer = sessionStorage.getItem('user');
 
@@ -792,8 +963,8 @@ return{
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-                //url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
-                url:'http://localhost/api/fetch/getdevices',   
+                url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+                //url:'http://localhost/api/fetch/getdevices',   
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
@@ -851,7 +1022,6 @@ return{
 
                 //initializing rows
                 
-
                 //temp rows for creating data array for graph
                              
                 var index = []
@@ -871,16 +1041,24 @@ return{
                           info = {};
                           /*$scope.graph[sensor]['gid'] = sensor*/
                           
-                          $scope.device.sensor.forEach(function(sensorValue,key){
+                          $scope.device.asset.forEach(function(assetValue,key){
+
+                            if(assetValue.sensor.indexOf(sensor) != -1){
+                              info = assetValue;
+                              hit = true;
+                            }
+                          
+                          })
+                        /*  $scope.device.sensor.forEach(function(sensorValue,key){
                             if(sensor == sensorValue.id){
                               info = sensorValue;
                               hit = true;
                             }
                           
-                          })
+                          })*/
                           
                           if(hit){
-                            $scope.graph[sensor]['info'] = info;
+                            $scope.graph[sensor]['info'] = {'id': sensor , 'fname' : info.fname};
                             hit =false;
                           }else
                           {
@@ -969,9 +1147,6 @@ return{
          return deferred.promise;   
               //defining chart type              
              
-             
-              
-
   },
     googleGraph:function($scope,$filter){
   
@@ -1068,102 +1243,7 @@ return{
               console.log($scope.graphLevel[myIndex]);
                
           }
-        )},
- /* getGraph:function($scope){
-    console.log($scope.data.indexOf($scope.device._id));
-      $scope.trigger();
-       // Creating Graph Data container
-             $scope.graph = {};
-               var myIndex = -1;
-               var level = {};
-              
-                myIndex = myIndex + 1;
-                // initializing data
-                $scope.graph = {};
-                $scope.graph['data'] = {};
-                //setting coloums
-              
-              $scope.graph.data = {"cols": [
-                  {id: "t", label: "Time", type: "date"},
-                  {id: "t01", label: "T01", type: "number"},
-                  {id: "l01", label: "L01", type: "number"},
-                  
-              ]}
-
-                //initializing rows
-                $scope.graph.data['rows'] = {};
-
-                //temp rows for creating data array for graph
-                var c = [];                
-                level["rows"] = [];                
-                var index = -1;
-
-                angular.forEach($scope.device.readings, function(readingData, keya){ 
-                  index =index +1 ; 
-                  var dt =   new Date(readingData.dt);                  
-                  dt1 = dt.getDate()  + "/" + dt.getMonth()  + "/" + dt.getFullYear()  + dt.getHours() + ':' +dt.getMinutes();
-                    level.rows[index]=[];
-                    level.rows[index]['c'] = []
-                    //pushing reading date
-                    
-                    level.rows[index].c.push({'v' : dt }); 
-                    
-                    angular.forEach(readingData.data, function(data, keyb){
-                     var sensor= readingData.data.sensorID;                   
-                      var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2})., "$1")                
-                    
-                      angular.forEach(data.sdata, function(sdata, keyc){ 
-                        //pushing reading data
-                        level.rows[index].c.push({'v' : parseFloat(sdata.value)/10});
-                    
-                      });// eof sdata
-
-                    });//eof data
-
-                })//eof reading data;
-
-              //push temp array to graph array                
-              $scope.graph.data['rows'] =level['rows'];
-              //defining chart type              
-              $scope.graph.type = 'AnnotationChart';              
-              
-              //setting chart options
-              var dt = new Date();
-              var dt1 = new Date(dt.getFullYear()  ,dt.getMonth() ,dt.getDate() )
-              $scope.graph.options = {
-                'title': 'Level',                
-                 "fill": 20,       
-                "animation" : {
-                        'startup' : true,
-                        'duration': 400,
-                       'easing': 'inAndOut',                      
-                  },
-                  "chartArea" :{
-                    'backgroundColor' :
-                    {'stroke': 'blue'}
-                    
-                  },
-                  'colors': ['blue','green'],
-                   'pointSize': 10,
-                  'zoomStartTime' : dt1,     
-                  'zoomEndTime' : dt  ,           
-                  'displayAnnotations' : false,
-                  'displayAnnotationsFilter' :false,                  
-                  'displayLegendDots' :false,
-                  'scaleColumns' : [1,2],             
-                  'scaleType' : 'allmaximized',
-                  'table':{
-                    'sortAscending' :false
-                  },                  
-                  min : 0,                 
-                  displayLegends :false,
-                  legendPosition:'newRow',
-                  //scaleFormat : '#\'%\'',
-                  dateFormat:'hh:mm a dd-MM-yy'                  
-              };
-
-
-  }*/
+        )}
 
 }})  
 
@@ -1176,8 +1256,8 @@ return{
 			$http({
 				//setting headers
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				//url:'http://www.smartafarm.com.au/api/login/authenticate',				
-				url:'http://localhost/api/login/authenticate',		
+				url:'http://www.smartafarm.com.au/api/login/authenticate',				
+				//url:'http://localhost/api/login/authenticate',		
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){
@@ -1227,8 +1307,27 @@ return{
 				 deferred.reject("Failed");
 			});
 		 	return deferred.promise;
+			},
+
+		getd : function(api,key){
+		//destroy token and user credentials
+			var deferred = $q.defer();
+			$http({
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+				url:'http://www.smartafarm.com.au/api/' + api,
+				//url:'http://localhost/api/' + api,
+				method:'POST',
+				data: {'user' : key }
+			}).then(function(response){
+				deferred.resolve(response);
+			},function(response){
+				 deferred.reject("Failed");
+			});
+		 	return deferred.promise;
 			}					
-		}
+		
+		}	
+		
 }])
 
 .factory('reqInspect',['$injector',
@@ -1301,8 +1400,8 @@ return{
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/api/'+api,
-				//url:'http://www.smartafarm.com.au/api/'+api,
+				//url:'http://localhost/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);
@@ -1314,8 +1413,8 @@ return{
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/api/'+api,
-				//url:'http://www.smartafarm.com.au/api/'+api,
+				//url:'http://localhost/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

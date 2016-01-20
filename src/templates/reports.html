@@ -1,0 +1,69 @@
+<ng-include src = "'templates/nav.html'"> </ng-include>
+<div class="container" style="padding-top: 80px; margin-bottom: 130px;" >
+	<div class="jumbotron" style="background-color: white">
+		<div class="row">
+			<h2 style="font-family: 'Pacifico', cursive;">Reports</h2><br>  	
+		</div>
+		<div class="row">
+		<div class="col-md-5">
+			Select Controller
+		</div>
+		</div>
+		<div class="row">
+			<div class="col-md-5">
+			<select name="singleSelect"   ng-model="device" ng-options="selectedDevice.EquipName+' ('+selectedDevice._id + ')' for selectedDevice in devices | orderBy:'_id'" ng-init="device = devices[0]" ng-change="refreshData()">
+				<option >device</option>     
+			</select><br>
+			<span ng-show="loading"><i class="fa fa-refresh fa-spin"></i></span>
+			</div>
+		</div>
+		<div ng-show="device" style="margin-top: 15px;">		
+		<uib-accordion close-others="oneAtATime">
+			<uib-accordion-group heading="Filter Assets:">
+				<div class="row">	
+				<div class="row">
+					<div class="col-md-5" style="margin-left: 20px; margin-bottom: 15px;">
+						<button ng-click = "checkAll()">
+							Check All
+						</button>
+						<button ng-click = "uncheckAll()">
+							UncheckAll
+						</button>
+					</div>
+				</div>
+	     			<div ng-repeat = "asset in device.asset">
+						<div class="col-md-5">
+							<div class="panel panel-default span4">
+							<div class="panel panel-body">
+								
+									<label>{{asset.id}}</label>
+									<div ng-repeat="sensor in asset.sensor">
+										<input type="checkbox" checklist-model="selAsset" checklist-value="sensor"> {{sensor}}
+									</div>
+								</div>
+							</div>
+						</div>		
+					</div>				
+										
+				</div>
+	   		 </uib-accordion-group>	
+   		 </uib-accordion>
+   		 <div class="row">
+   		 	<div class="col-md-5">
+   		 		<button class="btn btn-info" ng-click="generateReport()">Generate</button> 		
+   		 	</div>   		 	
+   		 </div>
+   		 <div class="row" style="background-color:#eee;margin-top:10px">			
+	 		<div  
+	 			ui-grid="gridOptions" 
+	 			ui-grid-selection 
+	 			ui-grid-resize-columns 
+	 			ui-grid-pagination
+	 			ui-grid-exporter
+	 			class="myGrid grid-align" style="margin-top: 20px;"></div>
+ 		</div>
+		</div>
+	</div>	
+</div>
+	
+<ng-include src = "'templates/footer.html'"> </ng-include>

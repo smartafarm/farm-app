@@ -1,0 +1,122 @@
+ <div modal="manageAssetCtrl" close="cancel()">
+   <!-- <form name="newUser"> -->
+   <div class="modal-header">
+     <h4>Manage Asset</h4> 
+     <h4>Controller ID : {{device.id}}</h4>
+   </div>
+   <div class="modal-body">
+     
+     <form name="editDevice" novalidate>
+       <div class="row"> 
+         <div class="form-group" ng-class="{ 'has-error' : editDevice.Name.$invalid && !editDevice.Name.$pristine }">
+           <label for="Name" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Name</label>
+           <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+             <input type="text" class="form-control" name="name" placeholder="name" ng-model="device.name" required>
+           </div>
+         </div>
+       </div>
+       <div class="row">
+         <div class="form-group" ng-class="{ 'has-error' : editDevice.desc.$invalid && !editDevice.desc.$pristine }">
+           <label for="desc" class="col-xs-offset-1 col-sm-3 col-sm-offset-0 col-md-3 control-label">Description</label>
+           <div class="col-xs-8 col-xs-offset-1 col-sm-5 col-md-6 col-md-offset-2 ">
+             <input type="text" class="form-control" name="desc" placeholder="Contact person" ng-model="device.desc" required>
+           </div>
+         </div>
+       </div>
+       <div class="row" style="margin-top: 8px;">
+        <div class="col-md-12">
+          <label style="font-size:18px">Asset</label>        
+          <button style="margin-left: 15px;" ng-click="showNewAsset = !showNewAsset" ng-disabled = "showNewAsset"><i class="fa fa-plus"></i></button>        
+          <hr style="margin-top: 0px;">
+        </div>        
+      </div>      
+
+      <div class="row" ng-show="showNewAsset">
+       <div class="col-md-10 col-md-offset-1">
+         <div class="panel panel-default ">
+           <div class="panel-heading">
+             <input name="newAssetName"  ng-model="newAsset.id" placeholder="New Asset Name" ng-init="newAsset.fname = 'Friendly Name'" required/>        
+             ({{newAsset.fname}}) 
+             <div
+             class="pull-right"
+             style="display: inline-block;"
+             tooltip-placement="top"
+             uib-tooltip ="{{!newAsset.id || !newAsset.assigned ? 'Asset Name and Assigned Sensor required' : 'Save Asset'}}"
+             tooltip-popup-delay='400'
+             >
+             <button class="btn btn-success" ng-click="saveNewAsset()" ng-disabled = "!newAsset.id || !newAsset.assigned">Save</button>             
+             </div>
+             <div
+             class="pull-right"
+             style="display: inline-block; margin-right: 10px"
+             tooltip-placement="top"
+             uib-tooltip ="Cancel"
+             tooltip-popup-delay='400'
+             >
+             <button class=" btn btn-warning" ng-click = "showNewAsset = !showNewAsset">X</button> 
+             </div>
+           </div> 
+           <div class="row" > 
+             <div class="panel-body">
+               <div class="col-md-12 col-md-offset-1"> 
+                <label for="newAssetsensor">Assigned Sensor #</label>   
+                <input name="newAssetsensor"  ng-model="newAsset.assigned" placeholder="Assigned sensor" required/>        
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div>           
+    </div>
+    <div ng-repeat="assetInfo in device.asset track by $index | orderBy : 'id'" >
+     <div class="row">
+       <div class="col-md-10 col-md-offset-1">
+         <div class="panel panel-default ">
+           <div class="panel-heading">
+             <label> # {{assetInfo.id}} </label> ({{assetInfo.fname}}) 
+             <div class="pull-right">
+                  <span style="margin-top:-5px;color: green"
+                  tooltip-placement="left"
+                  uib-tooltip ="Add Sensor"
+                  tooltip-popup-delay='400'
+                  ng-click="showNewSensor = !showNewSensor"
+                  ng-init = "showNewSensor = false"
+                  ng-show="!showNewSensor"
+                  ><i style="font-size: 90%"class="fa fa-plus"></i></span>
+                  <div style="display: inline-block;" ng-show="showNewSensor">
+                    <input name="newsensor"  ng-model="this.newsensor"  placeholder="New Sensor" required/>
+                     <span style="color: green"
+                      tooltip-placement="left"
+                      uib-tooltip ="Save Sensor"
+                      tooltip-popup-delay='400'
+                      ng-click="saveSensor(this)"    
+                      ng-show="newsensor"                  
+                      ><i style="font-size: 90%"class="fa fa-check"></i></span>
+                      <span style="color: red"
+                      tooltip-placement="right"
+                      uib-tooltip ="Close"
+                      tooltip-popup-delay='400'
+                      ng-click="this.showNewSensor = false"                                            
+                      ><i style="font-size: 90%"class="fa fa-times"></i></span>
+                 </div>
+             </div>
+           </div> 
+           <div class="row" ng-repeat="sensorInfo in assetInfo.sensor"> 
+             <div class="panel-body">             
+               <div class="col-md-12 col-md-offset-1"> 
+                 <span><label>{{sensorInfo}}</label><i ng-show="assetInfo.assigned == sensorInfo"> (assigned)</i></span> 
+                 <span style="margin-left: 20px" ng-hide="assetInfo.assigned == sensorInfo"><i class="fa fa-times"></i></span> 
+               </div>
+             </div>
+           </div>
+         </div> 
+       </div>           
+     </div>
+   </div>
+
+   <div class="modal-footer">
+     <button class="btn btn-success" ng-click="ok()"> Save</button>
+     <button class="btn" ng-click="cancel()">Cancel</button>
+   </div>
+ </form>
+</div>
+</div>

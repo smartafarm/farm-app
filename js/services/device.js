@@ -5,8 +5,8 @@ return{
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-                //url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
-                url:'http://localhost/api/fetch/getdevices',   
+                url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+                //url:'http://localhost/api/fetch/getdevices',   
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)

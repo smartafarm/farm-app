@@ -1,0 +1,20 @@
+<div ng-controller ="deviceMgtCtrl">
+	<div class="row">
+		<h3>Device Managment</h3>
+		<button class="btn btn-primary" style="margin-top: 10px;" addnew-device> 
+		<i class="fa fa-plus"> </i> Add Device
+		</button>		
+		<button class="btn btn-primary" style="margin-top: 10px;" manage-asset> 
+		<i class="fa fa-pencil"> </i> &nbsp Manage Asset
+		</button>
+	</div> 
+
+<div class="row" style="background-color:#eee;margin-top:10px">			
+	 		<div  
+	 			ui-grid="gridOptions" 
+	 			ui-grid-selection 
+	 			ui-grid-resize-columns 
+	 			ui-grid-pagination
+	 			class="myGrid grid-align" style="margin-top: 20px;"></div>
+		 	</div>
+</div>

@@ -1,8 +1,21 @@
 /* Sticky footer styles
 -------------------------------------------------- */
+.stage{
+  bottom: 15px;
+  position: relative;
+  top: 15px;
+}
+.tags .tag {
+    border-radius: 6px;
+    background-color: #EFEFEF;
+    border: 1px solid #DDD;
+    padding: 5px;
+    margin-right: 10px;
+}
 
-
-
+.grid-align {
+    text-align: center;
+}
 .footer {
   position: fixed;
   bottom:0px;

@@ -278,8 +278,8 @@ oadminService.getData('oadmin/getOrg/info').then(function(response){
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/api/'+api,
-				//url:'http://www.smartafarm.com.au/api/'+api,
+				//url:'http://localhost/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){
@@ -292,8 +292,8 @@ oadminService.getData('oadmin/getOrg/info').then(function(response){
 		getData : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/api/'+api,
-				//url:'http://www.smartafarm.com.au/api/'+api,
+				//url:'http://localhost/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET',
 				data: {serverData:serverData}
 			}).then(function(response){

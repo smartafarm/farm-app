@@ -1,6 +1,10 @@
 <nav class="navbar navbar-default navbar-fixed-top" ng-show="!currentUser" ng-controller ="NavCtrl" style="margin-top: -10px;">
-	<a class="navbar-brand" ui-sref="app.dashboard">
-	<img alt="Brand" src="templates/smartfarm.png" style="width: 200px;"></a>
+	
+	<div class="navbar-brand">
+	<a ui-sref="app.dashboard">
+	<img alt="Brand" src="templates/smartfarm.png" style="width: 200px;">	
+	</a>	
+	</div>
 	<div class="container" style="padding-top: 20px;">
 		<div class ="navbar-header" >		
 			<button type="button"  class="navbar-toggle" ng-init="navCollapsed = true" ng-click="navCollapsed = !navCollapsed" >
@@ -13,7 +17,8 @@
 	<div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
 		<ul class="nav navbar-nav" >
 			<li><a ui-sref="app.dashboard">Dashboard </a></li>				
-			<li><a href="http://localhost/feeder" target="_blank">Feeder </a></li>				
+			<li><a ui-sref="app.reports">Reports </a></li>
+			<!-- <li><a href="http://localhost/feeder" target="_blank">Feeder </a></li> -->				
 	        <li><a ui-sref="app.rawdata" >Raw Data</a></li> 
 	        <li><a ui-sref="oadmin.users" ng-if="user.details.type === 'oadmin'" >Admin</a></li> 
 	        <li ng-if="user.details.type === 'admin'"><a ui-sref="admin.users" >Admin Portal</a></li>     
@@ -27,10 +32,11 @@
 				</ul>
 			</li>
 		</ul>
-	</div> 
-			
+	</div> 			
 	</div>
+	
 		
+	
 </nav>
 
 
