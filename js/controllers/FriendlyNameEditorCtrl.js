@@ -9,15 +9,11 @@
 	'graphdata',
 function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$interval,graphdata) { 
 
-	//Device Friendly Name Editor Modal Controller 
-	//Click event initiates a modal via directive	
+	
 	
 	$scope.sensorUpdate =[];	
 	$scope.selectedDevice = selectedDevice;
-	/*console.log('Selecteddevice')	
-	console.log($scope.selectedDevice);
-	console.log('graphdata');
-	console.log(graphdata)*/
+
   	$scope.saveDeviceName = function() {    
   	//Updating Fname
   
@@ -30,11 +26,10 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 		})   
   				
   
-  	console.log($scope.fnameUpdate);
+  	
  	}
  	$scope.saveSensor = function(asset){
- 		/*console.log('asset');
- 		console.log(asset);*/
+ 	
  		var data={"_id" : $scope.selectedDevice._id ,"asset" : asset.assetInfo.id ,"fname" : asset.fnameUpdate}	
  		userFactory.submit('update/sname',data).then(function(response){
 

@@ -13,7 +13,7 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
     adminService.submit('admin/getOrg/addUser').then(function(response){$scope.org = response})
   	$scope.ok = function() {    
       if($scope.user.details.type = "Admin") $scope.user.details.type = "oadmin";
-      console.log($scope);
+      
   		adminService.submit('admin/createUser',$scope.user).then(function(response){
         if(response.status == 202){
             Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})

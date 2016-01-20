@@ -65,7 +65,7 @@
                             $scope.graph[sensor]['info'] = {'id': sensor , 'fname' : 'Sensor info unavailable'};
                           }
                           
-                          //console.log($scope.graph);
+                          
                           $scope.graph[sensor]['data'] = {};
                             //setting coloums
                           
@@ -240,7 +240,7 @@
                   //scaleFormat : '#\'%\'',
                   dateFormat:'hh:mm a dd-MM-yy'                  
               };
-              console.log($scope.graphLevel[myIndex]);
+              
                
           }
         )}

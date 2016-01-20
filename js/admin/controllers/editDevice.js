@@ -35,12 +35,14 @@ function ($scope,$uibModalInstance,devices,adminService,Notification) {
   			}
   			
   		})
-  		console.log($scope.selectedDevices);
+  		
   		},function(response){				
 				console.log(response);
 		});
 $scope.changeAlert = function(device,test){
-	console.log($scope.selectedDevices);
+	
+
+  
 	
 }
 $scope.changeFunc =function(device ,funct){
@@ -51,7 +53,7 @@ $scope.changeFunc =function(device ,funct){
 	}else{
 		$scope.selectedDevices[device].func.splice(index,1);
 	}
-	console.log($scope.selectedDevices);
+	
 }
 
 // eof testing
@@ -69,7 +71,7 @@ $scope.changeFunc =function(device ,funct){
   			}
   		})
   		
-  		console.log(data);
+  		
   		
   			adminService.submit('admin/setDeviceAccess',data).then(function(response){  	
   				if(response.status == 202){

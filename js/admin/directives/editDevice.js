@@ -13,7 +13,7 @@
 				      controller: 'editDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
-		      						console.log(scope.gridApi.selection.getSelectedRows(0))
+		      						
 						      		return scope.gridApi.selection.getSelectedRows(0);
 		      				}	
 	      				}    
