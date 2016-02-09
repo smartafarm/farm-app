@@ -1,5 +1,5 @@
-# application
+# Application
 Smartafarm
 
-#author
+#Author
 Vandish Gandhi
