@@ -51,17 +51,17 @@ var sfarm = angular
         //console.log(word);
         var label = word.id;        
         
-        var indidcate = word.value.substring(0, 1);
+        //var indidcate = word.value.substring(0, 1);
         if (word.type==='Temp'){
-          var wordValue  = parseFloat(word.value)/10 ;
-          return label + ' : '   + wordValue +' ℃ ';//&#8451  °C
+          //var wordValue  = parseFloat(word.value)/10 ;
+          return label + ' : '   + word.value +' ℃ ';//&#8451  °C
         }else if(word.type==='Level')
         {
-          var wordValue  = parseFloat(word.value)/10 ;
-          return label + ' : '   + wordValue + ' % '
+          //var wordValue  = parseFloat(word.value)/10 ;
+          return label + ' : '   + word.value + ' % '
         }else{
-          var wordValue  = parseFloat(word.value)/10 ;
-          return label + ' : '   + wordValue 
+        //  var wordValue  = parseFloat(word.value)/10 ;
+          return label + ' : '   + word.value 
         }
         
     }

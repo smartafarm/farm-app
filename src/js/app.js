@@ -51,17 +51,17 @@ var sfarm = angular
         //console.log(word);
         var label = word.id;        
         
-        var indidcate = word.value.substring(0, 1);
+        //var indidcate = word.value.substring(0, 1);
         if (word.type==='Temp'){
-          var wordValue  = parseFloat(word.value)/10 ;
-          return label + ' : '   + wordValue +' ℃ ';//&#8451  °C
+          //var wordValue  = parseFloat(word.value)/10 ;
+          return label + ' : '   + word.value +' ℃ ';//&#8451  °C
         }else if(word.type==='Level')
         {
-          var wordValue  = parseFloat(word.value)/10 ;
-          return label + ' : '   + wordValue + ' % '
+          //var wordValue  = parseFloat(word.value)/10 ;
+          return label + ' : '   + word.value + ' % '
         }else{
-          var wordValue  = parseFloat(word.value)/10 ;
-          return label + ' : '   + wordValue 
+        //  var wordValue  = parseFloat(word.value)/10 ;
+          return label + ' : '   + word.value 
         }
         
     }
@@ -309,18 +309,33 @@ sfarm
 				var dates=[];
 						var readings = scope.device.readings;
 						readings.forEach(function(value,key){
-							dates.push(new Date(value.dt));
+							dates.push(new Date(value.dt.replace(/-/g, "/")));
 						})
 						var maxDate=Math.max.apply(null,dates);
 						scope.device.lread =new Date(maxDate);			
 			
 						readings.forEach(function(value,key){	
 			
-							if(new Date (value.dt).getTime() === new Date(maxDate).getTime() ){		
+							if(new Date (value.dt.replace(/-/g, "/")).getTime() === new Date(maxDate).getTime() ){		
 								//setting last read for each device			
 								scope.device.lread = value ;			
 							}
 						})
+				/*var dates=[];
+						var readings = scope.device.readings;
+						readings.forEach(function(value,key){
+							dates.push( Date(value.dt));
+						})
+						var maxDate=Math.max.apply(null,dates);
+						scope.device.lread = Date(maxDate);			
+			
+						readings.forEach(function(value,key){	
+			
+							if( Date (value.dt).getTime() ===  Date(maxDate).getTime() ){		
+								//setting last read for each device			
+								scope.device.lread = value ;			
+							}
+						})*/
 				
 			},true)
 		}
@@ -435,8 +450,8 @@ sfarm
 	 			}
 	 		})
 	 		index = index+1;
-		});
-		 });
+			});
+	 	});
 	};
 
 	// initiate Poller for data from server - comment to deactivate and vice versa
@@ -460,8 +475,9 @@ sfarm
 
   //graph on ready event
   $scope.graphready = function(test){
-				$scope.graphLoading = false;				
-                };
+				
+		$scope.graphLoading = false;				
+    };
 
 }])
 
@@ -552,15 +568,11 @@ $scope.statusToggle = function(){
 	'graphdata',
 function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$interval,graphdata) { 
 
-	//Device Friendly Name Editor Modal Controller 
-	//Click event initiates a modal via directive	
+	
 	
 	$scope.sensorUpdate =[];	
 	$scope.selectedDevice = selectedDevice;
-	/*console.log('Selecteddevice')	
-	console.log($scope.selectedDevice);
-	console.log('graphdata');
-	console.log(graphdata)*/
+
   	$scope.saveDeviceName = function() {    
   	//Updating Fname
   
@@ -573,11 +585,10 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 		})   
   				
   
-  	console.log($scope.fnameUpdate);
+  	
  	}
  	$scope.saveSensor = function(asset){
- 		/*console.log('asset');
- 		console.log(asset);*/
+ 	
  		var data={"_id" : $scope.selectedDevice._id ,"asset" : asset.assetInfo.id ,"fname" : asset.fnameUpdate}	
  		userFactory.submit('update/sname',data).then(function(response){
 
@@ -858,7 +869,7 @@ $scope.generateReport = function(){
         if($scope.selAsset.indexOf(rdata.sensorID) != -1)
         //query filter
         { 
-          var dt = new Date(readings.dt); 
+          var dt = new Date(readings.dt.replace(/-/g, "/")); 
           $scope.myData.push(
             {
               "did" : readings.did, //device id
@@ -866,7 +877,7 @@ $scope.generateReport = function(){
               "time" :$filter('date')(dt,'shortTime'), //time
               "sensor" : rdata.sensorID , //sensor id
               "type" :sdata.id, // temp or level
-              "value":parseFloat(sdata.value)/10  //reading                      
+              "value":sdata.value  //reading                      
             })//eof mydata push
         }
      })//eof sdata
@@ -963,8 +974,8 @@ return{
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-                url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
-                //url:'http://localhost/api/fetch/getdevices',   
+               // url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+                url:'http://localhost/api/fetch/getdevices',   
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
@@ -1023,7 +1034,7 @@ return{
                 //initializing rows
                 
                 //temp rows for creating data array for graph
-                             
+                          
                 var index = []
 
                 angular.forEach($scope.device.readings, function(readingData, keya){ 
@@ -1065,7 +1076,7 @@ return{
                             $scope.graph[sensor]['info'] = {'id': sensor , 'fname' : 'Sensor info unavailable'};
                           }
                           
-                          //console.log($scope.graph);
+                          
                           $scope.graph[sensor]['data'] = {};
                             //setting coloums
                           
@@ -1118,19 +1129,23 @@ return{
                             
                           
                       }
-                     // debugger;
-                      var dt =   new Date(readingData.dt); 
+                     //debugger;
+                     //string replacing - with slash to provide all browser compatibility
+                    
+                   var dt =  new Date(readingData.dt.replace(/-/g, "/")); 
+                //  var dt =  new Date(readingData.dt)
                       index[sensor] = index[sensor] + 1 ;
                       level[sensor].rows[index[sensor]]=[];
                       level[sensor].rows[index[sensor]]['c'] = []
                             //pushing reading date
                             
                       level[sensor].rows[index[sensor]].c.push({'v' : dt }); 
-                      var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")                
+                      //var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")                
                     
                       angular.forEach(data.sdata, function(sdata, keyc){ 
                         //pushing reading data
-                        level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)/10});
+                       // level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)/10});
+                        level[sensor].rows[index[sensor]].c.push({'v' : sdata.value});
                     
                       });// eof sdata
 
@@ -1240,7 +1255,7 @@ return{
                   //scaleFormat : '#\'%\'',
                   dateFormat:'hh:mm a dd-MM-yy'                  
               };
-              console.log($scope.graphLevel[myIndex]);
+              
                
           }
         )}
@@ -1400,8 +1415,8 @@ return{
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
-				//url:'http://localhost/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);
@@ -1413,8 +1428,8 @@ return{
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				//url:'http://localhost/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

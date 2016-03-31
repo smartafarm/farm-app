@@ -23,7 +23,7 @@
                 //initializing rows
                 
                 //temp rows for creating data array for graph
-                             
+                          
                 var index = []
 
                 angular.forEach($scope.device.readings, function(readingData, keya){ 
@@ -118,19 +118,23 @@
                             
                           
                       }
-                     // debugger;
-                      var dt =   new Date(readingData.dt); 
+                     //debugger;
+                     //string replacing - with slash to provide all browser compatibility
+                    
+                   var dt =  new Date(readingData.dt.replace(/-/g, "/")); 
+                //  var dt =  new Date(readingData.dt)
                       index[sensor] = index[sensor] + 1 ;
                       level[sensor].rows[index[sensor]]=[];
                       level[sensor].rows[index[sensor]]['c'] = []
                             //pushing reading date
                             
                       level[sensor].rows[index[sensor]].c.push({'v' : dt }); 
-                      var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")                
+                      //var annote = dt.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1")                
                     
                       angular.forEach(data.sdata, function(sdata, keyc){ 
                         //pushing reading data
-                        level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)/10});
+                       // level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)/10});
+                        level[sensor].rows[index[sensor]].c.push({'v' : sdata.value});
                     
                       });// eof sdata
 

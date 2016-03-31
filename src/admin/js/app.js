@@ -103,7 +103,7 @@ angular.module('sfarm')
 				      controller: 'editDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
-		      						console.log(scope.gridApi.selection.getSelectedRows(0))
+		      						
 						      		return scope.gridApi.selection.getSelectedRows(0);
 		      				}	
 	      				}    
@@ -130,7 +130,7 @@ angular.module('sfarm')
 				      controller: 'editOrgDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
-		      						console.log(scope.gridApi.selection.getSelectedRows(0))
+		      						
 						      		return scope.gridApi.selection.getSelectedRows(0);
 		      				}	
 	      				}    
@@ -269,7 +269,7 @@ function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {
     adminService.submit('admin/getOrg/addUser').then(function(response){$scope.org = response})
   	$scope.ok = function() {    
       if($scope.user.details.type = "Admin") $scope.user.details.type = "oadmin";
-      console.log($scope);
+      
   		adminService.submit('admin/createUser',$scope.user).then(function(response){
         if(response.status == 202){
             Notification.error({message : 'Device Settings Updated Failed. Please try again' ,delay : 3000})
@@ -420,12 +420,14 @@ function ($scope,$uibModalInstance,devices,adminService,Notification) {
   			}
   			
   		})
-  		console.log($scope.selectedDevices);
+  		
   		},function(response){				
 				console.log(response);
 		});
 $scope.changeAlert = function(device,test){
-	console.log($scope.selectedDevices);
+	
+
+  
 	
 }
 $scope.changeFunc =function(device ,funct){
@@ -436,7 +438,7 @@ $scope.changeFunc =function(device ,funct){
 	}else{
 		$scope.selectedDevices[device].func.splice(index,1);
 	}
-	console.log($scope.selectedDevices);
+	
 }
 
 // eof testing
@@ -454,7 +456,7 @@ $scope.changeFunc =function(device ,funct){
   			}
   		})
   		
-  		console.log(data);
+  		
   		
   			adminService.submit('admin/setDeviceAccess',data).then(function(response){  	
   				if(response.status == 202){
@@ -517,7 +519,7 @@ function ($scope,$uibModalInstance,devices,userFactory,adminService,Notification
 				console.log(response);
 		});
 $scope.changeAlert = function(device,test){
-	console.log($scope.selectedDevices);
+	
 	
 }
 $scope.changeFunc =function(device ,funct){
@@ -546,7 +548,7 @@ $scope.changeFunc =function(device ,funct){
   			}
   		})
   		
-  		console.log(data);
+  		
   		
   			adminService.submit('admin/setOrgDeviceAccess',data).then(function(response){  	
   				if(response.status == 202){

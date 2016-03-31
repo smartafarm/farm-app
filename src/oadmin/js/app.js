@@ -33,7 +33,7 @@ angular.module('sfarm')
 				      controller: 'editouserDeviceCtrl',	
 				      resolve:{
 		      				devices : function(){	
-		      						console.log(scope.gridApi.selection.getSelectedRows(0))
+		      					
 						      		return scope.gridApi.selection.getSelectedRows(0);
 		      				}	
 	      				}    
@@ -112,7 +112,7 @@ function ($scope,$uibModalInstance,$interval,oadminService,Notification,parent) 
 	'oadminService',
 	'Notification',
 function ($scope,$uibModalInstance,devices,oadminService,Notification) {  
-  console.log($scope);
+  
 
 	$scope.selectedDevices = {};
 	oadminService.getData('oadmin/getDeviceFunc').then(function(response){
@@ -143,12 +143,12 @@ function ($scope,$uibModalInstance,devices,oadminService,Notification) {
   			}
   			
   		})
-  		console.log($scope.selectedDevices);
+  		
   		},function(response){				
 				console.log(response);
 		});
 $scope.changeAlert = function(device,test){
-	console.log($scope.selectedDevices);
+	
 	
 }
 $scope.changeFunc =function(device ,funct){
@@ -159,7 +159,7 @@ $scope.changeFunc =function(device ,funct){
 	}else{
 		$scope.selectedDevices[device].func.splice(index,1);
 	}
-	console.log($scope.selectedDevices);
+	
 }
 
 	

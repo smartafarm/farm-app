@@ -46,8 +46,8 @@
 	 			}
 	 		})
 	 		index = index+1;
-		});
-		 });
+			});
+	 	});
 	};
 
 	// initiate Poller for data from server - comment to deactivate and vice versa
@@ -71,7 +71,8 @@
 
   //graph on ready event
   $scope.graphready = function(test){
-				$scope.graphLoading = false;				
-                };
+				
+		$scope.graphLoading = false;				
+    };
 
 }])

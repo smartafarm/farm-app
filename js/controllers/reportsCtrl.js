@@ -110,7 +110,7 @@ $scope.generateReport = function(){
         if($scope.selAsset.indexOf(rdata.sensorID) != -1)
         //query filter
         { 
-          var dt = new Date(readings.dt); 
+          var dt = new Date(readings.dt.replace(/-/g, "/")); 
           $scope.myData.push(
             {
               "did" : readings.did, //device id
@@ -118,7 +118,7 @@ $scope.generateReport = function(){
               "time" :$filter('date')(dt,'shortTime'), //time
               "sensor" : rdata.sensorID , //sensor id
               "type" :sdata.id, // temp or level
-              "value":parseFloat(sdata.value)/10  //reading                      
+              "value":sdata.value  //reading                      
             })//eof mydata push
         }
      })//eof sdata
