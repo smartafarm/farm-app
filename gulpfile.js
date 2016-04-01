@@ -18,6 +18,8 @@ gulp.task('depsjs', function(){
 		'bower_components/angular-aria/angular-aria.js',
 		'bower_components/angular-material/angular-material.js',		
 		'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+		'node_modules/moment/moment.js',
+		'node_modules/moment-timezone/builds/moment-timezone-with-data.js',
 		'bower_components/oclazyload/dist/ocLazyLoad.min.js',
 		'bower_components/angular-base64/angular-base64.min.js',
 		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.js',	

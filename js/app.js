@@ -66,6 +66,16 @@ var sfarm = angular
         
     }
 })
+.filter('myDateFormat', function myDateFormat($filter){
+  return function(text){
+    if(text)
+    {
+      //custom filter to get string into date object for formatting
+      var  tempdate= new Date(text.replace(/-/g,"/"));
+      return $filter('date')(tempdate, "dd-MM-yyyy h:mm a");
+    }
+  }
+})
 .config(['$animateProvider', function($animateProvider) {
       //configuartion to animate accordion for UIB ANGULAR BOOTSTRAP
       $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);

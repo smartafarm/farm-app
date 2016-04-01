@@ -20,7 +20,7 @@
 				    	<span ng-repeat= "sensor in device.lread.data"> 
 				    	<span ng-if="sensor.sensorID == graphData.info.id" style="font-size: 75%">
 					    	<strong style="color:green">Last Reading</strong>
-					    	<span>{{ device.lread.dt | date:'dd-MM-yyyy h:mm a' }}&nbsp</span>
+					    	<span>{{ device.lread.dt | myDateFormat }}&nbsp</span>
 							<span ng-repeat= "sensorData in sensor.sdata"> {{sensorData | valueFilter}}</span>
 						</span>
 						</span>	

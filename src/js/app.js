@@ -66,6 +66,16 @@ var sfarm = angular
         
     }
 })
+.filter('myDateFormat', function myDateFormat($filter){
+  return function(text){
+    if(text)
+    {
+      //custom filter to get string into date object for formatting
+      var  tempdate= new Date(text.replace(/-/g,"/"));
+      return $filter('date')(tempdate, "dd-MM-yyyy h:mm a");
+    }
+  }
+})
 .config(['$animateProvider', function($animateProvider) {
       //configuartion to animate accordion for UIB ANGULAR BOOTSTRAP
       $animateProvider.classNameFilter(/^((?!(ui-grid-menu)).)*$/);
@@ -298,7 +308,7 @@ sfarm
 
 
 
-.directive('lastReading',function(){
+.directive('lastReading',function($filter){
 	//directive to print last reading on accordion panel header
 	return{
 		restrict:'A',	
@@ -317,10 +327,14 @@ sfarm
 						readings.forEach(function(value,key){	
 			
 							if(new Date (value.dt.replace(/-/g, "/")).getTime() === new Date(maxDate).getTime() ){		
-								//setting last read for each device			
-								scope.device.lread = value ;			
+								//setting last read for each device		
+								
+								scope.device.lread = value ;
+								
+
 							}
 						})
+						
 				/*var dates=[];
 						var readings = scope.device.readings;
 						readings.forEach(function(value,key){
@@ -659,7 +673,10 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 	'mygraphFactory',
 	'$filter',
 	'$window',
- function ($scope,device,$rootScope,mygraphFactory,$filter,$window) {
+	'$interval',
+	'Poller',
+
+ function ($scope,device,$rootScope,mygraphFactory,$filter,$window,$interval,Poller) {
  	
  	$scope.listData = [];
 	$scope.isLoading = true;	
@@ -708,7 +725,38 @@ $scope.getdate = function (MyDate) {
    	}
 
   };
-	
+
+function Repeater ()  {	 
+		// Poller.poll('fetch/getupdate?t='+ new Date().toISOString())
+		
+		//Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t=01042016090034')
+		Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t='+moment().format("DDMMYYYYHHmmss"))
+		 .then(function(response){
+		 	
+		/* 	var index = 0;
+		 	//for each new reading from server
+	 		$scope.data.forEach(function(entry) {
+	 		data.readings.forEach(function(reading){
+	 			if(reading.did == entry._id){
+	 				//pushing into device data
+	 				$scope.data[index].readings.push(reading);	 				
+	 				// updating last read	 				
+					$scope.data[index].lread =reading;
+	 				// refreshing angular js graph
+	 				
+	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
+	 			}
+	 		})
+	 		index = index+1;
+			});*/
+	 	});
+};
+$rootScope.timer = $interval(Repeater, 11000);	
+
+$scope.$on('timerEvent:stopped', function() {
+		// cancel event of timer when page is redirected 
+	$interval.cancel($rootScope.timer);
+});
 	$rootScope.getuser.then(function(response){
 		$rootScope.user = response;				
 	})
@@ -974,8 +1022,8 @@ return{
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-                url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
-               // url:'http://localhost/api/fetch/getdevices',   
+               // url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+                url:'http://localhost/api/fetch/getdevices',   
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
@@ -994,13 +1042,17 @@ return{
                return {
                     poll : function(api){
                         var deferred = $q.defer();
-                        $http.get(api).then(function (response) {                            
-                            deferred.resolve(response.data);
-                        },function(response){
-                           return deferred.reject() ;//reqInspect.submitResposne(response.status) ;                           
+                        $http({
+                            //url:'http://www.smartafarm.com.au/api/'+api,              
+                           url:'http://localhost/api/'+api,   
+                            method:'GET'
+                        }).then(function(response){
+                            deferred.resolve(response)
+                        },function(reject){
+                            deferred.reject(reject);
                         });
-                        return deferred.promise;
-                       
+                        return deferred.promise
+                                   
                     }
 
                 }
@@ -1145,7 +1197,7 @@ return{
                       angular.forEach(data.sdata, function(sdata, keyc){ 
                         //pushing reading data
                        // level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)/10});
-                        level[sensor].rows[index[sensor]].c.push({'v' : sdata.value});
+                        level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)});
                     
                       });// eof sdata
 
@@ -1271,8 +1323,8 @@ return{
 			$http({
 				//setting headers
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				url:'http://www.smartafarm.com.au/api/login/authenticate',				
-				//url:'http://localhost/api/login/authenticate',		
+				//url:'http://www.smartafarm.com.au/api/login/authenticate',				
+				url:'http://localhost/api/login/authenticate',		
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){
@@ -1415,8 +1467,8 @@ return{
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
-				//url:'http://localhost/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);
@@ -1428,8 +1480,8 @@ return{
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				//url:'http://localhost/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

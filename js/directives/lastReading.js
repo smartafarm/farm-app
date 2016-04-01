@@ -1,4 +1,4 @@
-.directive('lastReading',function(){
+.directive('lastReading',function($filter){
 	//directive to print last reading on accordion panel header
 	return{
 		restrict:'A',	
@@ -17,10 +17,14 @@
 						readings.forEach(function(value,key){	
 			
 							if(new Date (value.dt.replace(/-/g, "/")).getTime() === new Date(maxDate).getTime() ){		
-								//setting last read for each device			
-								scope.device.lread = value ;			
+								//setting last read for each device		
+								
+								scope.device.lread = value ;
+								
+
 							}
 						})
+						
 				/*var dates=[];
 						var readings = scope.device.readings;
 						readings.forEach(function(value,key){

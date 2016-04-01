@@ -5,8 +5,8 @@ return{
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-                url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
-               // url:'http://localhost/api/fetch/getdevices',   
+               // url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+                url:'http://localhost/api/fetch/getdevices',   
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
@@ -25,13 +25,17 @@ return{
                return {
                     poll : function(api){
                         var deferred = $q.defer();
-                        $http.get(api).then(function (response) {                            
-                            deferred.resolve(response.data);
-                        },function(response){
-                           return deferred.reject() ;//reqInspect.submitResposne(response.status) ;                           
+                        $http({
+                            //url:'http://www.smartafarm.com.au/api/'+api,              
+                           url:'http://localhost/api/'+api,   
+                            method:'GET'
+                        }).then(function(response){
+                            deferred.resolve(response)
+                        },function(reject){
+                            deferred.reject(reject);
                         });
-                        return deferred.promise;
-                       
+                        return deferred.promise
+                                   
                     }
 
                 }

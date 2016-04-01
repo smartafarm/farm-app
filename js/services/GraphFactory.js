@@ -134,7 +134,7 @@
                       angular.forEach(data.sdata, function(sdata, keyc){ 
                         //pushing reading data
                        // level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)/10});
-                        level[sensor].rows[index[sensor]].c.push({'v' : sdata.value});
+                        level[sensor].rows[index[sensor]].c.push({'v' : parseFloat(sdata.value)});
                     
                       });// eof sdata
 

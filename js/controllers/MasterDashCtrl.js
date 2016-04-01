@@ -5,7 +5,10 @@
 	'mygraphFactory',
 	'$filter',
 	'$window',
- function ($scope,device,$rootScope,mygraphFactory,$filter,$window) {
+	'$interval',
+	'Poller',
+
+ function ($scope,device,$rootScope,mygraphFactory,$filter,$window,$interval,Poller) {
  	
  	$scope.listData = [];
 	$scope.isLoading = true;	
@@ -54,7 +57,38 @@ $scope.getdate = function (MyDate) {
    	}
 
   };
-	
+
+function Repeater ()  {	 
+		// Poller.poll('fetch/getupdate?t='+ new Date().toISOString())
+		
+		//Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t=01042016090034')
+		Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t='+moment().format("DDMMYYYYHHmmss"))
+		 .then(function(response){
+		 	
+		/* 	var index = 0;
+		 	//for each new reading from server
+	 		$scope.data.forEach(function(entry) {
+	 		data.readings.forEach(function(reading){
+	 			if(reading.did == entry._id){
+	 				//pushing into device data
+	 				$scope.data[index].readings.push(reading);	 				
+	 				// updating last read	 				
+					$scope.data[index].lread =reading;
+	 				// refreshing angular js graph
+	 				
+	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
+	 			}
+	 		})
+	 		index = index+1;
+			});*/
+	 	});
+};
+$rootScope.timer = $interval(Repeater, 11000);	
+
+$scope.$on('timerEvent:stopped', function() {
+		// cancel event of timer when page is redirected 
+	$interval.cancel($rootScope.timer);
+});
 	$rootScope.getuser.then(function(response){
 		$rootScope.user = response;				
 	})
