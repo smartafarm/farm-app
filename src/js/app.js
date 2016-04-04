@@ -1054,8 +1054,8 @@ return{
 		all:function(credentials){
             var deferred = $q.defer();
             $http({
-               // url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
-                url:'http://localhost/api/fetch/getdevices',   
+               url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+               // url:'http://localhost/api/fetch/getdevices',   
                 method:'GET'
             }).then(function(response){
                 deferred.resolve(response.data)
@@ -1075,8 +1075,8 @@ return{
                     poll : function(api){
                         var deferred = $q.defer();
                         $http({
-                            //url:'http://www.smartafarm.com.au/api/'+api,              
-                           url:'http://localhost/api/'+api,   
+                            url:'http://www.smartafarm.com.au/api/'+api,              
+                           //url:'http://localhost/api/'+api,   
                             method:'GET'
                         }).then(function(response){
                             deferred.resolve(response)
@@ -1355,8 +1355,8 @@ return{
 			$http({
 				//setting headers
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-				//url:'http://www.smartafarm.com.au/api/login/authenticate',				
-				url:'http://localhost/api/login/authenticate',		
+				url:'http://www.smartafarm.com.au/api/login/authenticate',				
+				//url:'http://localhost/api/login/authenticate',		
 				method:'POST',
 				data: {credentials:credentials}
 			}).then(function(response){
@@ -1499,8 +1499,8 @@ return{
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/api/'+api,
-				//url:'http://www.smartafarm.com.au/api/'+api,
+				//url:'http://localhost/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);
@@ -1512,8 +1512,8 @@ return{
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				url:'http://localhost/api/'+api,
-				//url:'http://www.smartafarm.com.au/api/'+api,
+				//url:'http://localhost/api/'+api,
+				url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){
