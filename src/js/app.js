@@ -675,8 +675,8 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 	'$window',
 	'$interval',
 	'Poller',
-
- function ($scope,device,$rootScope,mygraphFactory,$filter,$window,$interval,Poller) {
+	'Notification',
+ function ($scope,device,$rootScope,mygraphFactory,$filter,$window,$interval,Poller,Notification) {
  	
  	$scope.listData = [];
 	$scope.isLoading = true;	
@@ -732,23 +732,55 @@ function Repeater ()  {
 		//Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t=01042016090034')
 		Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t='+moment().format("DDMMYYYYHHmmss"))
 		 .then(function(response){
-		 	
-		/* 	var index = 0;
-		 	//for each new reading from server
-	 		$scope.data.forEach(function(entry) {
-	 		data.readings.forEach(function(reading){
-	 			if(reading.did == entry._id){
-	 				//pushing into device data
-	 				$scope.data[index].readings.push(reading);	 				
-	 				// updating last read	 				
-					$scope.data[index].lread =reading;
-	 				// refreshing angular js graph
-	 				
-	 				Notification.info({ title:'New Reading', message: $scope.data[index].name , delay:4000 }) ;
-	 			}
-	 		})
-	 		index = index+1;
-			});*/
+		 	if(response.data.readings){
+	 			if(response.data.readings.length != 0){
+ 				$scope.data.forEach(function(entry) {
+ 					
+	 			response.data.readings.forEach(function(reading){
+		 			if(reading.did == entry._id){
+		 				//pushing into device data
+		 				entry.readings.push(reading);	 				
+		 				// updating last read	 				
+						entry.lread =reading;
+		 				
+			 				
+			 				Notification.info({ title:'New Reading', message: entry.name , delay:4000 }) ;
+			 			}
+
+		 			})
+		 		})
+
+		 		// refreshing angular js graph
+		 		response.data.readings.forEach(function(reading){
+				if(reading.did == $scope.device._id){
+		 				
+		 				reading.data.forEach(function(sinfo){
+		 					angular.forEach($scope.graph,function(graphData,key){
+		 						if(key == sinfo.sensorID)
+		 						 {
+		 						 	var dt =  new Date(reading.dt.replace(/-/g, "/")); 
+	 		 						 var c=[];
+	 		 						 c.push({'v' : dt});
+	 		 						 sinfo.sdata.forEach(function(sread){
+	 		 						 	c.push({'v' : parseFloat(sread.value)});	
+	 		 						 })
+	 		 						 
+	 		 						graphData.data.rows.push({'c' : c});
+	 		 					}
+		 					})
+		 				})// eof reading data for each
+		 				
+		 			}
+	 			 })
+			 	}
+
+			  
+			 }
+		 	else{
+			 		console.log('error');
+		 	}
+
+	
 	 	});
 };
 $rootScope.timer = $interval(Repeater, 11000);	
