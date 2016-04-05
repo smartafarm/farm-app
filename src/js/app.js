@@ -1,7 +1,7 @@
 //Main application Javascript
 var sfarm = angular
 .module('sfarm', [
-  //dependencies
+//dependencies
 'ui.router',
 'ui.bootstrap',
 'cgNotify',
@@ -21,6 +21,7 @@ var sfarm = angular
 'ui.grid.exporter'
 
 ])
+// User Role profiles
 .constant('USER_ROLES', {
   all: '*',
   admin: 'admin',  
@@ -128,13 +129,13 @@ sfarm
                 parent:'app'
             })
 
-              // admin routes
+            // admin application routes
            .state('admin' ,{
             url: '/admin',
             templateUrl: 'admin/test.html',
             controller:'adminCtrl',
             resolve: { 
-                        //LAZY loading admin scripts 
+                        //LAZY loading admin scripts on request
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('admin/js/app.js');
                         }]
@@ -178,7 +179,7 @@ sfarm
             templateUrl: 'oadmin/index.html',
             controller:'oadminCtrl',
             resolve: { 
-                        //LAZY loading organization admin scripts 
+                        //LAZY loading organization admin scripts on request 
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('oadmin/js/app.js');
                         }]
@@ -416,6 +417,9 @@ sfarm
         });
     }
 })
+// Controller Decrepted . 
+// Reference purpose Only
+
 .controller('uib-accordion',
 	['$scope',
 	'device',
@@ -495,16 +499,18 @@ sfarm
 
 }])
 
+// Main application controller
 .controller('AppCtrl',['$scope',
 	'$state',
 	'USER_ROLES',
 	'$rootScope',
   function ($scope,$state,USER_ROLES,$rootScope) {  
-  // Main application controller	
-		
-  $scope.userRoles = USER_ROLES;
-  //default route to dashboard
- // $state.go('app.dashboard'); 
+  	
+//user role profile
+$scope.userRoles = USER_ROLES;
+
+//default route to dashboard
+// $state.go('app.dashboard'); 
 
   
 }])
@@ -512,6 +518,7 @@ sfarm
 
 
 
+// Device status change controller
 .controller('deviceStatusCtrl',[
 	'$scope',
 	'UpdateService',
@@ -522,7 +529,7 @@ function ($scope,UpdateService,notify,$interval) {
 $scope.statusToggle = function(){
 	
 	if($scope.device.Status == 1){
-		
+		// updating values on server side
 		var data ={"_id" : $scope.device._id ,"status" : 0};
 		UpdateService.deviceStatus('update/deviceStatus',data).then(function(){
 			$scope.device.Status = 0;
@@ -540,6 +547,7 @@ $scope.statusToggle = function(){
 
 }])
 
+//Forgot password controller
 .controller('forgotCtrl',[
   '$scope', 
   '$rootScope', 
@@ -571,7 +579,8 @@ $scope.statusToggle = function(){
   	
   	}
 }])
-
+// Device friendly name editor contorller
+// This is a controller for friendly name directive
 .controller('FriendlyNameEditorCtrl',[
 	'$scope',
 	'$uibModalInstance',
@@ -588,7 +597,7 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 	$scope.selectedDevice = selectedDevice;
 
   	$scope.saveDeviceName = function() {    
-  	//Updating Fname
+  	//Updating device friendlyname
   
   	var data ={"_id" : $scope.selectedDevice._id ,"fname" : $scope.newfname};	
   		userFactory.submit('update/fname',data).then(function(response){
@@ -602,7 +611,8 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
   	
  	}
  	$scope.saveSensor = function(asset){
- 	
+ 	// Function to save sensor on the backend
+
  		var data={"_id" : $scope.selectedDevice._id ,"asset" : asset.assetInfo.id ,"fname" : asset.fnameUpdate}	
  		userFactory.submit('update/sname',data).then(function(response){
 
@@ -622,14 +632,16 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 
  	}
 	$scope.cancel = function() {
-		//closing modal on cancel click
-		
-	  $uibModalInstance.dismiss('cancel');
+
+	//closing modal on cancel click		
+  	$uibModalInstance.dismiss('cancel');
+
 	};	
 
 	
 }])
 
+// Master login controller
 .controller('LoginCtrl',[
   '$scope', 
   '$rootScope', 
@@ -644,7 +656,8 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
     password: ''
   };
   
-  //main login page controller. 
+  //main login page function. 
+  //Triggered on sumbit
   
   $scope.login = function(credentials){
     

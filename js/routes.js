@@ -44,13 +44,13 @@ sfarm
                 parent:'app'
             })
 
-              // admin routes
+            // admin application routes
            .state('admin' ,{
             url: '/admin',
             templateUrl: 'admin/test.html',
             controller:'adminCtrl',
             resolve: { 
-                        //LAZY loading admin scripts 
+                        //LAZY loading admin scripts on request
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('admin/js/app.js');
                         }]
@@ -94,7 +94,7 @@ sfarm
             templateUrl: 'oadmin/index.html',
             controller:'oadminCtrl',
             resolve: { 
-                        //LAZY loading organization admin scripts 
+                        //LAZY loading organization admin scripts on request 
                         loadMyCtrl: ['$ocLazyLoad', function($ocLazyLoad) {                          
                                  return $ocLazyLoad.load('oadmin/js/app.js');
                         }]

@@ -7,7 +7,7 @@
   'Notification',
   function ($scope,$uibModalInstance,$interval,adminService,myData,Notification) {  
    
-   $scope.user ={};
+  $scope.user ={};
   $scope.device = {}; // initiating new device
   $scope.checkName = function(){
     if($scope.device.id){

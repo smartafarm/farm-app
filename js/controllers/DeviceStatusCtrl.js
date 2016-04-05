@@ -1,3 +1,4 @@
+// Device status change controller
 .controller('deviceStatusCtrl',[
 	'$scope',
 	'UpdateService',
@@ -8,7 +9,7 @@ function ($scope,UpdateService,notify,$interval) {
 $scope.statusToggle = function(){
 	
 	if($scope.device.Status == 1){
-		
+		// updating values on server side
 		var data ={"_id" : $scope.device._id ,"status" : 0};
 		UpdateService.deviceStatus('update/deviceStatus',data).then(function(){
 			$scope.device.Status = 0;

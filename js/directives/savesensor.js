@@ -4,9 +4,8 @@
 		
 		link: function (scope, ele, iAttrs) {
 			ele.bind('click',function(){	
-				scope.checkSensor (scope.$index);
-			
-				/**/
+				scope.checkSensor (scope.$index);			
+				
 			})
 		}
 	};

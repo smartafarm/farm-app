@@ -1,4 +1,5 @@
-
+// Device friendly name editor contorller
+// This is a controller for friendly name directive
 .controller('FriendlyNameEditorCtrl',[
 	'$scope',
 	'$uibModalInstance',
@@ -15,7 +16,7 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 	$scope.selectedDevice = selectedDevice;
 
   	$scope.saveDeviceName = function() {    
-  	//Updating Fname
+  	//Updating device friendlyname
   
   	var data ={"_id" : $scope.selectedDevice._id ,"fname" : $scope.newfname};	
   		userFactory.submit('update/fname',data).then(function(response){
@@ -29,7 +30,8 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
   	
  	}
  	$scope.saveSensor = function(asset){
- 	
+ 	// Function to save sensor on the backend
+
  		var data={"_id" : $scope.selectedDevice._id ,"asset" : asset.assetInfo.id ,"fname" : asset.fnameUpdate}	
  		userFactory.submit('update/sname',data).then(function(response){
 
@@ -49,9 +51,10 @@ function ($scope,$uibModalInstance,selectedDevice,userFactory,Notification,$inte
 
  	}
 	$scope.cancel = function() {
-		//closing modal on cancel click
-		
-	  $uibModalInstance.dismiss('cancel');
+
+	//closing modal on cancel click		
+  	$uibModalInstance.dismiss('cancel');
+
 	};	
 
 	

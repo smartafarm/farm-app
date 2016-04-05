@@ -1,3 +1,6 @@
+// Controller Decrepted . 
+// Reference purpose Only
+
 .controller('uib-accordion',
 	['$scope',
 	'device',

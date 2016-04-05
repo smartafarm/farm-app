@@ -49,13 +49,7 @@
                             }
                           
                           })
-                        /*  $scope.device.sensor.forEach(function(sensorValue,key){
-                            if(sensor == sensorValue.id){
-                              info = sensorValue;
-                              hit = true;
-                            }
-                          
-                          })*/
+                    
                           
                           if(hit){
                             $scope.graph[sensor]['info'] = {'id': sensor , 'fname' : info.fname};

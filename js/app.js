@@ -1,7 +1,7 @@
 //Main application Javascript
 var sfarm = angular
 .module('sfarm', [
-  //dependencies
+//dependencies
 'ui.router',
 'ui.bootstrap',
 'cgNotify',
@@ -21,6 +21,7 @@ var sfarm = angular
 'ui.grid.exporter'
 
 ])
+// User Role profiles
 .constant('USER_ROLES', {
   all: '*',
   admin: 'admin',  

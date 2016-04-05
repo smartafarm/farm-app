@@ -1,3 +1,4 @@
+// Main dashboard controller
 .controller('dashboardMasterCtrl', [
 	'$scope',
 	'device',
@@ -14,6 +15,7 @@
 	$scope.isLoading = true;	
 	$scope.graphLoading = true;
 	$scope.changeCall  = true;
+	// receiving devices from backend services
 	device.all().then(function(data){
 		$scope.data = data;
 		$scope.isLoading = false;
@@ -21,6 +23,8 @@
 		
 		
 	})
+
+ // triggered when google graph ready	
   $scope.graphready = function(test){
   				
 				$scope.graphLoading = false;	
@@ -31,6 +35,7 @@
 					$scope.changeCall = false;
 				}
                 };
+
 $scope.getGraph = function(){	
 	//variable to trigger the graph resize message
 	$scope.changeCall = true
@@ -47,6 +52,8 @@ $scope.getGraph = function(){
   	 	//triggering resize for proper graph display when accordion header is clicked
   			 $rootScope.$emit('resizeMsg');  	 
   }
+
+// Date function  
 $scope.getdate = function (MyDate) {
    	if(MyDate){
    		MyDate =  MyDate.getFullYear() +'-'+
@@ -58,13 +65,16 @@ $scope.getdate = function (MyDate) {
 
   };
 
+// Poller for receiving new values from the devices
 function Repeater ()  {	 
 		// Poller.poll('fetch/getupdate?t='+ new Date().toISOString())
 		
 		//Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t=01042016090034')
 		Poller.poll('fetch/getupdate?did='+$scope.device._id+'&t='+moment().format("DDMMYYYYHHmmss"))
 		 .then(function(response){
+
 		 	if(response.data.readings){
+		 		// Adding value to the main scope
 	 			if(response.data.readings.length != 0){
  				$scope.data.forEach(function(entry) {
  					
@@ -82,7 +92,7 @@ function Repeater ()  {
 		 			})
 		 		})
 
-		 		// refreshing angular js graph
+		 		// adding values to google graph
 		 		response.data.readings.forEach(function(reading){
 				if(reading.did == $scope.device._id){
 		 				
@@ -115,13 +125,16 @@ function Repeater ()  {
 	
 	 	});
 };
+// Timer for fetching new values
 $rootScope.timer = $interval(Repeater, 11000);	
 
 $scope.$on('timerEvent:stopped', function() {
-		// cancel event of timer when page is redirected 
+// cancel event of timer when page is redirected 
 	$interval.cancel($rootScope.timer);
 });
-	$rootScope.getuser.then(function(response){
+
+// Promise for getting user profile
+$rootScope.getuser.then(function(response){
 		$rootScope.user = response;				
 	})
 

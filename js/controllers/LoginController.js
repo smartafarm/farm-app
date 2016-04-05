@@ -1,3 +1,4 @@
+// Master login controller
 .controller('LoginCtrl',[
   '$scope', 
   '$rootScope', 
@@ -12,7 +13,8 @@
     password: ''
   };
   
-  //main login page controller. 
+  //main login page function. 
+  //Triggered on sumbit
   
   $scope.login = function(credentials){
     

@@ -1,3 +1,4 @@
+// Directive for device panel. 
 .directive('devicePanel', [function () {
 	return {
 		restrict: 'E',

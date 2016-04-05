@@ -1,3 +1,4 @@
+//Forgot password controller
 .controller('forgotCtrl',[
   '$scope', 
   '$rootScope', 
