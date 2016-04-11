@@ -92,8 +92,8 @@
                               },
                               'colors': ['blue','green'],
                                'pointSize': 10,
-                              'zoomStartTime' : dt1,     
-                              'zoomEndTime' : startDate  ,           
+                              /*'zoomStartTime' : dt1,     
+                              'zoomEndTime' : startDate  ,   */        
                               'displayAnnotations' : false,
                               'displayAnnotationsFilter' :false,                  
                               'displayLegendDots' :false,
