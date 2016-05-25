@@ -74,8 +74,10 @@ function Repeater ()  {
 		 .then(function(response){
 
 		 	if(response.data.readings){
+
 		 		// Adding value to the main scope
 	 			if(response.data.readings.length != 0){
+
  				$scope.data.forEach(function(entry) {
  					
 	 			response.data.readings.forEach(function(reading){
@@ -100,6 +102,7 @@ function Repeater ()  {
 		 					angular.forEach($scope.graph,function(graphData,key){
 		 						if(key == sinfo.sensorID)
 		 						 {
+		 						 	
 		 						 	var dt =  new Date(reading.dt.replace(/-/g, "/")); 
 	 		 						 var c=[];
 	 		 						 c.push({'v' : dt});

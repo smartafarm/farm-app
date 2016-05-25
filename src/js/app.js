@@ -18,7 +18,8 @@ var sfarm = angular
 'ngAria',
 'angularUtils.directives.dirPagination',
 'checklist-model',
-'ui.grid.exporter'
+'ui.grid.exporter',
+'rzModule'
 
 ])
 // User Role profiles
@@ -128,6 +129,12 @@ sfarm
                 controller :'rawDataCtrl',
                 parent:'app'
             })
+               .state('app.alerts' ,{
+                url: 'app/alerts',
+                templateUrl: 'templates/alerts.html' ,
+                controller :'alertsCtrl',
+                parent:'app'
+            })
 
             // admin application routes
            .state('admin' ,{
@@ -217,6 +224,7 @@ sfarm
 
 
 
+
 // Directive for device panel. 
 .directive('devicePanel', [function () {
 	return {
@@ -228,6 +236,7 @@ sfarm
 		}
 	};
 }])
+
 .directive('deviceSwitch',function(){
 	// directive to enable/disable device status
 	return{
@@ -283,6 +292,69 @@ sfarm
 
 }) //eof devicedata
 
+.directive('noClick',function(){
+	//directive to prevent default click to open panel header
+	return{
+		restrict:'A',		
+		
+		link : function(scope,ele,attr){
+
+			ele.bind("click",function(event){		
+			 event.preventDefault();
+			 event.stopPropagation();      			
+			})
+		}
+	}
+
+}) //eof devicedata
+
+
+var sfarm =angular.module('sfarm');
+sfarm
+.directive('addNewAlert',function($uibModal){
+	//directive to edit friendly name of the device
+	//triggers a modal
+	return{
+		restrict:'A',					
+		link : function(scope,ele,attr){
+			
+			ele.bind("click",function(event){
+			//open modal
+			$uibModal.open({
+		      animation: true,
+		      templateUrl: 'partials/newAlertModal.html',
+		      controller: 'addNewAlertCtrl',
+		      resolve:{
+		      	//send data of selected device to controller
+		      	selectedDevice : function(){
+		      		return scope.device; 
+		      	},
+		      	deviceAlerts : function(){
+		      		return scope.alerts; 
+		      	}
+		      	
+		      }
+	        });
+	        //prevent default click event
+			 event.preventDefault();
+			 event.stopPropagation();      			
+			})
+		}
+	}
+
+}) //eof devicedata
+
+// Directive for device panel. 
+.directive('devicePanel', [function () {
+	return {
+		restrict: 'E',
+		templateUrl:'partials/devicePanel.html',
+		
+		link:function(scope,elm,attr){
+			
+		}
+	};
+}])
 .directive('googleGraph', [function ($scope) {
 //directive to print google annotation graph
 	return {
@@ -345,22 +417,6 @@ sfarm
 
 }) //eof devicedata
 	
-.directive('noClick',function(){
-	//directive to prevent default click to open panel header
-	return{
-		restrict:'A',		
-		
-		link : function(scope,ele,attr){
-
-			ele.bind("click",function(event){		
-			 event.preventDefault();
-			 event.stopPropagation();      			
-			})
-		}
-	}
-
-}) //eof devicedata
-
 .directive('saveSensor', ['Notification',function (Notification) {
 	return {
 		restrict: 'A',
@@ -741,8 +797,10 @@ function Repeater ()  {
 		 .then(function(response){
 
 		 	if(response.data.readings){
+
 		 		// Adding value to the main scope
 	 			if(response.data.readings.length != 0){
+
  				$scope.data.forEach(function(entry) {
  					
 	 			response.data.readings.forEach(function(reading){
@@ -767,6 +825,7 @@ function Repeater ()  {
 		 					angular.forEach($scope.graph,function(graphData,key){
 		 						if(key == sinfo.sensorID)
 		 						 {
+		 						 	
 		 						 	var dt =  new Date(reading.dt.replace(/-/g, "/")); 
 	 		 						 var c=[];
 	 		 						 c.push({'v' : dt});
@@ -848,6 +907,226 @@ $scope.refresh= function(){
 }
 //called to receive data when controller initiated
 $scope.refresh();
+}])
+.controller('TimeCtrl', ['$scope','$timeout', function ($scope,$timeout) {
+
+	//Login page timer controller
+ 	$scope.clock = "loading clock..."; // initialise the time variable
+    $scope.tickInterval = 1000 //ms
+    //Clocl settings
+    var tick = function() {
+        $scope.clock = Date.now() // get the current time
+        $timeout(tick, $scope.tickInterval); // reset the timer
+    }
+
+    // Start the timer
+    $timeout(tick, $scope.tickInterval);
+}])
+// Device friendly name editor contorller
+// This is a controller for friendly name directive
+.controller('addNewAlertCtrl',[
+	'$scope',
+	'$uibModalInstance',
+	'selectedDevice',
+	'deviceAlerts',
+	'$timeout',
+	
+function ($scope,$uibModalInstance,selectedDevice,deviceAlerts,$timeout) { 
+
+	      //setting temprature slider
+	    
+        $scope.alertTemp = {
+            minValue: 5,
+            maxValue: 20,
+            options: {
+                floor: 0,
+                ceil: 100,
+                step: 1,
+                showSelectionBar: true,
+                getSelectionBarColor : function(value) {            
+                    return 'blue'
+                },
+                translate: function(value) {
+                  return  value+'℃' 
+                }
+
+            }
+        };
+
+        //Setting level slider
+        $scope.alertLevel = {
+          minValue: 10,
+          maxValue: 90,
+          options: {
+              floor: 0,
+              ceil: 100,
+              step: 1,
+              showSelectionBar: true,
+              getSelectionBarColor : function(value) {            
+                  return 'green';
+              },
+              translate: function(value) {
+                return  value +'%' 
+              }
+          }
+
+      };
+        // Setting Time Slider
+        $scope.alertTime = {
+        minValue: 10,
+        maxValue: 60,
+        options: {
+            floor: 5,
+            ceil: 60,
+            step: 1,
+            showSelectionBar: true,
+            getSelectionBarColor : function(value) {            
+                return 'yellow';
+            },
+            translate: function(value) {
+              return  value +' mins' ;
+            }
+        }
+      }
+	
+	$scope.sensorUpdate =[];	
+	$scope.cancel = function() {
+
+	//closing modal on cancel click		
+  	$uibModalInstance.dismiss('cancel');
+
+	};	
+	$scope.refreshSlider = function () {
+    $timeout(function () {
+        $scope.$broadcast('rzSliderForceRender');
+    });
+};
+	$scope.refreshSlider();
+
+	
+
+   
+        
+  
+}])
+
+.controller('alertsCtrl', [
+	'$scope',
+	'$rootScope',
+	'userFactory',
+  '$timeout',
+	
+ function ($scope,$rootScope,userFactory,$timeout) {
+//getting global user properties
+
+$rootScope.getuser.then(function(response){
+	  $rootScope.user = response;		
+	
+  //function executiong after receiving user details
+  userFactory.receive('alerts/getDevices').then(function(response){
+    $scope.devices = response;
+    $scope.device = $scope.devices[0];
+    $scope.refreshData();
+  })
+	
+})	
+$scope.refreshSlider = function () {
+
+    $timeout(function () {
+        $scope.$broadcast('rzSliderForceRender');
+    });
+};
+
+$scope.refreshData = function(){
+  $scope.showResults = 'Loading...';
+  userFactory.receive('alerts/getAlerts?did=' + $scope.device._id).then(function(response){
+    $scope.alerts = [];
+    if(response != ' '){
+      $scope.showResults = 'Your Alerts';
+      
+      setAlerts(response);
+    }else{
+      $scope.showResults = 'No Alerts Yet !';
+    }
+  })
+
+}
+
+
+
+
+
+var setAlerts = function(response){
+
+  if(response.length != 0){
+
+      angular.forEach(response,function(value){
+
+        //setting temprature slider
+        var alertTemp = {
+            minValue: parseFloat(value.temp.lthan),
+            maxValue: parseFloat(value.temp.gthan),
+            options: {
+                floor: 0,
+                ceil: 100,
+                step: 1,
+                showSelectionBar: true,
+                getSelectionBarColor : function(value) {            
+                    return 'blue'
+                },
+                translate: function(value) {
+                  return  value+'℃' 
+                }
+
+            }
+        };
+
+        //Setting level slider
+        var alertLevel = {
+          minValue: value.level.increase,
+          maxValue: 90,
+          options: {
+              floor: 0,
+              ceil: 100,
+              step: 1,
+              showSelectionBar: true,
+              getSelectionBarColor : function(value) {            
+                  return 'green';
+              },
+              translate: function(value) {
+                return  value +'%' 
+              }
+          }
+
+      };
+        // Setting Time Slider
+        var alertTime = {
+        minValue: value.duration.mins,
+        maxValue: 60,
+        options: {
+            floor: 5,
+            ceil: 60,
+            step: 1,
+            showSelectionBar: true,
+            getSelectionBarColor : function(value) {            
+                return 'yellow';
+            },
+            translate: function(value) {
+              return  value +' mins' ;
+            }
+        }
+      }
+
+        $scope.alerts.push({'alertTime' : alertTime , 'alertTemp' : alertTemp , 'alertLevel' : alertLevel })
+        
+      })//eof response loop
+  }
+  
+  
+}
+
+console.log($scope);
+	
 }])
 .controller('reportsCtrl', [
 	'$scope',
@@ -981,20 +1260,6 @@ $scope.loading = false;
 
 	
 }])
-.controller('TimeCtrl', ['$scope','$timeout', function ($scope,$timeout) {
-
-	//Login page timer controller
- 	$scope.clock = "loading clock..."; // initialise the time variable
-    $scope.tickInterval = 1000 //ms
-    //Clocl settings
-    var tick = function() {
-        $scope.clock = Date.now() // get the current time
-        $timeout(tick, $scope.tickInterval); // reset the timer
-    }
-
-    // Start the timer
-    $timeout(tick, $scope.tickInterval);
-}])
 .run(['$rootScope',
 	'$state',
 	'LoginService',
@@ -1058,52 +1323,6 @@ function($rootScope,$state,LoginService,sessionService,$http,$interval,userFacto
 
 
 }])
-
-.factory('device',['$http','$q','reqInspect',function($http,$q,reqInspect){
-    //Factory to recevie user device data and readings based on user
-return{
-
-		all:function(credentials){
-            var deferred = $q.defer();
-            $http({
-               url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
-               // url:'http://localhost/api/fetch/getdevices',   
-                method:'GET'
-            }).then(function(response){
-                deferred.resolve(response.data)
-            },function(reject){
-                deferred.reject(reject);
-            });
-            return deferred.promise
-        }
-		      
-   }	
-}])// eof getdevices
-
-//Ajax poller to fetch data
-//current timer 11 seconds
-.factory('Poller', function($http,$q,reqInspect){
-               return {
-                    poll : function(api){
-                        var deferred = $q.defer();
-                        $http({
-                            url:'http://www.smartafarm.com.au/api/'+api,              
-                           //url:'http://localhost/api/'+api,   
-                            method:'GET'
-                        }).then(function(response){
-                            deferred.resolve(response)
-                        },function(reject){
-                            deferred.reject(reject);
-                        });
-                        return deferred.promise
-                                   
-                    }
-
-                }
-            })
-
-
-
 
 .factory('mygraphFactory', function($q)
   //Factory to prepare graph data for each device
@@ -1199,13 +1418,17 @@ return{
                               },
                               'colors': ['blue','green'],
                                'pointSize': 10,
+
+                               'min' : -10,
+                               'max' : 110,
                               /*'zoomStartTime' : dt1,     
-                              'zoomEndTime' : startDate  ,   */        
+                              'zoomEndTime' : startDate  ,*/           
+
                               'displayAnnotations' : false,
                               'displayAnnotationsFilter' :false,                  
                               'displayLegendDots' :false,
                               'scaleColumns' : [1,2],             
-                              'scaleType' : 'allmaximized',
+                              //'scaleType' : 'allfixed',
                               'table':{
                                 'sortAscending' :false
                               },                  
@@ -1435,28 +1658,6 @@ return{
 		
 }])
 
-.factory('reqInspect',['$injector',
-	//factory to intercept each request
-	function($injector){
-	return{	
-	//intercepting response error
-	 responseError: function(rejection) {
-        if (rejection.status === 401) {         
-    	//if response status 401 then route to login and destroy credentials
-         var sessionService = $injector.get('sessionService');
-         var $http = $injector.get('$http');
-         var $state = $injector.get('$state');
-				sessionService.destroy();
-	    		$http.defaults.headers.common['X-Auth-Token'] = undefined;
-	    		$http.defaults.headers.common['Bearer'] = undefined;   			    			    
-	    		$state.go('login')    ;    	
-          };
-        }
-    }
-	
-
-}])
-
 .factory('sessionService', ['LoginService','$interval','$rootScope', function(LoginService,$interval,$rootScope){
 	//Factory to set session
 	return {
@@ -1499,14 +1700,82 @@ return{
 			}
 		}
 }])
+.factory('device',['$http','$q','reqInspect',function($http,$q,reqInspect){
+    //Factory to recevie user device data and readings based on user
+return{
+
+		all:function(credentials){
+            var deferred = $q.defer();
+            $http({
+              // url:'http://www.smartafarm.com.au/api/fetch/getdevices',              
+               url:'http://localhost/api/fetch/getdevices',   
+                method:'GET'
+            }).then(function(response){
+                deferred.resolve(response.data)
+            },function(reject){
+                deferred.reject(reject);
+            });
+            return deferred.promise
+        }
+		      
+   }	
+}])// eof getdevices
+
+//Ajax poller to fetch data
+//current timer 11 seconds
+.factory('Poller', function($http,$q,reqInspect){
+               return {
+                    poll : function(api){
+                        var deferred = $q.defer();
+                        $http({
+                            //url:'http://www.smartafarm.com.au/api/'+api,              
+                           url:'http://localhost/api/'+api,   
+                            method:'GET'
+                        }).then(function(response){
+                            deferred.resolve(response)
+                        },function(reject){
+                            deferred.reject(reject);
+                        });
+                        return deferred.promise
+                                   
+                    }
+
+                }
+            })
+
+
+
+
+.factory('reqInspect',['$injector',
+	//factory to intercept each request
+	function($injector){
+	return{	
+	//intercepting response error
+	 responseError: function(rejection) {
+        if (rejection.status === 401) {         
+    	//if response status 401 then route to login and destroy credentials
+         var sessionService = $injector.get('sessionService');
+         var $http = $injector.get('$http');
+         var $state = $injector.get('$state');
+			sessionService.destroy();
+			$http.defaults.headers.common['X-Auth-Token'] = undefined;
+			$http.defaults.headers.common['Bearer'] = undefined;   			    			    
+			$state.go('login')    ;    	
+          };
+        }
+    }
+	
+
+}])
+
 .factory('userFactory', ['$http','$q', function($http,$q){
 	//factory to sending and receiving information
 	return {
 		receive : function(api){
 			var deferred = $q.defer();			
 			$http({
-				//url:'http://localhost/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				method:'GET'				
 			}).then(function(response){
 				deferred.resolve(response.data);
@@ -1518,8 +1787,8 @@ return{
 		submit : function(api,serverData){
 			var deferred = $q.defer();			
 			$http({
-				//url:'http://localhost/api/'+api,
-				url:'http://www.smartafarm.com.au/api/'+api,
+				url:'http://localhost/api/'+api,
+				//url:'http://www.smartafarm.com.au/api/'+api,
 				method:'POST',
 				data: {serverData:serverData}
 			}).then(function(response){

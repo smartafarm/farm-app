@@ -1,0 +1,63 @@
+<ng-include src = "'templates/nav.html'"> </ng-include>
+<div class="container" style="padding-top: 80px; margin-bottom: 130px;" >
+<div class="jumbotron" style="background-color: white">
+<div class="row">
+	<div class="col-md-5">
+	Device : 
+	<select name="singleSelect"   ng-model="device" ng-options="selectedDevice.EquipName+' ('+selectedDevice._id + ')' for selectedDevice in devices | orderBy:'_id'" ng-init="device = devices[0]" ng-change="refreshData()">
+		<option >device</option>     
+	</select><br>			
+	</div>
+	<div class="pull-right">
+		<button class="btn btn-primary" add-new-alert>
+			+ Add Alert
+		</button>
+	</div>
+</div>
+
+<h4>{{showResults}}</h4>
+<div class="clear-fix">
+<div ng-repeat="alert in alerts">
+	<uib-accordion>
+	 <uib-accordion-group >
+      <uib-accordion-heading class="btnd" >
+       <span ng-click="refreshSlider()">  Temprature > {{alert.alertTemp.minValue}} ℃ || Temprature < {{alert.alertTemp.maxValue}} ℃ || Level >  {{alert.alertLevel.minValue}} %|| Duration :{{alert.alertTime.minValue}} Mins</span>
+      </uib-accordion-heading>
+      <div class="well">
+      	<div>You will be alerted when</div>
+		<div><li>Temprature is greater than {{alert.alertTemp.minValue}} ℃ and less than {{alert.alertTemp.maxValue}} ℃</li></div>
+		<div><li>When Level Increases by {{alert.alertLevel.minValue}} %</li></div>
+		<div><li>In duration of past {{alert.alertTime.minValue}} mins when each reading is received.</li></div>
+		<div><h4>Temprature</h4></div>
+		<div>
+			<rzslider rz-slider-model="alert.alertTemp.minValue"   
+				 rz-slider-high="alert.alertTemp.maxValue"       
+		          rz-slider-options="alert.alertTemp.options"></rzslider>
+
+		</div>
+		<div><h4>Level</h4></div>
+		<div>
+			<rzslider rz-slider-model="alert.alertLevel.minValue"   
+				       
+		          rz-slider-options="alert.alertLevel.options"></rzslider>
+
+		</div>
+
+		<div><h4>Duration </h4></div>
+		<div>
+			<rzslider rz-slider-model="alert.alertTime.minValue"          
+		          rz-slider-options="alert.alertTime.options"></rzslider>
+
+		</div>
+	</div>
+    </uib-accordion-group>
+  </uib-accordion>
+</div>
+
+	
+</div>
+
+</div>
+</div>
+
+<ng-include src = "'templates/footer.html'"> </ng-include>

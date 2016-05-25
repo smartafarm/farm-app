@@ -1,5 +1,13 @@
 /* Sticky footer styles
 -------------------------------------------------- */
+.panel-title:active,
+.panel-title:focus,
+.panel-title.active {
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
 .stage{
   bottom: 15px;
   position: relative;
@@ -36,7 +44,7 @@
     height: auto;
     width: auto;
     
-    background: transparent url(../img/loginBackground.jpg) ;
+    background: transparent url(../img/loginBackground.png) ;
     background-size: cover;
     background-repeat: repeat-y;
     

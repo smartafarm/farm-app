@@ -92,13 +92,17 @@
                               },
                               'colors': ['blue','green'],
                                'pointSize': 10,
+
+                               'min' : -10,
+                               'max' : 110,
                               /*'zoomStartTime' : dt1,     
-                              'zoomEndTime' : startDate  ,   */        
+                              'zoomEndTime' : startDate  ,*/           
+
                               'displayAnnotations' : false,
                               'displayAnnotationsFilter' :false,                  
                               'displayLegendDots' :false,
                               'scaleColumns' : [1,2],             
-                              'scaleType' : 'allmaximized',
+                              //'scaleType' : 'allfixed',
                               'table':{
                                 'sortAscending' :false
                               },                  

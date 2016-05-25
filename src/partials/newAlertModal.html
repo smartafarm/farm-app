@@ -1,0 +1,41 @@
+
+<div modal="showModal" close="cancel()" >
+  <form name="newAlert">
+    <div class="modal-header">
+      New Alert for Device 
+    </div>
+    <div class="modal-body">  
+       <div class="well">
+        <div>You will be alerted when</div>
+        <div><li>Temprature is greater than {{alertTemp.minValue}} ℃ and less than {{alertTemp.maxValue}} ℃</li></div>
+        <div><li>When Level Increases by {{alertLevel.minValue}} %</li></div>
+        <div><li>In duration of past {{alertTime.minValue}} mins when each reading is received.</li></div>
+        <div><h4>Temprature</h4></div>
+        <div>
+          <rzslider rz-slider-model="alertTemp.minValue"   
+             rz-slider-high="alertTemp.maxValue"       
+                  rz-slider-options="alertTemp.options"></rzslider>
+
+        </div>
+        <div><h4>Level</h4></div>
+        <div>
+          <rzslider rz-slider-model="alertLevel.minValue"   
+                   
+                  rz-slider-options="alertLevel.options"></rzslider>
+
+        </div>
+
+        <div><h4>Duration </h4></div>
+        <div>
+          <rzslider rz-slider-model="alertTime.minValue"          
+                  rz-slider-options="alertTime.options"></rzslider>
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" ng-click="cancel()">Close</button>
+    </div>
+  </form>
+</div>
+
