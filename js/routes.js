@@ -43,6 +43,12 @@ sfarm
                 controller :'rawDataCtrl',
                 parent:'app'
             })
+               .state('app.alerts' ,{
+                url: 'app/alerts',
+                templateUrl: 'templates/alerts.html' ,
+                controller :'alertsCtrl',
+                parent:'app'
+            })
 
             // admin application routes
            .state('admin' ,{

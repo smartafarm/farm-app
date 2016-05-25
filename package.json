@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "es5-shim": "^4.4.1",
+    "gulp-cssmin": "^0.1.7",
     "gulp-ng-annotate": "^1.1.0",
     "gulp-ngmin": "^0.3.0"
   },

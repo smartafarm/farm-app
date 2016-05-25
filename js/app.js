@@ -18,7 +18,8 @@ var sfarm = angular
 'ngAria',
 'angularUtils.directives.dirPagination',
 'checklist-model',
-'ui.grid.exporter'
+'ui.grid.exporter',
+'rzModule'
 
 ])
 // User Role profiles

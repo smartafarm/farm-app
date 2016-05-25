@@ -7,18 +7,19 @@ var uglify			= require('gulp-uglify');
 var runSequence		= require('run-sequence');
 var watch			= require('gulp-watch');
 var ngAnnotate 		= require('gulp-ng-annotate');
+var cssmin 			= require('gulp-cssmin');
 
 /* tasks */
 gulp.task('depsjs', function(){
 	return gulp.src([
-		'bower_components/angular/angular.js',
+		'bower_components/angular/angular.min.js',
 		'bower_components/angular-ui-router/release/angular-ui-router.min.js',
 		'bower_components/angular-route/angular-route.min.js',
 		'bower_components/angular-animate/angular-animate.min.js',
-		'bower_components/angular-aria/angular-aria.js',
-		'bower_components/angular-material/angular-material.js',		
+		'bower_components/angular-aria/angular-aria.min.js',
+		'bower_components/angular-material/angular-material.min.js',		
 		'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
-		'node_modules/moment/moment.js',
+		'node_modules/moment/min/moment.min.js',
 		'node_modules/moment-timezone/builds/moment-timezone-with-data.js',
 		'bower_components/oclazyload/dist/ocLazyLoad.min.js',
 		'bower_components/angular-base64/angular-base64.min.js',
@@ -30,11 +31,13 @@ gulp.task('depsjs', function(){
 		'bower_components/angular-chart.js/dist/angular-chart.min.js',		
 		'node_modules/angular-google-chart/ng-google-chart.js',	
 		'bower_components/pdfmake/build/pdfmake.min.js',
-		'bower_components/pdfmake/build/vfs_fonts.js',			
+		'bower_components/pdfmake/build/vfs_fonts.min.js',			
+		'bower_components/angularjs-slider/dist/rzslider.min.js',
 		'js/deps/angular-notify.js'			
 		])// eof gul src
 	.pipe(concat('devdeps.js'))
 	.pipe(gulp.dest('src/js'))
+	
 	
 	//.pipe(uglify())
 	//.pipe(gulp.dest('src/js'))
@@ -61,12 +64,14 @@ gulp.task('css', function(){
 		'css/default.css',
 		'bower_components/bootstrap/dist/css/bootstrap.min.css',
 		'css/angular-notify.css',
-		'bower_components/angular-chart.js/dist/angular-chart.css',
+		'bower_components/angular-chart.js/dist/angular-chart.min.css',
 		'bower_components/angular-ui-grid/ui-grid.min.css',
 		'bower_components/angular-ui-notification/dist/angular-ui-notification.min.css'	,
-		'bower_components/angular-material/angular-material.css'	
+		'bower_components/angular-material/angular-material.min.css',
+		'bower_components/angularjs-slider/dist/rzslider.min.css'	
 		])// eof gul src
 	.pipe(concat('smartafarm.css'))
+	.pipe(cssmin())
 	.pipe(gulp.dest('src/css'))
 //	.pipe(uglify())
 //	.pipe(gulp.dest('src/js'))
